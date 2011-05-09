@@ -11,6 +11,13 @@ Clone the repository and call
 
 To remove the repository
 
+# Develop
+
+You'll need the latest version of node.js, npm, coffee-script, expresso and should to run everything.
+Run the tests by calling
+
+    expresso
+
 # Changelog
 
 Feel free to take a look at the changelog document.
