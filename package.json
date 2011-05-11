@@ -3,7 +3,7 @@
   "description":  "haml + coffeescript preprocessor",
   "keywords":     ["haml", "html", "javascript", "language", "coffeescript", "compiler"],
   "author":       "Sebastian Deutsch",
-  "version":      "0.2.3",
+  "version":      "0.2.4",
   "licenses":     [{
     "type":       "MIT",
     "url":        "http://github.com/sebastiandeutsch/haml-coffee/raw/master/LICENSE"
