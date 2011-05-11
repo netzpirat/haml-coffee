@@ -1,3 +1,7 @@
+# Version 0.2.4
+
+  * Fixed a bug with relative directories, closes issue #1
+
 # Version 0.2.3
 
   * Added inline assignment of coffeescript expression for haml tags
