@@ -28,6 +28,7 @@ exports.run = ->
         else
           console.log('  \033[92m[haml coffee] compiling directory\033[0m %s', input_filename);
           # removing a trailing slash
+          cwd = process.cwd()
           base_dir = input_filename.replace(/\/$/, "")
           process.chdir(base_dir)
           glob.glob "**/*.haml", "", (err, matches) ->
@@ -39,6 +40,7 @@ exports.run = ->
                 compiled_output = CoffeeMaker.compileFile(filename, compiled_output)                
 
               # output the file
+              process.chdir(cwd)
               fs.writeFileSync(output_filename, compiled_output)
 
               # we exit with everthing cool exit code ;-)
