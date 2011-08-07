@@ -1,3 +1,4 @@
 .DS_Store
 compiled-haml.js
 **/*/compiled-haml.js
+node_modules
