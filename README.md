@@ -25,7 +25,7 @@ a directory for input each file will be mapped to a function. You can generate t
 
     html = HAML.template_file_name()
 
-If you need to pass some paramters inside you can do it like this:
+If you need to pass some parameters inside you can do it like this:
 
     html = HAML.template_file_name({
       title : "foo bar"
@@ -43,6 +43,18 @@ The generated function will be called using the hash as context, so inside the t
             = project
 
 This will give your haml templates a very rubish touch.
+
+## HTML escaping
+
+By default, haml-coffee will perform HTML escaping on evaluated data.
+It can be turned off by setting the `escape_html` compiler option to `false`.
+
+If HTML escaping is turned on, compiler will insert a function named `html_escape` in the generated template code.
+If you wish to replace that function, you can do so by passing the `custom_html_escape` option to the compiler with your custom function's name, e.g.:
+
+    CoffeeMaker.compileFile('filename.html.haml', '', {custom_html_escape: 'window.my_escape'})
+
+This can help reduce the resulting code size, especially if you use many separately generated templates in your project.
 
 # Develop
 
