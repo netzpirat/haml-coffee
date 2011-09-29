@@ -1,5 +1,5 @@
 Node  = require('./node')
-e     = require('../helper').escape
+qe     = require('../helper').escape
 
 # static variables
 
@@ -7,17 +7,26 @@ e     = require('../helper').escape
 module.exports = class Haml extends Node
   @selfCloseTags: ["meta", "img", "link", "br", "hr", "input", "area", "base"]
   
+  constructor: (expression, block_level, code_block_level, @escape_html) ->
+    super expression, block_level, code_block_level
+  
   evaluate: ->
     parsedExpression = @parseExpression(@expression)
     htmlTagPrefix    = @buildHtmlTag(parsedExpression)
 
     if @isSelfClosing(parsedExpression.tag)
-      @opener = "#{@cw}o.push \"#{@hw}#{e(htmlTagPrefix)}>" 
+      @opener = "#{@cw}o.push \"#{@hw}#{qe(htmlTagPrefix)}>" 
       @closer = "#{@cw}o.push \"#{@hw}</#{parsedExpression.tag}>\""
     else
-      @opener = "#{@cw}o.push \"#{@hw}#{e(htmlTagPrefix)} />"
+      @opener = "#{@cw}o.push \"#{@hw}#{qe(htmlTagPrefix)} />"
 
-    @opener += '#{' + parsedExpression.assignment + '}' if parsedExpression.assignment
+    if parsedExpression.assignment
+      @opener +=
+        if @escape_html
+          "\#{e #{parsedExpression.assignment}}"
+        else
+          "\#{#{parsedExpression.assignment}}"
+        
     @opener += '"'
 
   parseExpression: (exp) ->
