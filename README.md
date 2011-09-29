@@ -15,10 +15,14 @@ To remove the repository. We will publish it to npm soon.
 
 After the installation you will have a haml-coffee binary. It can be called from the shell:
 
-    haml-coffee INPUT [OUTPUT]
-      
-      INPUT may be a file or directory, in a directory all *.haml files will be processed
-      OUTPUT is an optional argument, the default output file is 'compiled-haml.js'
+	Usage: haml-coffee
+	
+	Options:
+	  -i, --input               Either a file or a directory name, in a directory all *.haml files will be processed  [required]
+	  -o, --output              Output filename                                                                       [default: "compiled-haml.js"]
+	  -n, --name                Template name, if you don't want the default one, derived from a filename           
+	  --disable-html-escaping   Use this if you want to disable html escaping                                         [boolean]
+	  -e, --custom-html-escape  Use this to pass a name of your custom html escaping function                       
 
 The compiled-haml.js will create a HAML namespace that is attached to the window object. In case you took
 a directory for input each file will be mapped to a function. You can generate the html like this:
@@ -46,13 +50,13 @@ This will give your haml templates a very rubish touch.
 
 ## HTML escaping
 
-By default, haml-coffee will perform HTML escaping on evaluated data.
-It can be turned off by setting the `escape_html` compiler option to `false`.
+By default, `haml-coffee` will perform HTML escaping on evaluated data.
+It can be turned off by passing the `--disable-html-escaping` option when running the binary.
 
-If HTML escaping is turned on, compiler will insert a function named `html_escape` in the generated template code.
-If you wish to replace that function, you can do so by passing the `custom_html_escape` option to the compiler with your custom function's name, e.g.:
+If HTML escaping is turned on, compiler will insert a `window.HAML.html_escape` function in the generated template code.
+If you wish to replace that function with your own, you can do so by running the binary with `--custom-html-escape=<name>` option, where `name` is a name of your function, e.g.:
 
-    CoffeeMaker.compileFile('filename.html.haml', '', {custom_html_escape: 'window.my_escape'})
+    haml-coffee -i filename.haml --custom-html-escape=window.my_escape
 
 This can help reduce the resulting code size, especially if you use many separately generated templates in your project.
 

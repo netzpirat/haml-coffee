@@ -93,7 +93,7 @@ module.exports =
     return
     
   'Test compiler with escaping.html.haml and escaping turned off': ->
-    compiled_output = CoffeeMaker.compileFile "test/valid/escaping.html.haml", "",
+    compiled_output = CoffeeMaker.compileFile "test/valid/escaping.html.haml", "", null,
       escape_html: false
 
     # fake the browser & run the script
@@ -108,7 +108,7 @@ module.exports =
     return
     
   'Test compiler with escaping.html.haml and custom escaping function': ->
-    compiled_output = CoffeeMaker.compileFile "test/valid/escaping.html.haml", "",
+    compiled_output = CoffeeMaker.compileFile "test/valid/escaping.html.haml", "", null,
       escape_html: true
       custom_html_escape: 'window.my_html_escape'
 

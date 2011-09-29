@@ -93,7 +93,7 @@ module.exports = class Compiler
         output +=
           html_escape_function_name +
           '''
-           = (text) ->
+          ||= (text) ->
             "#{text}"
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
