@@ -4,11 +4,14 @@ Haml  = require('./nodes/haml')
 Code  = require('./nodes/code')
 
 module.exports = class Compiler
+  constructor: (@options = {}) ->
+    @options.escape_html ?= true
+    
   node_factory: (expression, current_block_level, current_code_block_level) ->
-    if expression.match(/^(-|=)\s*(.*)/)
-      node = new Code(expression, current_block_level, current_code_block_level)
+    if expression.match(/^(-|=|!=)\s*(.*)/)
+      node = new Code(expression, current_block_level, current_code_block_level, @options.escape_html)
     else if expression.match(/^(%|#|\.)(.*)/)
-      node = new Haml(expression, current_block_level, current_code_block_level)
+      node = new Haml(expression, current_block_level, current_code_block_level, @options.escape_html)
     else
       node = new Text(expression, current_block_level, current_code_block_level)
     return node
@@ -82,16 +85,34 @@ module.exports = class Compiler
     namespace ?= "HAML"
     output  = "window.#{namespace} ?= {}\n"
     
+    if @options.escape_html
+      if @options.custom_html_escape
+        html_escape_function_name = @options.custom_html_escape
+      else
+        html_escape_function_name = "window.#{namespace}.html_escape"
+        output +=
+          html_escape_function_name +
+          '''
+          ||= (text) ->
+            "#{text}"
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/\"/g, "&quot;")
+          
+          '''
+    
     segments = @parameterize(filename).split('/')
     name     = segments.pop();
     
     for segment in segments
       namespace += ".#{segment}"
       output += "window.#{namespace} ?= {}\n"
-    
+      
     output += "window.#{namespace}.#{name} = (context) ->\n"
     output += "  fn = (context) ->\n"
     output += "    o = []"
+    output += "\n    e = #{html_escape_function_name}" if @options.escape_html
     output += @root.render()
     output += "    return o.join(\"\\n\")\n"
     output += "  return fn.call(context)\n"
