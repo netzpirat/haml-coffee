@@ -15,3 +15,5 @@ module.exports = class Code extends Node
         "#{@cw}o.push \"#{@hw}\#{#{code}}\""
       else
         "#{@cw}o.push e \"#{@hw}\#{#{code}}\""
+    if identifier == '-' and @children.length > 0
+      @closer = "#{@cw}  ''"
