@@ -124,3 +124,16 @@ module.exports =
     html.should.eql source
     return
     
+  # use a function that generates haml
+  'Test compiler with functions_generating_haml.html.haml': ->
+    compiled_output = CoffeeMaker.compileFile "test/valid/functions_generating_haml.html.haml"
+    
+    # fake the browser & run the script
+    window = {}
+    eval compiled_output
+    
+    html = window.HAML.test.valid.functions_generating_haml()
+    source = fs.readFileSync("test/valid/functions_generating_haml.html").toString()
+    
+    html.should.eql source
+    return
