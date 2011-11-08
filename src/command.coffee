@@ -4,7 +4,7 @@ glob          = require('glob')
 
 argv = require('optimist')
   .usage("Usage: $0")
-  .options('i', 
+  .options('i',
     alias: 'input'
     demand: true
     describe: 'Either a file or a directory name, in a directory all *.haml files will be processed"
@@ -37,16 +37,16 @@ exports.run = ->
   compiler_options =
     escape_html: not argv['disable-html-escaping']
     custom_html_escape: argv.e
-    
+
   fs.stat input_filename, (err, stat) ->
     unless err
       unless stat.isDirectory()
         console.log '  \033[90m[haml coffee] compiling file\033[0m %s', input_filename
         compiled_output = CoffeeMaker.compileFile input_filename, compiled_output,
           template_name, compiler_options
-        
+
         fs.writeFileSync output_filename, compiled_output
-        
+
         process.exit 0
       else
         console.log '  \033[92m[haml coffee] compiling directory\033[0m %s', input_filename
@@ -66,9 +66,6 @@ exports.run = ->
             fs.writeFileSync output_filename, compiled_output
 
             process.exit 0
-          return
     else
       console.log '  \033[91m[haml coffee] error compiling file\033[0m %s', process.argv[2]
       process.exit 1
-    return
-  return

@@ -21,7 +21,7 @@
   "dependencies": {
     "coffee-script": ">= 1.0.1",
     "should": ">= 0.0.4",
-    "glob": "2.0.5",
+    "glob": "2.0.9",
     "optimist": ">= 0.2.6"
   },  
   "homepage":     "http://haml-coffee.9elements.com",

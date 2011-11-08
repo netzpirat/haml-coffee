@@ -1,17 +1,35 @@
 Node  = require('./node')
 e     = require('../helper').escape
 
-# Code Node
+# Code node that represent lines of CoffeeScript code
+# in the Haml template.
+#
+# @example inline code
+#   - for project in projects
+#
+# @example Escaped code assignment
+#   = user.get('email')
+#
+# @example Unescaped code assignment
+#   != user.get('email')
+#
 module.exports = class Code extends Node
-  constructor: (expression, block_level, code_block_level, @escape_html) ->
-    super expression, block_level, code_block_level
-    
+
+  # Evaluate the Haml inline code
+  #
   evaluate: ->
-    [expression, identifier, code] = @expression.match(/(-|!=|=)\s(.*)/)
+    [expression, identifier, code] = @expression.match(/(-|!=|=)\s?(.*)?/)
+
     @opener =
+
+      # Code block without output
       if identifier == '-'
-        "#{@cw}#{code}"
+        "#{@cw}#{ code }"
+
+      # Code block with unescaped output
       else if identifier == '!=' or not @escape_html
-        "#{@cw}o.push \"#{@hw}\#{#{code}}\""
+        "#{@cw}o.push \"#{@hw}\#{#{ code }}\""
+
+      # Code block with escaped code block
       else
-        "#{@cw}o.push e \"#{@hw}\#{#{code}}\""
+        "#{@cw}o.push e \"#{@hw}\#{#{ code }}\""
