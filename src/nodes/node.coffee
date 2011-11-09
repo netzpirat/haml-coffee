@@ -61,8 +61,10 @@ module.exports = class Node
   #
   evaluate: ->
 
-  # Render the node and its children
-  # to CoffeeScript code.
+  # Render the node and its children to CoffeeScript code.
+  # This base implementation handles normal and self closing tags
+  # and does no output escaping. Override this in the specific node
+  # implementation if you need special rendering behaviour.
   #
   # @return [String] the code
   #

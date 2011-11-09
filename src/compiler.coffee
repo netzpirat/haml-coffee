@@ -69,32 +69,63 @@ module.exports = class Compiler
 
     node
 
+  # Update the indention level for a code block.
+  #
+  # @param [Node] node the node to update
+  #
   update_code_block_level: (node) ->
     if node instanceof Code
       @current_code_block_level = node.code_block_level + 1
     else
       @current_code_block_level = node.code_block_level
 
+  # Test if the indention level has changed, either
+  # increased or decreased.
+  #
+  # @return [Boolean] true when indention changed
+  #
   indent_changed: ->
     @current_indent != @previous_indent
 
+  # Test if the indention levels has been increased.
+  #
+  # @return [Boolean] true when increased
+  #
   is_indent: ->
     @current_indent > @previous_indent
 
+  # Calculate the indention size
+  #
   update_tab_size: ->
      @tab_size = @current_indent - @previous_indent if @tab_size == 0
 
+  # Update the current block level indention.
+  #
   update_block_level: ->
     @current_block_level = @current_indent / @tab_size
-    if @current_block_level - Math.floor(@current_block_level) > 0 then throw("Indentation error in line #{@line_number}")
-    if (@current_indent - @previous_indent) / @tab_size > 1 then throw("Block level too deep in line #{@line_number}")
 
+    # Validate current indention
+    if @current_block_level - Math.floor(@current_block_level) > 0
+      throw("Indentation error in line #{ @line_number }")
+
+    # Validate block level
+    if (@current_indent - @previous_indent) / @tab_size > 1
+      throw("Block level too deep in line #{ @line_number }")
+
+    # Set the indention delta
     @delta = @previous_block_level - @current_block_level
 
+  # Indention level has been increased:
+  # Push the current parent node to the stack and make
+  # the current node the parent node.
+  #
   push_parent: ->
     @stack.push(@parent_node)
     @parent_node = @node
 
+  # Indention level has been decreased:
+  # Make the grand parent the current parent.
+  #
   pop_parent: ->
     for i in [0..@delta-1]
       @parent_node = @stack.pop()
@@ -139,12 +170,14 @@ module.exports = class Compiler
 
       @current_indent = whitespace.length
 
+      # Update indention levels and set the current parent
       if @indent_changed()
         @update_tab_size()
         @update_block_level()
         if @is_indent() then @push_parent() else @pop_parent()
         @update_code_block_level(@parent_node)
 
+      # Create current node
       @node = @node_factory(expression, @node, @parent_node, @current_block_level, @current_code_block_level)
 
       # Save previous indention levels
@@ -183,7 +216,7 @@ module.exports = class Compiler
     # Create parameter name from the filename, e.g. a file `users/new.hamlc`
     # will create window.HAML.user.new
     segments = filename.replace(/(\s|-)+/g, '_').split('/')
-    name     = segments.pop();
+    name     = segments.pop()
 
     # Create code for file and namespace creation
     for segment in segments
