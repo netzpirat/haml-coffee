@@ -27,36 +27,7 @@ module.exports = class Filter extends Node
 
     # Top level filter expression
     else
-      tokens = @expression.match(/:(escaped|preserve|css|javascript|coffeescript)(.*)?/)
-
-      @filter = tokens[1]
-      @content = tokens[2]
-
-      switch @filter
-
-        when 'escaped'
-          @opener = escapeHTML(@content)
-          @closer = ''
-
-        when 'preserve', 'plain'
-          @opener = ''
-          @closer = ''
-
-        when 'cdata'
-          @opener = '/*<![CDATA[*/' + @content
-          @closer = '/*]]>*/'
-
-        when 'css'
-          @opener = '<style type=\'text/css\'>\n  /*<![CDATA[*/' + @content
-          @closer = '  /*]]>*/\n</script>'
-
-        when 'javascript'
-          @opener = '<script type=\'text/javascript\'>\n  /*<![CDATA[*/' + @content
-          @closer = '  /*]]>*/\n</script>'
-
-        when 'coffeescript'
-          @opener = '<script type=\'text/javascript\'>\n  /*<![CDATA[*/#{' + @content + '}'
-          @closer = '  /*]]>*/\n</script>'
+      @filter = @expression.match(/:(escaped|preserve|css|javascript|coffeescript|plain)(.*)?/)[1]
 
   # Render the filter
   #
@@ -70,18 +41,65 @@ module.exports = class Filter extends Node
 
     # Top level filter expression
     else
-      content = "#{ child.render() }" for child in @children
 
       switch @filter
         when 'escaped'
-          output += escapeHTML(content)
-        when 'preserve'
-          output += content.replace("\n", '&#x000A;')
-        when 'css', 'javascript', 'cdata', 'plain'
-          output += content
-        when 'coffeescript'
-          output += '#{' + content + '}'
+          for child in @children
+            output += "#{ @cw }o.push \"#{ @hw }#{ escapeHTML(child.render()) }\"\n"
 
-      output = "#{ @cw }o.push \"#{ @hw }#{ output }\"\n"
+        when 'preserve'
+          output += "#{ child.render() }&#x000A;" for child in @children
+          output = output.replace(/\&\#x000A;$/, '')
+          output = "#{ @cw }o.push \"#{ @hw }#{ output }\"\n"
+
+        when 'plain'
+          output += "#{ child.render() }" for child in @children
+          output = "#{ @cw }o.push \"#{ output }\"\n"
+
+        when 'css'
+          output += "#{ @cw }o.push \"#{ @hw }<style type=\'text/css\'>\"\n"
+          output += "#{ @cw }o.push \"#{ @hw }  /*<![CDATA[*/\"\n"
+
+          for child in @children
+            css = child.render()
+            output += "#{ @cw }o.push \"#{ @hw }    #{ css }\"\n" unless css is '' && child is @children[@children.length - 1]
+
+          output += "#{ @cw }o.push \"#{ @hw }  /*]]>*/\"\n"
+          output += "#{ @cw }o.push \"#{ @hw }</style>\"\n"
+
+        when 'javascript'
+          output += "#{ @cw }o.push \"#{ @hw }<script type=\'text/javascript\'>\"\n"
+          output += "#{ @cw }o.push \"#{ @hw }  //<![CDATA[\"\n"
+
+          for child in @children
+            js = child.render()
+            output += "#{ @cw }o.push \"#{ @hw }    #{ js }\"\n" unless js is '' && child is @children[@children.length - 1]
+
+          output += "#{ @cw }o.push \"#{ @hw }  //]]>\"\n"
+          output += "#{ @cw }o.push \"#{ @hw }</script>\"\n"
+
+        when 'cdata'
+          output += "#{ @cw }o.push \"#{ @hw }/*<![CDATA[*/\"\n"
+
+          for child in @children
+            cdata = child.render()
+            output += "#{ @cw }o.push \"#{ @hw }  #{ cdata }\"\n" unless cdata is '' && child is @children[@children.length - 1]
+
+          output += "#{ @cw }o.push \"#{ @hw }/*]]>*/\"\n"
+
+        when 'coffeescript'
+          output += "#{ child.render() }" for child in @children
+          output = @opener + '#{' + output + '}' + @closer
 
     output
+
+  # Traverse up the tree until it finds the
+  # top level filter expression node.
+  #
+  # @return [Node] the top level filter node
+  #
+  getFilterExpressionNode: ->
+    if @parent_node instanceof Filter
+      @parent_node.getFilterExpressionNode()
+    else
+      @

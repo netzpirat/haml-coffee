@@ -21,32 +21,53 @@ module.exports = class Compiler
     @options.escape_html ?= true
     @options.format ?= 'html5'
 
-  # Get the matching node type for the given expression.
+  # Get the matching node type for the given expression. This
+  # is also responsible for creating the nested tree structure,
+  # since there is an exception for creating the node tree:
+  # Within a filter expression, any empty line without indention
+  # is added as child to the previous filter expression.
   #
   # @param [String] expression the HAML expression
+  # @param [Node] previous_node the previously created node
+  # @param [Node] parent_node the parent node
+  # @param [Number] current_block_level the current HTML indention
+  # @param [Number] current_code_block_level the current code indention
   # @return [Node] the parser node
   #
-  node_factory: (expression, current_block_level, current_code_block_level) ->
+  node_factory: (expression, previous_node, parent_node, current_block_level, current_code_block_level) ->
+
+    # Detect empty line within a filter
+    if expression is '' && previous_node instanceof Filter
+      top_filter_node = previous_node.getFilterExpressionNode()
+      node = new Filter(top_filter_node, expression, current_block_level, current_code_block_level, @options.escape_html, @options.format)
+      top_filter_node.addChild(node)
+
+    # Detect filter expression node and nested childrens
+    else if parent_node instanceof Filter || expression.match(/^:(escaped|preserve|css|javascript|plain|coffeescript)/)
+      node = new Filter(parent_node, expression, current_block_level, current_code_block_level, @options.escape_html, @options.format)
+      parent_node.addChild(node)
 
     # Detect comment node
-    if expression.match(/^(\/|-#)(.*)/)
-      return new Comment(@parent_node, expression, current_block_level, current_code_block_level, @options.escape_html, @options.format)
+    else if expression.match(/^(\/|-#)(.*)/)
+      node = new Comment(parent_node, expression, current_block_level, current_code_block_level, @options.escape_html, @options.format)
+      parent_node.addChild(node)
 
     # Detect code node
     else if expression.match(/^(-#|-|=|!=)\s*(.*)/)
-      return new Code(@parent_node, expression, current_block_level, current_code_block_level, @options.escape_html)
+      node = new Code(parent_node, expression, current_block_level, current_code_block_level, @options.escape_html)
+      parent_node.addChild(node)
 
     # Detect Haml node
     else if expression.match(/^(%|#|\.|\!)(.*)/)
-      return new Haml(@parent_node, expression, current_block_level, current_code_block_level, @options.escape_html, @options.format)
-
-    # Detect filter node
-    else if @parent_node instanceof Filter || expression.match(/^:(escaped|preserve|css|javascript|coffeescript)/)
-      return new Filter(@parent_node, expression, current_block_level, current_code_block_level, @options.escape_html, @options.format)
+      node = new Haml(parent_node, expression, current_block_level, current_code_block_level, @options.escape_html, @options.format)
+      parent_node.addChild(node)
 
     # Everything else is a text node
     else
-      return new Text(@parent_node, expression, current_block_level, current_code_block_level)
+      node = new Text(parent_node, expression, current_block_level, current_code_block_level)
+      parent_node.addChild(node)
+
+    node
 
   update_code_block_level: (node) ->
     if node instanceof Code
@@ -79,7 +100,13 @@ module.exports = class Compiler
       @parent_node = @stack.pop()
 
   # Parse the given source and create the nested node
-  # structure.
+  # structure. This parses the source code line be line, but
+  # looks ahead to find lines that should be merged into the current line.
+  # This is needed for splitting Haml attributes over several lines
+  # and also for the different types of filters.
+  #
+  # Parsing does not create an output, it creates the syntax tree in the
+  # compiler. To get the template, use `#render`.
   #
   # @param source [String] the HAML source code
   #
@@ -91,41 +118,40 @@ module.exports = class Compiler
     # Initialize nodes
     @node = null
     @stack = []
-    @root = @parent_node = new Node("", @current_block_level, @current_code_block_level)
+    @root = @parent_node = new Node()
 
     # Keep lines for look ahead
     lines = source.split("\n")
 
     # Parse source line by line
-    while line = lines.shift()
+    while (line = lines.shift()) isnt undefined
 
       # Get whitespace and Haml expressions
       result = line.match /^(\s*)(.*)/
       whitespace = result[1]
       expression = result[2]
 
-      if expression.length > 0
-
-        # Look ahead for more attributes
-        while lines[0]?.match /([^:|\s|=]+\s*=>\s*(("[^"]+")|('[^']+')|[^\s,\}]+))|([\w]+=(("[^"]+")|('[^']+')|[^\s\)]+))/g
-          # Merge attribute lines into current line and remove indention
-          attributes = lines.shift()
-          expression += ' ' + attributes.match(/^(\s*)(.*)/)[2]
-
-        @current_indent = whitespace.length
-
-        if @indent_changed()
-          @update_tab_size()
-          @update_block_level()
-          if @is_indent() then @push_parent() else @pop_parent()
-          @update_code_block_level(@parent_node)
-
-        @node = @node_factory(expression, @current_block_level, @current_code_block_level)
-        @parent_node.addChild(@node)
-
-        @previous_block_level = @current_block_level
-        @previous_indent = @current_indent
+      # Look ahead for more attributes
+      while lines[0]?.match /([^:|\s|=]+\s*=>\s*(("[^"]+")|('[^']+')|[^\s,\}]+))|([\w]+=(("[^"]+")|('[^']+')|[^\s\)]+))/g
+        attributes = lines.shift()
+        expression += ' ' + attributes.match(/^(\s*)(.*)/)[2]
         @line_number++
+
+      @current_indent = whitespace.length
+
+      if @indent_changed()
+        @update_tab_size()
+        @update_block_level()
+        if @is_indent() then @push_parent() else @pop_parent()
+        @update_code_block_level(@parent_node)
+
+      @node = @node_factory(expression, @node, @parent_node, @current_block_level, @current_code_block_level)
+
+      # Save previous indention levels
+      @previous_block_level = @current_block_level
+      @previous_indent = @current_indent
+
+      @line_number++
 
   # Convert spaces and dashes in the template filename
   # to underscores.

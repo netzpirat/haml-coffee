@@ -15,7 +15,7 @@ module.exports = class Node
   # @param [Boolean] escape_html whether to escape the rendered HTML or not
   # @option options [String] format the template format, either `xhtml`, `html4` or `html5`
   #
-  constructor: (@parent_node, @expression, @block_level, @code_block_level, @escape_html, @format) ->
+  constructor: (@parent_node = null, @expression = '', @block_level = 0, @code_block_level = 2, @escape_html = true, @format = 'html5') ->
     @children = []
     @opener = @closer = ''
     @silent = false
