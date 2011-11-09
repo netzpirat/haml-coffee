@@ -1,0 +1,21 @@
+{
+  "boolean attributes" : {
+
+    "boolean attribute with XHTML" : {
+      "haml" : "%input(checked=false)",
+      "html" : "<input />",
+      "config" : {
+        "format" : "xhtml"
+      }
+    },
+
+    "boolean attribute with HTML" : {
+      "haml" : "%input(checked=false)",
+      "html" : "<input>",
+      "config" : {
+        "format" : "html5"
+      }
+    }
+  }
+
+}

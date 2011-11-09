@@ -100,15 +100,15 @@ module.exports = class Haml extends Node
       if pair.key is 'id'
         if id
           # Merge attribute id into existing id
-          id += '_' + pair.value.substring(1, pair.value.length - 1)
+          id += '_' + pair.value
         else
           # Push id from attribute
-          id = pair.value.substring(1, pair.value.length - 1)
+          id = pair.value
 
       # Merge classes
       else if pair.key is 'class'
         classes or= []
-        classes.push(pair.value.substring(1, pair.value.length - 1))
+        classes.push pair.value
 
       # Add to normal attributes
       else
@@ -182,8 +182,7 @@ module.exports = class Haml extends Node
   # `%tag(attr='value){ :attr => 'value' }`.
   #
   # This takes also care of proper attribute interpolation, unwrapping
-  # quoted keys, e.g. `'a' =>'hello'` becomes `a='hello'` and
-  # converting all quotes to single quotes.
+  # quoted keys and value, e.g. `'a' => 'hello'` becomes `a => hello`.
   #
   # @param [String] exp the HAML expression
   # @return [Object] the parsed attribute tokens
@@ -198,13 +197,18 @@ module.exports = class Haml extends Node
       key   = pair[0].trim()
       value = pair[1].trim()
 
-      # Wrap plain attributes into an interpolation
-      value = '\'#{' + value + '}\'' unless value.match /^("|').*\1$/
+      # Set key to value if the value is boolean true
+      if value is 'true'
+        value = "'#{ key }'"
 
-      # Ensure single quoted attributes
-      value = "'#{ double_quoted[1] }'" if double_quoted = value.match /^"(.*)"$/
+      # Wrap plain attributes into an interpolation, expect boolean values
+      else
+        value = '\'#{' + value + '}\'' unless value.match /^("|').*\1$/
 
-      # Unwrap keys from quotes
+      # Unwrap value from quotes
+      value = quoted[2] if quoted = value.match /^("|')(.*)\1$/
+
+      # Unwrap key from quotes
       key = quoted[2] if quoted = key.match /^("|')(.*)\1$/
 
       pairs.push {
@@ -256,7 +260,10 @@ module.exports = class Haml extends Node
     # Construct tag attributes
     if tokens.pairs.length > 0
       for pair in tokens.pairs
-        tagParts.push "#{ pair.key }=#{ pair.value }"
+        if pair.key isnt pair.value || @format isnt 'html5'
+          tagParts.push "#{ pair.key }='#{ pair.value }'"
+        else
+          tagParts.push "#{ pair.key }"
 
     tagParts.join(' ')
 
