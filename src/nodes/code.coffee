@@ -18,7 +18,7 @@ module.exports = class Code extends Node
   # Evaluate the Haml inline code
   #
   evaluate: ->
-    code_block  = @expression.match(/(-|!=|\&=|=)\s?(.*)?/)
+    code_block  = @expression.match(/(-|!=|\&=|=|~)\s?(.*)?/)
     @identifier = code_block[1]
     @code       = code_block[2]
 
@@ -33,7 +33,11 @@ module.exports = class Code extends Node
 
     # Code block without output
     if @identifier is '-'
-      output += "#{@ cw }#{ @code }\n"
+      output += "#{ @cw }#{ @code }\n"
+
+    # Code block that preserves whitespace
+    else if @identifier is '~'
+      output += "#{ @cw }o.push \"#{ @hw }\#{#{ @find_and_preserve(@code) }}\"\n"
 
     # Code block with escaped code block, either `=` in escaped mode or `&=`
     else if @identifier is '&=' or (@identifier is '=' and @escape_html)
@@ -44,3 +48,12 @@ module.exports = class Code extends Node
       output += "#{ @cw }o.push \"#{ @hw }\#{#{ @code }}\"\n"
 
     output
+
+  # Find and preserve newlines within the preserve tags
+  #
+  # @param [String] code the code to preserve
+  # @return [String] the preserved code
+  #
+  find_and_preserve: (code) ->
+    code.replace /<(pre|textarea)>(.*?)<\/\1>/g, (text) ->
+      text.replace('\\n', '\&\#x000A;')

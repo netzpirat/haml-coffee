@@ -53,7 +53,7 @@ module.exports = class Compiler
       parent_node.addChild(node)
 
     # Detect code node
-    else if expression.match(/^(-#|-|=|!=|\&=)\s*(.*)/)
+    else if expression.match(/^(-#|-|=|!=|\&=|~)\s*(.*)/)
       node = new Code(parent_node, expression, current_block_level, current_code_block_level, @options.escape_html)
       parent_node.addChild(node)
 
