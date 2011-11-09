@@ -35,6 +35,7 @@ qe    = require('../helper').escape
 module.exports = class Haml extends Node
 
   @selfCloseTags: ['meta', 'img', 'link', 'br', 'hr', 'input', 'area', 'param', 'col', 'base']
+  @preserveTags:  ['pre', 'textarea']
 
   # Evaluate the node content and store the opener tag
   # and the closer tag if applicable.
@@ -90,6 +91,8 @@ module.exports = class Haml extends Node
   parseExpression: (exp) ->
     tag     = @parseTag(exp)
     options = @parseOptions(exp)
+
+    @preserve = true if Haml.preserveTags.indexOf(tag.tag) isnt -1
 
     pairs   = []
     id      = tag.ids?.pop()

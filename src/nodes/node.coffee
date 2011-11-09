@@ -19,7 +19,8 @@ module.exports = class Node
     @children = []
     @opener = @closer = ''
 
-    @silent = false
+    @silent   = false
+    @preserve = false
 
     @cw = w(@codeBlockLevel)
     @hw = w(@blockLevel)
@@ -54,6 +55,26 @@ module.exports = class Node
     @evaluate() unless @evaluated
     @evaluated = true
 
+  # Traverse up the tree to see if a parent node
+  # is preserving output space.
+  #
+  # @return [Boolean] true when preserved
+  #
+  isPreserved: ->
+    return true if @preserve
+
+    if @parentNode
+      @parentNode.isPreserved()
+    else
+      false
+
+  # Get the indention for the HTML code
+  #
+  # @return [String] a string of spaces
+  #
+  getHtmlIndention: ->
+    if @isPreserved() then '' else @hw
+
   # Creates the CoffeeScript code that outputs
   # the given static HTML.
   #
@@ -61,7 +82,7 @@ module.exports = class Node
   # @return [String] the CoffeeScript code
   #
   outputHtml: (html) ->
-    "#{ @cw }o.push \"#{ @hw }#{ html }\"\n"
+    "#{ @cw }o.push \"#{ @getHtmlIndention() }#{ html }\"\n"
 
   # Adds the CoffeeScript code to the template
   # to be run at render time.
@@ -82,9 +103,9 @@ module.exports = class Node
   #
   outputCodeHtml: (code, escape = false) ->
     if escape
-      "#{ @cw }o.push e \"#{ @hw }\#{#{ code }}\"\n"
+      "#{ @cw }o.push e \"#{ @getHtmlIndention() }\#{#{ code }}\"\n"
     else
-      "#{ @cw }o.push \"#{ @hw }\#{#{ code }}\"\n"
+      "#{ @cw }o.push \"#{ @getHtmlIndention() }\#{#{ code }}\"\n"
 
   # Template method that must be implemented by each
   # Node subclass. This evaluates the `@expression`
@@ -103,6 +124,7 @@ module.exports = class Node
   # @return [String] the code
   #
   render: ->
+    @evaluateIfNecessary()
     output = ''
 
     # Nodes without children
@@ -114,19 +136,34 @@ module.exports = class Node
 
       # Self closing tag
       else if @getOpener().length > 0
-        output = @outputHtml(@getOpener())
+
+        # Whitespace preserved child tag are outputted by the preserving tag
+        if not @preserve && @isPreserved()
+          output = @getOpener()
+
+        # Normal self closing tag
+        else
+          output = @outputHtml(@getOpener())
 
     # Nodes with children
     else
 
       # Non self closing Haml tag
       if @getOpener().length > 0 && @getCloser().length > 0
-        output = @outputHtml(@getOpener())
 
-        for child in @children
-          output += child.render()
+        # Whitespace preserving tag
+        if @preserve
+          output = @getOpener()
+          output += "#{ child.render() }\\n" for child in @children
+          output = output.replace(/\\n$/, '')
+          output += @getCloser()
+          output = @outputHtml(output)
 
-        output += @outputHtml(@getCloser()) if @getCloser().length > 0
+        # Non preserving tag
+        else
+          output = @outputHtml(@getOpener())
+          output += child.render() for child in @children
+          output += @outputHtml(@getCloser())
 
       # Text and code node or Haml nodes without content (e.g. the root node)
       # A code node is set to `silent` when it contains a silent comment.
