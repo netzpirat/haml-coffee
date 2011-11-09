@@ -230,6 +230,6 @@ module.exports = class Compiler
     output += "    e = #{ escape_fn }\n"
     output += @root.render()
     output += "    return o.join(\"\\n\")\n"
-    output += "  return fn.call(context)\n"
+    output += "  return fn.call(context)"
 
     output
