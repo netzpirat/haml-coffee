@@ -273,7 +273,7 @@
     },
 
     "HTML-style interpolated attribute" : {
-      "haml" : "%p(a=\"#{var}\")",
+      "haml" : "%p(a=\"#{@var}\")",
       "html" : "<p a='value'></p>",
       "locals" : {
         "var" : "value"
@@ -301,7 +301,7 @@
     },
 
     "HTML-style tag with a variable attribute" : {
-      "haml" : "%p(class=var)",
+      "haml" : "%p(class=@var)",
       "html" : "<p class='hello'></p>",
       "locals" : {
         "var" : "hello"
@@ -309,7 +309,7 @@
     },
 
     "HTML-style tag with a CSS class and 'class' as a variable attribute" : {
-      "haml" : ".hello(class=var)",
+      "haml" : ".hello(class=@var)",
       "html" : "<div class='hello world'></div>",
       "locals" : {
         "var" : "world"
@@ -317,7 +317,7 @@
     },
 
     "HTML-style tag multiple CSS classes (sorted correctly)" : {
-      "haml" : ".z(class=var)",
+      "haml" : ".z(class=@var)",
       "html" : "<div class='a z'></div>",
       "locals" : {
         "var" : "a"
@@ -340,7 +340,7 @@
     },
 
     "Ruby-style interpolated attribute" : {
-      "haml" : "%p{:a =>\"#{var}\"}",
+      "haml" : "%p{:a =>\"#{@var}\"}",
       "html" : "<p a='value'></p>",
       "optional" : true,
       "locals" : {
@@ -391,7 +391,7 @@
     },
 
     "Ruby-style tag with a variable attribute" : {
-      "haml" : "%p{:class => var}",
+      "haml" : "%p{:class => @var}",
       "html" : "<p class='hello'></p>",
       "optional" : true,
       "locals" : {
@@ -400,7 +400,7 @@
     },
 
     "Ruby-style tag with a CSS class and 'class' as a variable attribute" : {
-      "haml" : ".hello{:class => var}",
+      "haml" : ".hello{:class => @var}",
       "html" : "<div class='hello world'></div>",
       "optional" : true,
       "locals" : {
@@ -409,7 +409,7 @@
     },
 
     "Ruby-style tag multiple CSS classes (sorted correctly)" : {
-      "haml" : ".z{:class => var}",
+      "haml" : ".z{:class => @var}",
       "html" : "<div class='a z'></div>",
       "optional" : true,
       "locals" : {
@@ -484,7 +484,7 @@
   "Ruby-style interpolation": {
 
     "interpolation inside inline content" : {
-      "haml" : "%p #{var}",
+      "haml" : "%p #{@var}",
       "html" : "<p>value</p>",
       "optional" : true,
       "locals" : {
@@ -493,8 +493,8 @@
     },
 
     "no interpolation when escaped" : {
-      "haml" : "%p \\#{var}",
-      "html" : "<p>#{var}</p>",
+      "haml" : "%p \\#{@var}",
+      "html" : "<p>#{@var}</p>",
       "optional" : true,
       "locals" : {
         "var" : "value"
@@ -502,7 +502,7 @@
     },
 
     "interpolation when the escape character is escaped" : {
-      "haml" : "%p \\\\#{var}",
+      "haml" : "%p \\\\#{@var}",
       "html" : "<p>\\value</p>",
       "optional" : true,
       "locals" : {
@@ -511,7 +511,7 @@
     },
 
     "interpolation inside filtered content" : {
-      "haml" : ":plain\n  #{var} interpolated: #{var}",
+      "haml" : ":plain\n  #{@var} interpolated: #{@var}",
       "html" : "value interpolated: value",
       "optional" : true,
       "locals" : {

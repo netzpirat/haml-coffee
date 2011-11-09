@@ -17,15 +17,7 @@ for group, specs of suite
           escape_html: spec.config?.escape_html || false
           format: spec.config?.format || 'xhtml'
 
-        # Locals are differently implemented in haml-coffee:
-        # instead of `local` it must be `@local`
-        haml = spec.haml
-        for key, value of spec.locals
-          haml = haml.replace(key, "@#{ key }")
-
-        console.log haml
-
-        compiler.parse haml
+        compiler.parse spec.haml
         cs_template = compiler.render 'test'
         console.log(cs_template)
         template = CoffeeScript.compile cs_template
