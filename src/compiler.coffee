@@ -53,7 +53,7 @@ module.exports = class Compiler
       parent_node.addChild(node)
 
     # Detect code node
-    else if expression.match(/^(-#|-|=|!=)\s*(.*)/)
+    else if expression.match(/^(-#|-|=|!=|\&=)\s*(.*)/)
       node = new Code(parent_node, expression, current_block_level, current_code_block_level, @options.escape_html)
       parent_node.addChild(node)
 
@@ -153,52 +153,48 @@ module.exports = class Compiler
 
       @line_number++
 
-  # Convert spaces and dashes in the template filename
-  # to underscores.
-  #
-  # @param [String] name the file name
-  # @return [String] the cleaned file name
-  #
-  parameterize: (filename) ->
-    filename.replace(/(\s|-)+/g, "_")
-
   # Render the parsed source code as CoffeeScript template.
   #
   # @param [String] filename the name to register the template
   # @param [String] namespace the namespace to register the template
   #
   render: (filename, namespace) ->
-    namespace ?= "HAML"
-    output  = "window.#{namespace} ?= {}\n"
+    namespace ?= 'HAML'
+    output     = "window.#{ namespace } ?= {}\n"
 
-    if @options.escape_html
-      if @options.custom_html_escape
-        html_escape_function_name = @options.custom_html_escape
-      else
-        html_escape_function_name = "window.#{namespace}.html_escape"
-        output +=
-          html_escape_function_name +
-          '''
-          ||= (text) ->
-            "#{text}"
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/\'/g, "&apos;")
-            .replace(/\"/g, "&quot;")
-          '''
+    # Always include escape function in the template, since escaping
+    # can be forced with `&=` event when turned off
+    if @options.custom_html_escape
+      escape_fn = @options.custom_html_escape
+    else
+      escape_fn = "window.#{ namespace }.html_escape"
+      output +=
+        escape_fn +
+        '''
+        ||= (text) ->
+          "#{ text }"
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/\'/g, '&apos;')
+          .replace(/\"/g, '&quot;')\n
+        '''
 
-    segments = @parameterize(filename).split('/')
+    # Create parameter name from the filename, e.g. a file `users/new.hamlc`
+    # will create window.HAML.user.new
+    segments = filename.replace(/(\s|-)+/g, '_').split('/')
     name     = segments.pop();
 
+    # Create code for file and namespace creation
     for segment in segments
-      namespace += ".#{segment}"
-      output    += "window.#{namespace} ?= {}\n"
+      namespace += ".#{ segment }"
+      output    += "window.#{ namespace } ?= {}\n"
 
-    output += "window.#{namespace}.#{name} = (context) ->\n"
+    # Render the template
+    output += "window.#{ namespace }.#{ name } = (context) ->\n"
     output += "  fn = (context) ->\n"
     output += "    o = []\n"
-    output += "    e = #{html_escape_function_name}\n" if @options.escape_html
+    output += "    e = #{ escape_fn }\n"
     output += @root.render()
     output += "    return o.join(\"\\n\")\n"
     output += "  return fn.call(context)\n"

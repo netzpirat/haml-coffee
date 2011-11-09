@@ -18,18 +18,29 @@ module.exports = class Code extends Node
   # Evaluate the Haml inline code
   #
   evaluate: ->
-    [expression, identifier, code] = @expression.match(/(-|!=|=)\s?(.*)?/)
+    code_block  = @expression.match(/(-|!=|\&=|=)\s?(.*)?/)
+    @identifier = code_block[1]
+    @code       = code_block[2]
 
-    @opener =
+  # Render the node and its children
+  # to CoffeeScript code.
+  #
+  # @return [String] the code
+  #
+  render: ->
+    @evaluateIfNecessary()
+    output = ''
 
-      # Code block without output
-      if identifier == '-'
-        "#{@cw}#{ code }"
+    # Code block without output
+    if @identifier is '-'
+      output += "#{@ cw }#{ @code }\n"
 
-      # Code block with unescaped output
-      else if identifier == '!=' or not @escape_html
-        "#{@cw}o.push \"#{@hw}\#{#{ code }}\""
+    # Code block with escaped code block, either `=` in escaped mode or `&=`
+    else if @identifier is '&=' or (@identifier is '=' and @escape_html)
+      output += "#{ @cw }o.push e \"#{ @hw }\#{#{ @code }}\"\n"
 
-      # Code block with escaped code block
-      else
-        "#{@cw}o.push e \"#{@hw}\#{#{ code }}\""
+    # Code block with unescaped output, either with `!=` or escaped mode to false
+    else
+      output += "#{ @cw }o.push \"#{ @hw }\#{#{ @code }}\"\n"
+
+    output
