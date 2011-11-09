@@ -45,50 +45,50 @@ module.exports = class Filter extends Node
       switch @filter
         when 'escaped'
           for child in @children
-            output += "#{ @cw }o.push \"#{ @hw }#{ e(child.render()) }\"\n"
+            output += @outputHtml(e(child.render()))
 
         when 'preserve'
           output += "#{ child.render() }&#x000A;" for child in @children
           output = output.replace(/\&\#x000A;$/, '')
-          output = "#{ @cw }o.push \"#{ @hw }#{ output }\"\n"
+          output = @outputHtml(output)
 
         when 'plain'
-          output += "#{ child.render() }" for child in @children
-          output = "#{ @cw }o.push \"#{ output }\"\n"
+          output += child.render() for child in @children
+          output = @outputHtml(output)
 
         when 'css'
-          output += "#{ @cw }o.push \"#{ @hw }<style type=\'text/css\'>\"\n"
-          output += "#{ @cw }o.push \"#{ @hw }  /*<![CDATA[*/\"\n"
+          output += @outputHtml('<style type=\'text/css\'>')
+          output += @outputHtml('  /*<![CDATA[*/')
 
           for child in @children
             css = child.render()
-            output += "#{ @cw }o.push \"#{ @hw }    #{ css }\"\n" unless css is '' && child is @children[@children.length - 1]
+            output += @outputHtml("    #{ css }") unless css is '' && child is @children[@children.length - 1]
 
-          output += "#{ @cw }o.push \"#{ @hw }  /*]]>*/\"\n"
-          output += "#{ @cw }o.push \"#{ @hw }</style>\"\n"
+          output += @outputHtml('  /*]]>*/')
+          output += @outputHtml('</style>')
 
         when 'javascript'
-          output += "#{ @cw }o.push \"#{ @hw }<script type=\'text/javascript\'>\"\n"
-          output += "#{ @cw }o.push \"#{ @hw }  //<![CDATA[\"\n"
+          output += @outputHtml('<script type=\'text/javascript\'>')
+          output += @outputHtml('  //<![CDATA[')
 
           for child in @children
             js = child.render()
-            output += "#{ @cw }o.push \"#{ @hw }    #{ js }\"\n" unless js is '' && child is @children[@children.length - 1]
+            output += @outputHtml("    #{ js }") unless js is '' && child is @children[@children.length - 1]
 
-          output += "#{ @cw }o.push \"#{ @hw }  //]]>\"\n"
-          output += "#{ @cw }o.push \"#{ @hw }</script>\"\n"
+          output += @outputHtml('  //]]>')
+          output += @outputHtml('</script>')
 
         when 'cdata'
-          output += "#{ @cw }o.push \"#{ @hw }/*<![CDATA[*/\"\n"
+          output += @outputHtml('/*<![CDATA[*/')
 
           for child in @children
             cdata = child.render()
-            output += "#{ @cw }o.push \"#{ @hw }  #{ cdata }\"\n" unless cdata is '' && child is @children[@children.length - 1]
+            output += @outputHtml("  #{ cdata }") unless cdata is '' && child is @children[@children.length - 1]
 
-          output += "#{ @cw }o.push \"#{ @hw }/*]]>*/\"\n"
+          output += @outputHtml('/*]]>*/')
 
         when 'coffeescript'
-          output += "#{ child.render() }" for child in @children
+          output += child.render() for child in @children
           output = @opener + '#{' + output + '}' + @closer
 
     output

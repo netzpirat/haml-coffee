@@ -33,19 +33,19 @@ module.exports = class Code extends Node
 
     # Code block without output
     if @identifier is '-'
-      output += "#{ @cw }#{ @code }\n"
+      output += @outputCode(@code)
 
     # Code block that preserves whitespace
     else if @identifier is '~'
-      output += "#{ @cw }o.push \"#{ @hw }\#{#{ @findAndPreserve(@code) }}\"\n"
+      output += @outputCodeHtml(@findAndPreserve(@code))
 
     # Code block with escaped code block, either `=` in escaped mode or `&=`
     else if @identifier is '&=' or (@identifier is '=' and @escapeHtml)
-      output += "#{ @cw }o.push e \"#{ @hw }\#{#{ @code }}\"\n"
+      output += @outputCodeHtml(@code, true)
 
     # Code block with unescaped output, either with `!=` or escaped mode to false
     else
-      output += "#{ @cw }o.push \"#{ @hw }\#{#{ @code }}\"\n"
+      output += @outputCodeHtml(@code)
 
     output
 

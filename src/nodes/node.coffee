@@ -18,7 +18,9 @@ module.exports = class Node
   constructor: (@parentNode = null, @expression = '', @blockLevel = 0, @codeBlockLevel = 2, @escapeHtml = true, @format = 'html5') ->
     @children = []
     @opener = @closer = ''
+
     @silent = false
+
     @cw = w(@codeBlockLevel)
     @hw = w(@blockLevel)
 
@@ -52,6 +54,38 @@ module.exports = class Node
     @evaluate() unless @evaluated
     @evaluated = true
 
+  # Creates the CoffeeScript code that outputs
+  # the given static HTML.
+  #
+  # @param [String] html the html to output
+  # @return [String] the CoffeeScript code
+  #
+  outputHtml: (html) ->
+    "#{ @cw }o.push \"#{ @hw }#{ html }\"\n"
+
+  # Adds the CoffeeScript code to the template
+  # to be run at render time.
+  #
+  # @param [String] code the CoffeeScript code
+  # @return [String] the CoffeeScript code
+  #
+  outputCode: (code) ->
+    "#{ @cw }#{ code }\n"
+
+  # Creates the CoffeeScript code that runs the
+  # given CoffeeScript code at render time and
+  # output it as HTML.
+  #
+  # @param [String] code the code to run and capture output
+  # @param [Boolean] escape whether to escape the generated output
+  # @return [String] the CoffeeScript code
+  #
+  outputCodeHtml: (code, escape = false) ->
+    if escape
+      "#{ @cw }o.push e \"#{ @hw }\#{#{ code }}\"\n"
+    else
+      "#{ @cw }o.push \"#{ @hw }\#{#{ code }}\"\n"
+
   # Template method that must be implemented by each
   # Node subclass. This evaluates the `@expression`
   # and save the generated HTML tags as `@opener` and
@@ -76,25 +110,29 @@ module.exports = class Node
 
       # Non self closing tag
       if @getOpener().length > 0 && @getCloser().length > 0
-        output = "#{ @cw }o.push \"#{ @hw }#{ @getOpener() }#{ @getCloser() }\"\n"
+        output = @outputHtml(@getOpener() + @getCloser())
 
       # Self closing tag
       else if @getOpener().length > 0
-        output = "#{ @cw }o.push \"#{ @hw }#{ @getOpener() }\"\n"
+        output = @outputHtml(@getOpener())
 
     # Nodes with children
     else
 
       # Non self closing Haml tag
       if @getOpener().length > 0 && @getCloser().length > 0
-        output = "#{ @cw }o.push \"#{ @hw }#{ @getOpener() }\"\n"
-        output += "#{ child.render() }" for child in @children
-        output += "#{ @cw }o.push \"#{ @hw }#{ @getCloser() }\"\n" if @getCloser().length > 0
+        output = @outputHtml(@getOpener())
+
+        for child in @children
+          output += child.render()
+
+        output += @outputHtml(@getCloser()) if @getCloser().length > 0
 
       # Text and code node or Haml nodes without content (e.g. the root node)
       # A code node is set to `silent` when it contains a silent comment.
       else
         unless @silent
-          output += "#{ child.render() }" for child in @children
+          for child in @children
+            output += child.render()
 
     output
