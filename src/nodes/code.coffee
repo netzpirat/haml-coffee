@@ -18,9 +18,9 @@ module.exports = class Code extends Node
   # Evaluate the Haml inline code
   #
   evaluate: ->
-    code_block  = @expression.match(/(-|!=|\&=|=|~)\s?(.*)?/)
-    @identifier = code_block[1]
-    @code       = code_block[2]
+    codeBlock  = @expression.match(/(-|!=|\&=|=|~)\s?(.*)?/)
+    @identifier = codeBlock[1]
+    @code       = codeBlock[2]
 
   # Render the node and its children
   # to CoffeeScript code.
@@ -37,10 +37,10 @@ module.exports = class Code extends Node
 
     # Code block that preserves whitespace
     else if @identifier is '~'
-      output += "#{ @cw }o.push \"#{ @hw }\#{#{ @find_and_preserve(@code) }}\"\n"
+      output += "#{ @cw }o.push \"#{ @hw }\#{#{ @findAndPreserve(@code) }}\"\n"
 
     # Code block with escaped code block, either `=` in escaped mode or `&=`
-    else if @identifier is '&=' or (@identifier is '=' and @escape_html)
+    else if @identifier is '&=' or (@identifier is '=' and @escapeHtml)
       output += "#{ @cw }o.push e \"#{ @hw }\#{#{ @code }}\"\n"
 
     # Code block with unescaped output, either with `!=` or escaped mode to false
@@ -54,6 +54,6 @@ module.exports = class Code extends Node
   # @param [String] code the code to preserve
   # @return [String] the preserved code
   #
-  find_and_preserve: (code) ->
+  findAndPreserve: (code) ->
     code.replace /<(pre|textarea)>(.*?)<\/\1>/g, (text) ->
       text.replace('\\n', '\&\#x000A;')

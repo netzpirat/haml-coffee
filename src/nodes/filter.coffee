@@ -1,5 +1,5 @@
-Node       = require('./node')
-escapeHTML = require('../helper').escapeHTML
+Node = require('./node')
+e    = require('../helper').escapeHTML
 
 # Filter node for built-in Haml filters:
 #
@@ -21,8 +21,8 @@ module.exports = class Filter extends Node
   evaluate: ->
 
     # Nested filter content
-    if @parent_node instanceof Filter
-      @filter = @parent_node.filter
+    if @parentNode instanceof Filter
+      @filter = @parentNode.filter
       @content = @expression
 
     # Top level filter expression
@@ -36,7 +36,7 @@ module.exports = class Filter extends Node
     output = ''
 
     # Nested filter content
-    if @parent_node instanceof Filter
+    if @parentNode instanceof Filter
       output = @content
 
     # Top level filter expression
@@ -45,7 +45,7 @@ module.exports = class Filter extends Node
       switch @filter
         when 'escaped'
           for child in @children
-            output += "#{ @cw }o.push \"#{ @hw }#{ escapeHTML(child.render()) }\"\n"
+            output += "#{ @cw }o.push \"#{ @hw }#{ e(child.render()) }\"\n"
 
         when 'preserve'
           output += "#{ child.render() }&#x000A;" for child in @children
@@ -99,7 +99,7 @@ module.exports = class Filter extends Node
   # @return [Node] the top level filter node
   #
   getFilterExpressionNode: ->
-    if @parent_node instanceof Filter
-      @parent_node.getFilterExpressionNode()
+    if @parentNode instanceof Filter
+      @parentNode.getFilterExpressionNode()
     else
       @

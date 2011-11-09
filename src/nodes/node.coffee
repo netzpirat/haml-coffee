@@ -10,17 +10,17 @@ module.exports = class Node
   #
   # @param [Node] the parent node
   # @param [String] expression the Haml expression to evaluate
-  # @param [Number] block_level the HTML whitespace block level
-  # @param [Number] code_block_level the CoffeeScript block level
-  # @param [Boolean] escape_html whether to escape the rendered HTML or not
+  # @param [Number] blockLevel the HTML whitespace block level
+  # @param [Number] codeBlockLevel the CoffeeScript block level
+  # @param [Boolean] escapeHtml whether to escape the rendered HTML or not
   # @option options [String] format the template format, either `xhtml`, `html4` or `html5`
   #
-  constructor: (@parent_node = null, @expression = '', @block_level = 0, @code_block_level = 2, @escape_html = true, @format = 'html5') ->
+  constructor: (@parentNode = null, @expression = '', @blockLevel = 0, @codeBlockLevel = 2, @escapeHtml = true, @format = 'html5') ->
     @children = []
     @opener = @closer = ''
     @silent = false
-    @cw = w(@code_block_level)
-    @hw = w(@block_level)
+    @cw = w(@codeBlockLevel)
+    @hw = w(@blockLevel)
 
   # Add a child node.
   #

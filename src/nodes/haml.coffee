@@ -69,7 +69,7 @@ module.exports = class Haml extends Node
 
       # Add code assignment to the Haml tag
       if tokens.assignment
-        @opener += if @escape_html then "\#{e #{ tokens.assignment }}" else "\#{#{ tokens.assignment }}"
+        @opener += if @escapeHtml then "\#{e #{ tokens.assignment }}" else "\#{#{ tokens.assignment }}"
 
   # Parses the expression and detect the tag, attributes
   # and any assignment. In addition class and id cleanup

@@ -29,43 +29,54 @@ argv = require('optimist')
   )
   .argv
 
+# Main function to run from console
+#
 exports.run = ->
-  input_filename = argv.i
-  output_filename = argv.o
-  template_name = argv.n
-  compiled_output = ""
-  compiler_options =
-    escape_html: not argv['disable-html-escaping']
-    custom_html_escape: argv.e
 
-  fs.stat input_filename, (err, stat) ->
+  inputFilename   = argv.i
+  outputFilename  = argv.o
+  templateName    = argv.n
+  compiledOutput  = ''
+  compilerOptions =
+    escapeHtml       : not argv['disable-html-escaping']
+    customHtmlEscape : argv.e
+
+  fs.stat inputFilename, (err, stat) ->
     unless err
-      unless stat.isDirectory()
-        console.log '  \033[90m[haml coffee] compiling file\033[0m %s', input_filename
-        compiled_output = CoffeeMaker.compileFile input_filename, compiled_output,
-          template_name, compiler_options
 
-        fs.writeFileSync output_filename, compiled_output
+      # Compile a single Haml CoffeeScript template
+      unless stat.isDirectory()
+        console.log '  \033[90m[haml coffee] compiling file\033[0m %s', inputFilename
+
+        compiledOutput = CoffeeMaker.compileFile inputFilename, compiledOutput, templateName, compilerOptions
+        fs.writeFileSync outputFilename, compiledOutput
 
         process.exit 0
+
+      # Compile a directory of Haml CoffeeScript files
       else
-        console.log '  \033[92m[haml coffee] compiling directory\033[0m %s', input_filename
+        console.log '  \033[92m[haml coffee] compiling directory\033[0m %s', inputFilename
+
         # removing a trailing slash
-        cwd = process.cwd()
-        base_dir = input_filename.replace(/\/$/, "")
-        process.chdir(base_dir)
+        baseDir = inputFilename.replace(/\/$/, "")
+        cwd     = process.cwd()
+
+        process.chdir(baseDir)
+
+        # Loop through all Haml files and compile them
         glob.glob "**/*.haml", "", (err, matches) ->
           unless err
             for match in matches
               console.log '    \033[90m[haml coffee] compiling file\033[0m %s', match
-              filename = "#{match}"
-              compiled_output = CoffeeMaker.compileFile filename, compiled_output,
-                null, compiler_options
+
+              filename = "#{ match }"
+              compiledOutput = CoffeeMaker.compileFile filename, compiledOutput, null, compilerOptions
 
             process.chdir cwd
-            fs.writeFileSync output_filename, compiled_output
+            fs.writeFileSync outputFilename, compiledOutput
 
             process.exit 0
+
     else
       console.log '  \033[91m[haml coffee] error compiling file\033[0m %s', process.argv[2]
       process.exit 1

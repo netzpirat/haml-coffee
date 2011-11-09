@@ -3,33 +3,46 @@ Compiler      = require('./compiler')
 fs            = require('fs')
 
 module.exports = class CoffeeMaker
-  # compiles one file
-  @compileFile = (filename, compiled_output = "", template_name = null, compiler_options = {}) ->
+
+  # Compiles a Haml coffee file to a JavaScript template
+  # When the output template is omitted, it will be derived from the file name.
+  #
+  # @param [String] filename the Haml coffee file to compile
+  # @param [String] compiledOutput the output where the JavaScript template is appended
+  # @param [String] templateName the name of the output template.
+  # @param [Object] compilerOptions the compiler options
+  #
+  @compileFile = (filename, compiledOutput = "", templateName = null, compilerOptions = {}) ->
+
     try
       source = fs.readFileSync(filename).toString()
-    catch cant_read_file_error
-      console.log cant_read_file_error
+    catch error
+      console.log error
 
     try
       # strip optional .html and .haml from filename
-      stripped_filename = filename.match /([^\.]+)(\.html)?\.haml$/
-      if stripped_filename?
-        name = template_name || stripped_filename[1]
-        compiler = new Compiler compiler_options
+      strippedFilename = filename.match /([^\.]+)(\.html)?\.haml$/
+
+      if strippedFilename?
+        name = templateName || strippedFilename[1]
+        compiler = new Compiler compilerOptions
         compiler.parse source
-        rendered_haml = compiler.render name
+        renderedHaml = compiler.render name
+
       else
         console.log '  \033[91m[haml coffee] no valid haml extension\033[0m'
         process.exit 1
-    catch haml_error
-      console.log '  \033[91m[haml coffee] error compiling file\033[0m %s', haml_error
-      console.log haml_error.stack
+
+    catch error
+      console.log '  \033[91m[haml coffee] error compiling file\033[0m %s', error
+      console.log error.stack
       process.exit 1
 
     try
-      compiled_output += CoffeeScript.compile rendered_haml
-    catch coffee_error
-      console.log "CoffeeScript " + coffee_error
-      console.log coffee_error.stack
+      compiledOutput += CoffeeScript.compile renderedHaml
 
-    return compiled_output
+    catch error
+      console.log "CoffeeScript " + error
+      console.log error.stack
+
+    compiledOutput
