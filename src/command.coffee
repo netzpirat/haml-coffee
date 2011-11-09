@@ -93,6 +93,10 @@ exports.run = ->
                 outputFilename  = "#{ filename.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] }.jst"
                 fs.writeFileSync outputFilename,  CoffeeMaker.compileFile filename, compilerOptions
 
+            # Write concatenated output
+            if argv.o
+              fs.writeFileSync argv.o, compound
+
             process.chdir cwd
             process.exit 0
 
