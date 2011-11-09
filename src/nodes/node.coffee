@@ -25,6 +25,8 @@ module.exports = class Node
     @cw = w(@codeBlockLevel)
     @hw = w(@blockLevel)
 
+    @evaluate()
+
   # Add a child node.
   #
   # @param [Node] child the child node
@@ -37,23 +39,13 @@ module.exports = class Node
   #
   # @return [String] the opening tag
   #
-  getOpener: ->
-    @evaluateIfNecessary()
-    @opener
+  getOpener: -> @opener
 
   # Get the closing tag for the node.
   #
   # @return [String] the closing tag
   #
-  getCloser: ->
-    @evaluateIfNecessary()
-    @closer
-
-  # Evaluate the node when not already done.
-  #
-  evaluateIfNecessary: ->
-    @evaluate() unless @evaluated
-    @evaluated = true
+  getCloser: -> @closer
 
   # Traverse up the tree to see if a parent node
   # is preserving output space.
@@ -124,7 +116,6 @@ module.exports = class Node
   # @return [String] the code
   #
   render: ->
-    @evaluateIfNecessary()
     output = ''
 
     # Nodes without children

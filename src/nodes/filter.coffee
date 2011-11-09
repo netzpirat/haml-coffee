@@ -32,7 +32,6 @@ module.exports = class Filter extends Node
   # Render the filter
   #
   render: ->
-    @evaluateIfNecessary()
     output = ''
 
     # Nested filter content

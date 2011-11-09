@@ -28,7 +28,6 @@ module.exports = class Code extends Node
   # @return [String] the code
   #
   render: ->
-    @evaluateIfNecessary()
     output = ''
 
     # Code block without output
