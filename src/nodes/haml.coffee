@@ -139,9 +139,10 @@ module.exports = class Haml extends Node
       return { doctype: doctype } if doctype
 
       # Separate Haml tags and inline text
-      hamltext = exp.match /^((?:[#%\.][a-z0-9_:\-]*[\/]?)+)(?:[\(\{].*[\)\}])?(.*)?$/i
-      haml     = hamltext[1]
-      text     = hamltext[2].replace(/^ /, '') if hamltext[2] && !hamltext[2].match(/^=/)
+      tokens     = exp.match /^((?:[#%\.][a-z0-9_:\-]*[\/]?)+)(?:[\(\{].*[\)\}])?([\<\>])?(.*)?$/i
+      haml       = tokens[1]
+      @wsRemoval = tokens[2]
+      text       = tokens[3].replace(/^ /, '') if tokens[3] && !tokens[3].match(/^=/)
 
       # Extracts tag name, id and classes
       tag      = haml.match(/\%([a-z_\-][a-z0-9_:\-]*[\/]?)/i)

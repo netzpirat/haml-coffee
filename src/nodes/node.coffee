@@ -21,6 +21,7 @@ module.exports = class Node
 
     @silent   = false
     @preserve = false
+    @newline  = true
 
     @cw = w(@codeBlockLevel)
     @hw = w(@blockLevel)
@@ -60,7 +61,8 @@ module.exports = class Node
     else
       false
 
-  # Get the indention for the HTML code
+  # Get the indention for the HTML code. If the node
+  # is preserved, then there is no indention.
   #
   # @return [String] a string of spaces
   #
@@ -164,3 +166,34 @@ module.exports = class Node
             output += child.render()
 
     output
+
+  # Apply the whitespace removal by traversing the
+  # tree and adjust @newline to false where necessary.
+  #
+  applyWhitespaceRemoval: ->
+    child.applyWhitespaceRemoval() for child in @children
+
+    # Inline whitespace cleanup
+    @newline = false if @wsRemoval is '<'
+
+    # Surrounding whitespace cleanup
+    @applySurroundingWhitespaceRemoval() if @wsRemoval is '>'
+
+  # Apply the surrounding whitespace removal strategy.
+  #
+  # When a node is marked to remove surrounding whitespace
+  # it will mark its siblings to remove whitespace also.
+  #
+  applySurroundingWhitespaceRemoval: ->
+
+    # Find position
+    siblings = @parentNode.children
+    position = siblings.indexOf(@)
+
+    # Mark surrounding siblings
+    siblings[position - 1]?.newline = false
+    @newline = false
+    siblings[position + 1]?.newline = false
+
+    # Mark parent node when current node is the first child
+    @parentNode.newline = false unless siblings[position - 1]

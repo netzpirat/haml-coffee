@@ -186,6 +186,8 @@ module.exports = class Compiler
 
       @line_number++
 
+    @root.applyWhitespaceRemoval()
+
   # Render the parsed source code as CoffeeScript template.
   #
   # @param [String] filename the name to register the template
