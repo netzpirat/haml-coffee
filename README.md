@@ -1,6 +1,6 @@
 # Haml CoffeeScript Templates
 
-** This is a work in progress fork and pull request will be made when stable **
+**This is a work in progress fork and pull request will be made when stable**
 
 haml-coffee is a Haml parser that understands CoffeeScript. It will generate a JavaSript template that can be rendered
 to HTML. Those templates can be used in your [Backbone.js](http://documentcloud.github.com/backbone/) application.
@@ -23,9 +23,7 @@ $ npm install
 
 We will publish it to npm soon.
 
-## Usage
-
-### Compile Haml CoffeeScript template
+## Compile Haml CoffeeScript template
 
 After the installation you will have a `haml-coffee` binary:
 
@@ -43,7 +41,7 @@ Options:
   -f, --format              Set HTML output format, either `xhtml`, `html4` or `html5`  [default: "html5"]
 ```
 
-#### `-i`/`--input` option
+### `-i`/`--input` option
 
 You can either specify a single template or a directory. When you supply a directory, templates are being searched
 within it:
@@ -55,7 +53,7 @@ $ haml-coffee -i template.haml
 This will generate a template with the same name but the extension changed to `jst`. The above command for example would
 generate a template named `template.jst`.
 
-#### `-o`/`--output` option
+### `-o`/`--output` option
 
 You can specify a single output file name to be used instead of the automatic generated output file name:
 
@@ -72,7 +70,7 @@ $ haml-coffee -i templates -o all.js
 
 This will create all the templates under the `templates` directory into a single, combined output file `all.js`.
 
-#### `-n`/`--namespace` option
+### `-n`/`--namespace` option
 
 Each template will register itself by default under the `window.HAML` namespace, but you can change the namespace with:
 
@@ -80,7 +78,7 @@ Each template will register itself by default under the `window.HAML` namespace,
 $ haml-coffee -i template.haml -n exports.JST
 ```
 
-#### `-t`/`--template` option
+### `-t`/`--template` option
 
 Each template must have a unique name under which it can be addressed. By default the template name is derived from the
 template file name, by stripping of all extensions and remove illegal characters. Directory names are converted to
@@ -95,7 +93,7 @@ $ haml-coffee -i template.haml -n exports.JST -t other
 
 Will result in a template that can be accessed with `exports.JST.other`.
 
-#### `-f`/`--format` option
+### `-f`/`--format` option
 
 The Haml parser knows different HTML formats to which a given template can be rendered and it must be one of:
 
@@ -106,7 +104,7 @@ The Haml parser knows different HTML formats to which a given template can be re
 Doctype, self-closing tags and attributes handling depends on this setting. Please consult the official
 [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more details.
 
-#### `-c`/`--custom-html-escape` option
+### `-c`/`--custom-html-escape` option
 
 Every data that is evaluated at render time will be escaped. The escaping function is included in every template and
 with a growing number of templates, there is a lot of duplication that can be avoided in order to reduce your template
@@ -131,7 +129,7 @@ window.HAML.htmlEscape ||= (text) ->
   .replace(/\"/g, '&quot;')\n
 ```
 
-#### `--disable-html-escaping` option
+### `--disable-html-escaping` option
 
 Although not recommended, escaping can also be turned off completely:
 
@@ -221,7 +219,7 @@ in the project root directory. Run the tests by calling
 expresso
 ```
 
-# Changelog
+## Changelog
 
 Feel free to take a look at the [changelog](https://github.com/9elements/haml-coffee/blob/master/CHANGELOG.md).
 
