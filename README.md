@@ -1,8 +1,8 @@
 # Haml CoffeeScript Templates
 
-**This is a work in progress fork and pull request will be made when stable**
+**This is a work in progress fork and a pull request will be made when stable.**
 
-haml-coffee is a Haml parser that understands CoffeeScript. It will generate a JavaSript template that can be rendered
+Haml CoffeeScript is a Haml parser that understands CoffeeScript. It will generate a JavaSript template that can be rendered
 to HTML. Those templates can be used in your [Backbone.js](http://documentcloud.github.com/backbone/) application.
 
 It is heavily inspired by Tim Caswells [haml-js](https://github.com/creationix/haml-js). We developed it since we love
@@ -23,7 +23,7 @@ $ npm install
 
 We will publish it to npm soon.
 
-## Compile Haml CoffeeScript template
+## Compile Haml CoffeeScript
 
 After the installation you will have a `haml-coffee` binary:
 
@@ -126,7 +126,7 @@ window.HAML.htmlEscape ||= (text) ->
   .replace(/</g, '&lt;')
   .replace(/>/g, '&gt;')
   .replace(/\'/g, '&apos;')
-  .replace(/\"/g, '&quot;')\n
+  .replace(/\"/g, '&quot;')
 ```
 
 ### `--disable-html-escaping` option
@@ -134,7 +134,7 @@ window.HAML.htmlEscape ||= (text) ->
 Although not recommended, escaping can also be turned off completely:
 
 ```bash
-$ haml-coffee -i template.haml -c HAML.escape
+$ haml-coffee -i template.haml --disable-html-escaping
 ```
 
 ## Render Haml CoffeeScript
@@ -186,6 +186,7 @@ The spec covers:
 * CoffeeScript (instead of Ruby) interpolation: `#{}`
 * Escaping HTML: `&=`, unescaping HTML: `!=`
 * Filters: `:plain`, `:javascript`, `:css`, `:cdata`, `:escaped`, `:preserve`
+* Boolean attributes
 
 In addition the following features are implemented:
 
