@@ -17,8 +17,8 @@ for group, specs of suite
         format   = spec.config?.format || 'xhtml'
 
         compiler = new Compiler({
-          escape_html : escaping
-          format      : format
+          escapeHtml : escaping
+          format     : format
         })
 
         console.log "\n\n\n"
@@ -32,12 +32,13 @@ for group, specs of suite
           console.log "-------------------- Local variables --------------------------"
           console.log JSON.stringify(spec.locals)
 
-        compiler.parse spec.haml
+        haml = spec.haml || fs.readFileSync(spec.haml_template)
+
+        compiler.parse haml
         cst = compiler.render 'test'
 
         console.log "-------------------- Rendered CST template --------------------"
         console.log cst
-
 
         template = CoffeeScript.compile cst
 
@@ -49,6 +50,7 @@ for group, specs of suite
         console.log "-------------------- Rendered HTML ---------------------------"
         console.log html
 
-        html.should.eql(spec.html)
+        result = spec.html  || fs.readFileSync(spec.html_template)
+        html.should.eql(result)
 
         return

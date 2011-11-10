@@ -17,8 +17,8 @@ for group, specs of suite
         format   = spec.config?.format || 'xhtml'
 
         compiler = new Compiler({
-          escape_html : escaping
-          format      : format
+          escapeHtml : escaping
+          format     : format
         })
 
         console.log "\n\n\n"
@@ -37,7 +37,6 @@ for group, specs of suite
 
         console.log "-------------------- Rendered CST template --------------------"
         console.log cst
-
 
         template = CoffeeScript.compile cst
 

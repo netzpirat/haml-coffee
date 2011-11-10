@@ -26,6 +26,54 @@
         "title" : "MyPage"
       }
     }
-  }
+  },
 
+  "coffeescript" : {
+    "inline function that generates Haml" : {
+      "haml" : "- foo = (x) ->\n  #bar= x*10\n= foo(10)",
+      "html" : "<div id='bar'>100</div>"
+    },
+
+    "inline function with code block" : {
+      "haml" : "- foo = (x) ->\n  x*10\n#bar= foo(10)",
+      "html" : "<div id='bar'>100</div>"
+    },
+
+    "filter" : {
+      "haml_template" : "coffee/filter",
+      "html_template" : "coffee/filter"
+    }
+
+  },
+
+  "template tests" : {
+
+    "escaping off" : {
+        "haml_template" : "text/escaping",
+        "html_template" : "text/escaping_off",
+        "config" : {
+          "escape_html" : "false"
+        },
+        "local" : {
+          "title" : "html <em>escaping</em> test"
+        }
+    },
+
+    "escaping on" : {
+        "haml_template" : "text/escaping",
+        "html_template" : "text/escaping_on",
+        "config" : {
+          "escape_html" : "true"
+        },
+        "local" : {
+          "title" : "html <em>escaping</em> test"
+        }
+    },
+
+    "long plain text" : {
+        "haml_template" : "text/long",
+        "html_template" : "text/long"
+    }
+
+  }
 }
