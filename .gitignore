@@ -3,3 +3,4 @@ compiled-haml.js
 **/*/compiled-haml.js
 node_modules
 Gemfile.lock
+.bundle
