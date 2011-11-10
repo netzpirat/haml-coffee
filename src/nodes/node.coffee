@@ -124,10 +124,12 @@ module.exports = class Node
   # @return [String] the CoffeeScript code
   #
   outputInsertingCode: (code, escape = false) ->
-    if escape
-      "#{ @codeWhitespace }o.push e \"#{ @getHtmlIndention() }\#{#{ code }}\"\n"
+    htmlIndention = @getHtmlIndention()
+
+    if htmlIndention.length is 0
+      "#{ @codeWhitespace }o.push #{ if escape then 'e ' else '' }#{ code }\n"
     else
-      "#{ @codeWhitespace }o.push \"#{ @getHtmlIndention() }\#{#{ code }}\"\n"
+      "#{ @codeWhitespace }o.push #{ if escape then 'e' else '' } \"#{ @getHtmlIndention() }\" + #{ code }\n"
 
   # Template method that must be implemented by each
   # Node subclass. This evaluates the `@expression`
