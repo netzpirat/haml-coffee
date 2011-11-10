@@ -208,27 +208,30 @@ module.exports = class Haml extends Node
       key   = pair[0].trim()
       value = pair[1].trim()
 
-      # Set key to value if the value is boolean true
-      if value is 'true'
-        value = "'#{ key }'"
+      # Ignore attributes that are `false`
+      if value isnt 'false'
 
-      # Wrap plain attributes into an interpolation, expect boolean values
-      else if not value.match /^("|').*\1$/
-        if @escapeAttributes
-          value = '\'#{ e(' + value + ') }\''
-        else
-          value = '\'#{ ' + value + ' }\''
+        # Set key to value if the value is boolean true
+        if value is 'true'
+          value = "'#{ key }'"
 
-      # Unwrap value from quotes
-      value = quoted[2] if quoted = value.match /^("|')(.*)\1$/
+        # Wrap plain attributes into an interpolation, expect boolean values
+        else if not value.match /^("|').*\1$/
+          if @escapeAttributes
+            value = '\'#{ e(' + value + ') }\''
+          else
+            value = '\'#{ ' + value + ' }\''
 
-      # Unwrap key from quotes
-      key = quoted[2] if quoted = key.match /^("|')(.*)\1$/
+        # Unwrap value from quotes
+        value = quoted[2] if quoted = value.match /^("|')(.*)\1$/
 
-      pairs.push {
-        key   : key
-        value : value
-      }
+        # Unwrap key from quotes
+        key = quoted[2] if quoted = key.match /^("|')(.*)\1$/
+
+        pairs.push {
+          key   : key
+          value : value
+        }
 
     pairs
 

@@ -199,7 +199,6 @@ The spec covers:
 
 In addition the following features are implemented:
 
-* HTML 5 data attributes
 * `:coffeescript` filter
 * Escaping `\`
 
