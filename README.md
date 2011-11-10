@@ -208,17 +208,25 @@ Haml CoffeeScript is the  Rails asset pipeline:
 ## Development
 
 You'll need the latest version of `node.js`, `npm`, `coffee-script`, `expresso` and `should` to run everything. Start
-the coffeescript compilation by running:
+the CoffeeScript compilation in the project root directory by running:
 
 ```bash
 cake watch
 ```
 
-in the project root directory. Run the tests by calling
+And run the tests by calling:
 
 ```bash
 expresso
 ```
+
+You can optionally install [Guard](https://github.com/guard/guard) with the [Bundler](http://gembundler.com/):
+
+```bash
+bundle install
+```
+
+and run Guard to automatically compile your CoffeeScripts and run the Expresso tests on file modification.
 
 ## Changelog
 
