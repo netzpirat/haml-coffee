@@ -5,7 +5,7 @@ fs     = require 'fs'
 CoffeeScript  = require 'coffee-script'
 Compiler      = require '../lib/compiler'
 
-suite = JSON.parse fs.readFileSync('test/haml_spec.json')
+suite = JSON.parse fs.readFileSync('test/specs/haml_coffee_spec.json')
 
 for group, specs of suite
   for desc, spec of specs
@@ -16,9 +16,10 @@ for group, specs of suite
         escaping = spec.config?.escape_html || false
         format   = spec.config?.format || 'xhtml'
 
-        compiler = new Compiler
-          escape_html: escaping
-          format: format
+        compiler = new Compiler({
+          escape_html : escaping
+          format      : format
+        })
 
         console.log "\n\n\n"
         console.log "### TEST: #{ group }: #{ desc }\n"

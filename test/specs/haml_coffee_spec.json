@@ -1,15 +1,4 @@
 {
-  "data attributes" : {
-
-    "boolean attribute with XHTML" : {
-      "haml" : "%a{:href=>\"/posts\", :data => {:author_id => 123}} Posts By Author",
-      "html" : "<a data-author_id='123' href='/posts'>Posts By Author</a>",
-      "config" : {
-        "format" : "html5"
-      }
-    }
-  },
-
   "boolean attributes" : {
 
     "boolean attribute with XHTML" : {
@@ -25,6 +14,16 @@
       "html" : "<input>",
       "config" : {
         "format" : "html5"
+      }
+    }
+  },
+
+  "escaping" : {
+    "plain text escaping" : {
+      "haml" : "%title\n  = @title\n  \\= @title",
+      "html" : "<title>\n  MyPage\n  = @title\n</title>",
+      "locals" : {
+        "title" : "MyPage"
       }
     }
   }
