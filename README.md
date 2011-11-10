@@ -1,86 +1,255 @@
-# About
+# Haml CoffeeScript Templates
 
-haml-coffee is a haml parser that understands coffeescript. It will generate a javascript file which contains
-all templates that can be rendered to html. Those templates can be used in your [backbone.js](http://documentcloud.github.com/backbone/) application. It is heavily inspired by Tim Caswells [haml-js](https://github.com/creationix/haml-js). We developed it since we love haml - and we love coffeescript and we don't want to have a media break in our toolchain. If you want to see it in action feel free to take a look at our [website](http://www.9elements.com/). We also written a motivational [blog post](http://9elements.com/io/?p=551) where we explain our toolchain.
+** This is a work in progress fork and pull request will be made when stable **
 
-# Installation
+haml-coffee is a Haml parser that understands CoffeeScript. It will generate a JavaSript template that can be rendered
+to HTML. Those templates can be used in your [Backbone.js](http://documentcloud.github.com/backbone/) application.
 
-Clone the repository and call
+It is heavily inspired by Tim Caswells [haml-js](https://github.com/creationix/haml-js). We developed it since we love
+Haml & CoffeeScript and we don't want to have a media break in our tool chain. If you want to see it in action feel free
+to take a look at our [website](http://www.9elements.com/).
 
-    npm install
+We also written a motivational [blog post](http://9elements.com/io/?p=551) where we explain our tool chain.
 
-To remove the repository. We will publish it to npm soon.
+## Installation
 
-# Usage
+Clone the repository and install with `npm`:
 
-After the installation you will have a haml-coffee binary. It can be called from the shell:
+```bash
+$ https://github.com/9elements/haml-coffee
+$ cd haml-coffee
+$ npm install
+```
 
-	Usage: haml-coffee
-	
-	Options:
-	  -i, --input               Either a file or a directory name, in a directory all *.haml files will be processed  [required]
-	  -o, --output              Output filename                                                                       [default: "compiled-haml.js"]
-	  -n, --name                Template name, if you don't want the default one, derived from a filename           
-	  --disable-html-escaping   Use this if you want to disable html escaping                                         [boolean]
-	  -e, --custom-html-escape  Use this to pass a name of your custom html escaping function                       
+We will publish it to npm soon.
 
-The compiled-haml.js will create a HAML namespace that is attached to the window object. In case you took
-a directory for input each file will be mapped to a function. You can generate the html like this:
+## Usage
 
-    html = HAML.template_file_name()
+### Compile Haml CoffeeScript template
 
-If you need to pass some parameters inside you can do it like this:
+After the installation you will have a `haml-coffee` binary:
 
-    html = HAML.template_file_name({
-      title : "foo bar"
-      projects : ['haml', 'coffee', 'parser']
-    })  
+```bash
+$ haml-coffee
+Usage: node ./bin/haml-coffee
 
-The generated function will be called using the hash as context, so inside the templates you can access all keys using CoffeeScripts @syntax:
+Options:
+  -i, --input               Either a file or a directory name to be compiled            [required]
+  -o, --output              Set the output filename
+  -n, --namespace           Set a custom template namespace                             [default: "window.HAML"]
+  -t, --template            Set a custom template name
+  --disable-html-escaping   Disable any HTML output escaping                            [boolean]
+  -e, --custom-html-escape  Set the custom HTML escaping function name
+  -f, --format              Set HTML output format, either `xhtml`, `html4` or `html5`  [default: "html5"]
+```
 
-    %h1
-      = @title
-    %section.content
-      %ul
-        - for project in @projects
-          %li
-            = project
+#### `-i`/`--input` option
 
-This will give your haml templates a very rubish touch.
+You can either specify a single template or a directory. When you supply a directory, templates are being searched
+within it:
 
-## HTML escaping
+```bash
+$ haml-coffee -i template.haml
+```
 
-By default, `haml-coffee` will perform HTML escaping on evaluated data.
-It can be turned off by passing the `--disable-html-escaping` option when running the binary.
+This will generate a template with the same name but the extension changed to `jst`. The above command for example would
+generate a template named `template.jst`.
 
-If HTML escaping is turned on, compiler will insert a `window.HAML.html_escape` function in the generated template code.
-If you wish to replace that function with your own, you can do so by running the binary with `--custom-html-escape=<name>` option, where `name` is a name of your function, e.g.:
+#### `-o`/`--output` option
 
-    haml-coffee -i filename.haml --custom-html-escape=window.my_escape
+You can specify a single output file name to be used instead of the automatic generated output file name:
 
-This can help reduce the resulting code size, especially if you use many separately generated templates in your project.
+```bash
+$ haml-coffee -i template.haml -o t.js
+```
 
-# Develop
+This created a template named `t.js`. You can also set a directory as input and give a output file name for
+concatenating all output into a single file:
 
-You'll need the latest version of node.js, npm, coffee-script, expresso and should to run everything.
-Start the coffeescript compilation by running
+```bash
+$ haml-coffee -i templates -o all.js
+```
 
-    cake watch
+This will create all the templates under the `templates` directory into a single, combined output file `all.js`.
+
+#### `-n`/`--namespace` option
+
+Each template will register itself by default under the `window.HAML` namespace, but you can change the namespace with:
+
+``` bash
+$ haml-coffee -i template.haml -n exports.JST
+```
+
+#### `-t`/`--template` option
+
+Each template must have a unique name under which it can be addressed. By default the template name is derived from the
+template file name, by stripping of all extensions and remove illegal characters. Directory names are converted to
+nested namespaces under the default namespace.
+
+For example, a template named `user/show-admin.html.haml` will result in a template name `window.HAML.user.show_admin`,
+but you can override this behaviour:
+
+``` bash
+$ haml-coffee -i template.haml -n exports.JST -t other
+```
+
+Will result in a template that can be accessed with `exports.JST.other`.
+
+#### `-f`/`--format` option
+
+The Haml parser knows different HTML formats to which a given template can be rendered and it must be one of:
+
+* xhtml
+* html4
+* html5
+
+Doctype, self-closing tags and attributes handling depends on this setting. Please consult the official
+[Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more details.
+
+#### `-c`/`--custom-html-escape` option
+
+Every data that is evaluated at render time will be escaped. The escaping function is included in every template and
+with a growing number of templates, there is a lot of duplication that can be avoided in order to reduce your template
+size.
+
+You can specify an escape function that will be used to render the template:
+
+```bash
+$ haml-coffee -i template.haml -c HAML.escape
+```
+
+Now the escaping function isn't included in your template anymore and you have to make sure the function is available
+when the template is rendered. The default implementation is quite simple:
+
+```coffeescript
+window.HAML.htmlEscape ||= (text) ->
+  "#{ text }"
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/\'/g, '&apos;')
+  .replace(/\"/g, '&quot;')\n
+```
+
+#### `--disable-html-escaping` option
+
+Although not recommended, escaping can also be turned off completely:
+
+```bash
+$ haml-coffee -i template.haml -c HAML.escape
+```
+
+## Render Haml CoffeeScript
+
+Your template is compiled into a JavaScript file that can be rendered by instantiating the template with data that to
+be evaluated.
+
+Consider the given template:
+
+```haml
+%h1
+  = @title
+%section.content
+  %ul
+    - for project in @projects
+      %li
+        = project
+```
+
+that has been successful compiled and registered under `window.HAML.template`. Now you can simply render the template:
+
+```coffeescript
+html = HAML.template_file_name({
+  title : "foo bar"
+  projects : ['haml', 'coffee', 'parser']
+})
+```
+
+The generated template function will be called using the hash as context, so inside the templates you can access all
+keys using `this` or `@`.
+
+## Haml Compatibility
+
+Haml CoffeeScript implements the [Haml Spec](https://github.com/norman/haml-spec) to ensure some degree of compatibility
+to other implementations.
+
+The spec covers:
+
+* Plain text
+* Element names `%`
+* Attributes: `{}` or `()`
+* Class and ID: `.` and `#`, implicit `div` elements
+* Self-closing tags: `/`
+* Whitespace removal: `>` and `<`
+* Doctype: `!!!`
+* HTML comments: `/`, conditional comments: `/[]`, Haml comments: `-#`
+* CoffeeScript (instead of Ruby) evaluation: running CoffeeScript: `-`
+* Whitespace preservation: `~`
+* CoffeeScript (instead of Ruby) interpolation: `#{}`
+* Escaping HTML: `&=`, unescaping HTML: `!=`
+* Filters: `:plain`, `:javascript`, `:css`, `:cdata`, `:escaped`, `:preserve`
+
+In addition the following features are implemented:
+
+* HTML 5 data attributes
+* `:coffeescript` filter
+* Escaping `\`
+
+Please consult the official [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more
+details.
+
+## Related projects
+
+Haml CoffeeScript is the  Rails asset pipeline:
+
+* [haml-coffee-assets](https://github.com/netzpirat/haml_coffee_assets)
+* [ruby-haml-coffe](https://github.com/bfrydl/ruby-haml-coffee)
+* [haml-coffee-rails](https://github.com/voidseeker/haml-coffee-rails)
+
+## Development
+
+You'll need the latest version of `node.js`, `npm`, `coffee-script`, `expresso` and `should` to run everything. Start
+the coffeescript compilation by running:
+
+```bash
+cake watch
+```
 
 in the project root directory. Run the tests by calling
 
-    expresso
+```bash
+expresso
+```
 
 # Changelog
 
-Feel free to take a look at the [changelog](https://github.com/9elements/haml-coffee/blob/master/CHANGELOG.md) document.
+Feel free to take a look at the [changelog](https://github.com/9elements/haml-coffee/blob/master/CHANGELOG.md).
 
-# Roadmap
+## Contributors
 
-There is a little [roadmap](https://github.com/9elements/haml-coffee/blob/master/TODO.md). One key ingredient would be
-to make the output namespace not bound to window, but some something configurable. If we would have this we could use templates
-on client and on server.
+See all contributors on [the contributor page](https://github.com/9elements/haml-coffee/contributors).
 
-# License
+## License
 
-Copyright (c) 2011 9elements, this project runs under MIT license
+(The MIT License)
+
+Copyright (c) 2011 9elements
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
