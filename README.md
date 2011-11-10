@@ -29,7 +29,7 @@ After the installation you will have a `haml-coffee` binary:
 
 ```bash
 $ haml-coffee
-Usage: node ./bin/haml-coffee
+Usage: node haml-coffee
 
 Options:
   -i, --input                        Either a file or a directory name to be compiled            [required]
