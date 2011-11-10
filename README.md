@@ -16,7 +16,7 @@ We also written a motivational [blog post](http://9elements.com/io/?p=551) where
 Clone the repository and install with `npm`:
 
 ```bash
-$ https://github.com/9elements/haml-coffee
+$ git clone git://github.com/9elements/haml-coffee.git
 $ cd haml-coffee
 $ npm install
 ```
