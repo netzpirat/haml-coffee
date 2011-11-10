@@ -190,43 +190,43 @@ module.exports = class Compiler
 
   # Render the parsed source code as CoffeeScript template.
   #
-  # @param [String] filename the name to register the template
+  # @param [String] templateName the name to register the template
   # @param [String] namespace the namespace to register the template
   #
-  render: (filename, namespace) ->
-    namespace ?= 'HAML'
-    output     = "window.#{ namespace } ?= {}\n"
+  render: (templateName, namespace = 'window.HAML') ->
+    output = ''
+
+    # Create parameter name from the filename, e.g. a file `users/new.hamlc`
+    # will create `window.HAML.user.new`
+    segments     = "#{ namespace }.#{ templateName }".replace(/(\s|-)+/g, '_').split(/\.|\//)
+    templateName = segments.pop()
+    namespace    = segments.shift()
+
+    # Create code for file and namespace creation
+    for segment in segments
+      namespace += ".#{ segment }"
+      output    += "#{ namespace } ?= {}\n"
 
     # Always include escape function in the template, since escaping
     # can be forced with `&=` event when turned off
     if @options.customHtmlEscape
       escapeFn = @options.customHtmlEscape
     else
-      escapeFn = "window.#{ namespace }.html_escape"
+      escapeFn = "#{ namespace }.htmlEscape"
       output +=
-      escapeFn +
-        '''
-        ||= (text) ->
-          "#{ text }"
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/\'/g, '&apos;')
-          .replace(/\"/g, '&quot;')\n
-        '''
-
-    # Create parameter name from the filename, e.g. a file `users/new.hamlc`
-    # will create window.HAML.user.new
-    segments = filename.replace(/(\s|-)+/g, '_').split('/')
-    name     = segments.pop()
-
-    # Create code for file and namespace creation
-    for segment in segments
-      namespace += ".#{ segment }"
-      output    += "window.#{ namespace } ?= {}\n"
+        escapeFn +
+          '''
+          ||= (text) ->
+            "#{ text }"
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/\'/g, '&apos;')
+            .replace(/\"/g, '&quot;')\n
+          '''
 
     # Render the template
-    output += "window.#{ namespace }.#{ name } = (context) ->\n"
+    output += "#{ namespace }.#{ templateName } = (context) ->\n"
     output += "  fn = (context) ->\n"
     output += "    o = []\n"
     output += "    e = #{ escapeFn }\n"

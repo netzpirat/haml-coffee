@@ -11,11 +11,16 @@ argv = require('optimist')
   )
   .options('o',
     alias     : 'output'
-    describe  : 'Set the output filename if you don\'t want the default one derived from the template filename'
+    describe  : 'Set the output filename'
   )
   .options('n',
-    alias     : 'name'
-    describe  : 'Set a custom template name if you don\'t want the default one derived from the template filename'
+    alias     : 'namespace'
+    describe  : 'Set a custom template namespace'
+    default   : 'window.HAML'
+  )
+  .options('t',
+    alias     : 'template'
+    describe  : 'Set a custom template name'
   )
   .options('disable-html-escaping',
     boolean   : true
@@ -42,7 +47,8 @@ exports.run = ->
   throw "Unknown template format '#{ arv.f }'" unless ['xhtml', 'html4', 'html5'].indexOf(arv.f) is -1
 
   inputFilename   = argv.i
-  templateName    = argv.n
+  templateName    = argv.t
+  namespace       = argv.n
 
   compilerOptions =
     escapeHtml       : not argv['disable-html-escaping']
