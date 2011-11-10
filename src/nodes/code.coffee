@@ -32,19 +32,19 @@ module.exports = class Code extends Node
 
     # Code block without output
     if @identifier is '-'
-      output += @outputCode(@code)
+      output += @outputRunningCode(@code)
 
     # Code block that preserves whitespace
     else if @identifier is '~'
-      output += @outputCodeHtml(@findAndPreserve(@code))
+      output += @outputInsertingCode(@findAndPreserve(@code))
 
     # Code block with escaped code block, either `=` in escaped mode or `&=`
     else if @identifier is '&=' or (@identifier is '=' and @escapeHtml)
-      output += @outputCodeHtml(@code, true)
+      output += @outputInsertingCode(@code, true)
 
     # Code block with unescaped output, either with `!=` or escaped mode to false
     else
-      output += @outputCodeHtml(@code)
+      output += @outputInsertingCode(@code)
 
     output
 

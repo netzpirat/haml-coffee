@@ -24,7 +24,11 @@ module.exports = class Node
 
     @silent   = false
     @preserve = false
-    @newline  = true
+
+    @wsRemoval = {
+      around: false
+      inside: false
+    }
 
     @escapeHtml        = options.escapeHtml
     @escapeAttributes  = options.escapeAttributes
@@ -47,15 +51,29 @@ module.exports = class Node
 
   # Get the opening tag for the node.
   #
+  # This may add a hidden unicode control character for
+  # later whitespace processing:
+  #
+  # * \u0091 Cleanup surrounding whitespace to the left
+  # * \u0092 Cleanup surrounding whitespace to the right
+  #
   # @return [String] the opening tag
   #
-  getOpener: -> @opener
+  getOpener: ->
+    (if @wsRemoval.around then '\u0091' else '') + @opener + (if @wsRemoval.inside then '\u0092' else '')
 
   # Get the closing tag for the node.
   #
+  # This may add a hidden unicode control character for
+  # later whitespace processing:
+  #
+  # * \u0091 Cleanup surrounding whitespace to the left
+  # * \u0092 Cleanup surrounding whitespace to the right
+  #
   # @return [String] the closing tag
   #
-  getCloser: -> @closer
+  getCloser: ->
+    (if @wsRemoval.inside then '\u0091' else '') + @closer + (if @wsRemoval.around then '\u0092' else '')
 
   # Traverse up the tree to see if a parent node
   # is preserving output space.
@@ -88,12 +106,13 @@ module.exports = class Node
     "#{ @codeWhitespace }o.push \"#{ @getHtmlIndention() }#{ html }\"\n"
 
   # Adds the CoffeeScript code to the template
-  # to be run at render time.
+  # to be run at render time without producing
+  # any output.
   #
   # @param [String] code the CoffeeScript code
   # @return [String] the CoffeeScript code
   #
-  outputCode: (code) ->
+  outputRunningCode: (code) ->
     "#{ @codeWhitespace }#{ code }\n"
 
   # Creates the CoffeeScript code that runs the
@@ -104,7 +123,7 @@ module.exports = class Node
   # @param [Boolean] escape whether to escape the generated output
   # @return [String] the CoffeeScript code
   #
-  outputCodeHtml: (code, escape = false) ->
+  outputInsertingCode: (code, escape = false) ->
     if escape
       "#{ @codeWhitespace }o.push e \"#{ @getHtmlIndention() }\#{#{ code }}\"\n"
     else
@@ -175,34 +194,3 @@ module.exports = class Node
             output += child.render()
 
     output
-
-  # Apply the whitespace removal by traversing the
-  # tree and adjust @newline to false where necessary.
-  #
-  applyWhitespaceRemoval: ->
-    child.applyWhitespaceRemoval() for child in @children
-
-    # Inline whitespace cleanup
-    @newline = false if @wsRemoval is '<'
-
-    # Surrounding whitespace cleanup
-    @applySurroundingWhitespaceRemoval() if @wsRemoval is '>'
-
-  # Apply the surrounding whitespace removal strategy.
-  #
-  # When a node is marked to remove surrounding whitespace
-  # it will mark its siblings to remove whitespace also.
-  #
-  applySurroundingWhitespaceRemoval: ->
-
-    # Find position
-    siblings = @parentNode.children
-    position = siblings.indexOf(@)
-
-    # Mark surrounding siblings
-    siblings[position - 1]?.newline = false
-    @newline = false
-    siblings[position + 1]?.newline = false
-
-    # Mark parent node when current node is the first child
-    @parentNode.newline = false unless siblings[position - 1]

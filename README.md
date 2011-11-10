@@ -62,7 +62,7 @@ You can specify a single output file name to be used instead of the automatic ge
 $ haml-coffee -i template.haml -o t.js
 ```
 
-This created a template named `t.js`. You can also set a directory as input and give a output file name for
+This creates a template named `t.js`. You can also set a directory as input and give a output file name for
 concatenating all output into a single file:
 
 ```bash
@@ -208,7 +208,7 @@ details.
 
 ## Related projects
 
-Haml CoffeeScript is the  Rails asset pipeline:
+Haml CoffeeScript in the  Rails asset pipeline:
 
 * [haml-coffee-assets](https://github.com/netzpirat/haml_coffee_assets)
 * [ruby-haml-coffe](https://github.com/bfrydl/ruby-haml-coffee)
@@ -220,19 +220,19 @@ You'll need the latest version of `node.js`, `npm`, `coffee-script`, `expresso` 
 the CoffeeScript compilation in the project root directory by running:
 
 ```bash
-cake watch
+$ cake watch
 ```
 
 And run the tests by calling:
 
 ```bash
-expresso
+$ expresso
 ```
 
 You can optionally install [Guard](https://github.com/guard/guard) with the [Bundler](http://gembundler.com/):
 
 ```bash
-bundle install
+$ bundle install
 ```
 
 and run Guard to automatically compile your CoffeeScripts and run the Expresso tests on file modification.

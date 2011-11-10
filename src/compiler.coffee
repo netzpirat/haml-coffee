@@ -197,8 +197,6 @@ module.exports = class Compiler
 
       @line_number++
 
-    @root.applyWhitespaceRemoval()
-
   # Render the parsed source code as CoffeeScript template.
   #
   # @param [String] templateName the name to register the template
@@ -241,8 +239,25 @@ module.exports = class Compiler
     output += "  fn = (context) ->\n"
     output += "    o = []\n"
     output += "    e = #{ escapeFn }\n"
-    output += @root.render()
-    output += "    return o.join(\"\\n\")\n"
+    code    = @root.render()
+    output += code
+    output += "    return o.join(\"\\n\")#{ @cleanupWhitespace(code) }\n"
     output += "  return fn.call(context)"
 
     output
+
+  # Adds whitespace cleanup function when needed by the
+  # template. The cleanup must be done AFTER the template
+  # has been rendered.
+  #
+  # The detection is based on hidden unicode characters that
+  # are placed as marker into the template:
+  #
+  # * \u0091 Cleanup surrounding whitespace to the left
+  # * \u0092 Cleanup surrounding whitespace to the right
+  #
+  cleanupWhitespace: (code) ->
+    if /\u0091|\u0092/.test code
+      ".replace(/[\\s\\n]*\\u0091/mg, '').replace(/\\u0092[\\s\\n]*/mg, '')"
+    else
+      ''
