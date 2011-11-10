@@ -172,20 +172,27 @@ module.exports = class Haml extends Node
   # @return [Object] the parsed option tokens
   #
   parseOptions: (exp) ->
+    [pairs, hasAttributes] = @parseAttributes(exp)
+
     {
-      assignment : @parseAssignment(exp)
-      pairs      : @parseAttributes(exp)
+      pairs      : pairs
+      assignment : @parseAssignment(exp, hasAttributes)
     }
 
-  # Parse for code assignment `}= assignment` or `)= assignment`.
+  # Parse for code assignment `=`, `}=` and `)=`.
   # The parsed assignment contains only the code and no HAML
   # `)=` or `}=` tokens.
   #
   # @param [String] exp the HAML expression
+  # @param [Boolean] hasAttributes if the expression contains attributes
   # @return [String] the parsed assignment
   #
-  parseAssignment: (exp) ->
-    assignment = exp.match /[\}\)]=\s*(\S+)$/
+  parseAssignment: (exp, hasAttributes) ->
+    if hasAttributes
+      assignment = exp.match /[\}\)]=\s*(\S+)$/
+    else
+      assignment = exp.match /\=\s*(\S+)$/
+
     if assignment then assignment[1] else undefined
 
   # Parse attributes either in Ruby style `%tag{ :attr => 'value' }`
@@ -201,7 +208,7 @@ module.exports = class Haml extends Node
   parseAttributes: (exp) ->
     pairs = []
     attributes = exp.match /([^:|\s|=]+\s*=>\s*(("[^"]+")|('[^']+')|[^\s,\}]+))|([\w]+=(("[^"]+")|('[^']+')|[^\s\)]+))/g
-    return pairs unless attributes
+    return [pairs, false] unless attributes
 
     for attribute in attributes
       pair  = attribute.split /\=>|\=/
@@ -233,7 +240,7 @@ module.exports = class Haml extends Node
           value : value
         }
 
-    pairs
+    [pairs, true]
 
   # Build the HTML tag prefix by concatenating all the
   # tag information together. The result is an unfinished
