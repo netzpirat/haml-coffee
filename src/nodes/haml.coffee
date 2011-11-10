@@ -206,8 +206,11 @@ module.exports = class Haml extends Node
         value = "'#{ key }'"
 
       # Wrap plain attributes into an interpolation, expect boolean values
-      else
-        value = '\'#{ e(' + value + ') }\'' unless value.match /^("|').*\1$/
+      else if not value.match /^("|').*\1$/
+        if @escapeAttributes
+          value = '\'#{ e(' + value + ') }\''
+        else
+          value = '\'#{ ' + value + ' }\''
 
       # Unwrap value from quotes
       value = quoted[2] if quoted = value.match /^("|')(.*)\1$/

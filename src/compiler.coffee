@@ -18,8 +18,23 @@ module.exports = class Compiler
   # @option options [String] format the template format, either `xhtml`, `html4` or `html5`
   #
   constructor: (@options = {}) ->
-    @options.escapeHtml ?= true
-    @options.format ?= 'html5'
+    @options.escapeHtml       ?= true
+    @options.escapeAttributes ?= true
+    @options.format           ?= 'html5'
+
+  # Get the options for creating a node
+  #
+  # @return [Object] the node options
+  #
+  getNodeOptions: ->
+    {
+      parentNode       : @parentNode
+      blockLevel       : @currentBlockLevel
+      codeBlockLevel   : @currentCodeBlockLevel
+      escapeHtml       : @options.escapeHtml
+      escapeAttributes : @options.escapeAttributes
+      format           : @options.format
+    }
 
   # Get the matching node type for the given expression. This
   # is also responsible for creating the nested tree structure,
@@ -28,44 +43,39 @@ module.exports = class Compiler
   # is added as child to the previous filter expression.
   #
   # @param [String] expression the HAML expression
-  # @param [Node] previousNode the previously created node
-  # @param [Node] parentNode the parent node
-  # @param [Number] currentBlockLevel the current HTML indention
-  # @param [Number] currentCodeBlockLevel the current code indention
   # @return [Node] the parser node
   #
-  node_factory: (expression, previousNode, parentNode, currentBlockLevel, currentCodeBlockLevel) ->
+  nodeFactory: (expression = '') ->
+
+    previousNode = @node
+    options      = @getNodeOptions()
 
     # Detect empty line within a filter
     if expression is '' && previousNode instanceof Filter
-      topFilterNode = previousNode.getFilterExpressionNode()
-      node = new Filter(topFilterNode, expression, currentBlockLevel, currentCodeBlockLevel, @options.escapeHtml, @options.format)
-      topFilterNode.addChild(node)
+      options.parentNode = previousNode.getFilterExpressionNode()
+      node = new Filter(expression, options)
 
-    # Detect filter expression node and nested childrens
-    else if parentNode instanceof Filter || expression.match(/^:(escaped|preserve|css|javascript|plain|coffeescript)/)
-      node = new Filter(parentNode, expression, currentBlockLevel, currentCodeBlockLevel, @options.escapeHtml, @options.format)
-      parentNode.addChild(node)
+    # Detect filter expression node and nested children
+    else if options.parentNode instanceof Filter || expression.match(/^:(escaped|preserve|css|javascript|plain|coffeescript)/)
+      node = new Filter(expression, options)
 
     # Detect comment node
     else if expression.match(/^(\/|-#)(.*)/)
-      node = new Comment(parentNode, expression, currentBlockLevel, currentCodeBlockLevel, @options.escapeHtml, @options.format)
-      parentNode.addChild(node)
+      node = new Comment(expression, options)
 
     # Detect code node
     else if expression.match(/^(-#|-|=|!=|\&=|~)\s*(.*)/)
-      node = new Code(parentNode, expression, currentBlockLevel, currentCodeBlockLevel, @options.escapeHtml)
-      parentNode.addChild(node)
+      node = new Code(expression, options)
 
     # Detect Haml node
     else if expression.match(/^(%|#|\.|\!)(.*)/)
-      node = new Haml(parentNode, expression, currentBlockLevel, currentCodeBlockLevel, @options.escapeHtml, @options.format)
-      parentNode.addChild(node)
+      node = new Haml(expression, options)
 
     # Everything else is a text node
     else
-      node = new Text(parentNode, expression, currentBlockLevel, currentCodeBlockLevel)
-      parentNode.addChild(node)
+      node = new Text(expression, options)
+
+    options.parentNode?.addChild(node)
 
     node
 
@@ -75,14 +85,15 @@ module.exports = class Compiler
   #
   updateCodeBlockLevel: (node) ->
     if node instanceof Code
-      @currentCodeBlockLevel = node.code_block_level + 1
+      @currentCodeBlockLevel = node.codeBlockLevel + 1
     else
-      @currentCodeBlockLevel = node.code_block_level
+      @currentCodeBlockLevel = node.codeBlockLevel
 
   # Test if the indention level has changed, either
   # increased or decreased.
   #
   # @return [Boolean] true when indention changed
+  #
   #
   indentChanged: ->
     @currentIndent != @previousIndent
@@ -142,14 +153,14 @@ module.exports = class Compiler
   # @param source [String] the HAML source code
   #
   parse: (source) ->
-    # Initialize line and indent helpers
+    # Initialize line and indent markers
     @line_number = @previousIndent = @tabSize = @currentBlockLevel = @previousBlockLevel = 0
     @currentCodeBlockLevel = @previousCodeBlockLevel = 2
 
     # Initialize nodes
     @node = null
     @stack = []
-    @root = @parentNode = new Node()
+    @root = @parentNode = new Node('', @getNodeOptions())
 
     # Keep lines for look ahead
     lines = source.split("\n")
@@ -178,7 +189,7 @@ module.exports = class Compiler
         @updateCodeBlockLevel(@parentNode)
 
       # Create current node
-      @node = @node_factory(expression, @node, @parentNode, @currentBlockLevel, @currentCodeBlockLevel)
+      @node = @nodeFactory(expression)
 
       # Save previous indention levels
       @previousBlockLevel = @currentBlockLevel

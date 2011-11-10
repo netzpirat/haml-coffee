@@ -8,23 +8,32 @@ module.exports = class Node
 
   # Constructs a syntax node
   #
-  # @param [Node] the parent node
   # @param [String] expression the Haml expression to evaluate
-  # @param [Number] blockLevel the HTML whitespace block level
-  # @param [Number] codeBlockLevel the CoffeeScript block level
-  # @param [Boolean] escapeHtml whether to escape the rendered HTML or not
+  # @param [Object] options the node options
+  # @option options [Node] parentNode the parent node
+  # @option options [Number] blockLevel the HTML block level
+  # @option options [Number] codeBlockLevel the CoffeeScript block level
+  # @option options [Boolean] escapeHtml whether to escape the rendered HTML or not
   # @option options [String] format the template format, either `xhtml`, `html4` or `html5`
   #
-  constructor: (@parentNode = null, @expression = '', @blockLevel = 0, @codeBlockLevel = 2, @escapeHtml = true, @format = 'html5') ->
+  constructor: (@expression = '', options = {}) ->
+    @parentNode = options.parentNode
     @children = []
+
     @opener = @closer = ''
 
     @silent   = false
     @preserve = false
     @newline  = true
 
-    @cw = w(@codeBlockLevel)
-    @hw = w(@blockLevel)
+    @escapeHtml        = options.escapeHtml
+    @escapeAttributes  = options.escapeAttributes
+    @format            = options.format
+    @codeBlockLevel    = options.codeBlockLevel
+    @blockLevel        = options.blockLevel
+
+    @codeWhitespace    = w(@codeBlockLevel)
+    @htmlWhitespace    = w(@blockLevel)
 
     @evaluate()
 
@@ -67,7 +76,7 @@ module.exports = class Node
   # @return [String] a string of spaces
   #
   getHtmlIndention: ->
-    if @isPreserved() then '' else @hw
+    if @isPreserved() then '' else @htmlWhitespace
 
   # Creates the CoffeeScript code that outputs
   # the given static HTML.
@@ -76,7 +85,7 @@ module.exports = class Node
   # @return [String] the CoffeeScript code
   #
   outputHtml: (html) ->
-    "#{ @cw }o.push \"#{ @getHtmlIndention() }#{ html }\"\n"
+    "#{ @codeWhitespace }o.push \"#{ @getHtmlIndention() }#{ html }\"\n"
 
   # Adds the CoffeeScript code to the template
   # to be run at render time.
@@ -85,7 +94,7 @@ module.exports = class Node
   # @return [String] the CoffeeScript code
   #
   outputCode: (code) ->
-    "#{ @cw }#{ code }\n"
+    "#{ @codeWhitespace }#{ code }\n"
 
   # Creates the CoffeeScript code that runs the
   # given CoffeeScript code at render time and
@@ -97,9 +106,9 @@ module.exports = class Node
   #
   outputCodeHtml: (code, escape = false) ->
     if escape
-      "#{ @cw }o.push e \"#{ @getHtmlIndention() }\#{#{ code }}\"\n"
+      "#{ @codeWhitespace }o.push e \"#{ @getHtmlIndention() }\#{#{ code }}\"\n"
     else
-      "#{ @cw }o.push \"#{ @getHtmlIndention() }\#{#{ code }}\"\n"
+      "#{ @codeWhitespace }o.push \"#{ @getHtmlIndention() }\#{#{ code }}\"\n"
 
   # Template method that must be implemented by each
   # Node subclass. This evaluates the `@expression`

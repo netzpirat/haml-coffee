@@ -32,13 +32,14 @@ $ haml-coffee
 Usage: node ./bin/haml-coffee
 
 Options:
-  -i, --input               Either a file or a directory name to be compiled            [required]
-  -o, --output              Set the output filename
-  -n, --namespace           Set a custom template namespace                             [default: "window.HAML"]
-  -t, --template            Set a custom template name
-  --disable-html-escaping   Disable any HTML output escaping                            [boolean]
-  -e, --custom-html-escape  Set the custom HTML escaping function name
-  -f, --format              Set HTML output format, either `xhtml`, `html4` or `html5`  [default: "html5"]
+  -i, --input                        Either a file or a directory name to be compiled            [required]
+  -o, --output                       Set the output filename
+  -n, --namespace                    Set a custom template namespace                             [default: "window.HAML"]
+  -t, --template                     Set a custom template name
+  -f, --format                       Set HTML output format, either `xhtml`, `html4` or `html5`  [default: "html5"]
+  -e, --custom-html-escape           Set the custom HTML escaping function name
+  --disable-html-attribute-escaping  Disable any HTML attribute escaping                         [boolean]
+  --disable-html-escaping            Disable any HTML escaping                                   [boolean]
 ```
 
 ### `-i`/`--input` option
@@ -129,6 +130,14 @@ window.HAML.htmlEscape ||= (text) ->
   .replace(/\"/g, '&quot;')
 ```
 
+### `--disable-html-attribute-escaping` option
+
+All dynamic generated HTML attributes are escaped by default, but can be turned off with:
+
+```bash
+$ haml-coffee -i template.haml --disable-html-attribute-escaping
+```
+
 ### `--disable-html-escaping` option
 
 Although not recommended, escaping can also be turned off completely:
@@ -157,7 +166,7 @@ Consider the given template:
 that has been successful compiled and registered under `window.HAML.template`. Now you can simply render the template:
 
 ```coffeescript
-html = HAML.template_file_name({
+html = HAML.template({
   title : "foo bar"
   projects : ['haml', 'coffee', 'parser']
 })

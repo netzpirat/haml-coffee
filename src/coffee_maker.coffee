@@ -9,9 +9,10 @@ module.exports = class CoffeeMaker
   #
   # @param [String] filename the Haml coffee file to compile
   # @param [Object] compilerOptions the compiler options
+  # @param [String] namespace the template namespace.
   # @param [String] templateName the name of the output template.
   #
-  @compileFile = (filename, compilerOptions = {}, templateName = null) ->
+  @compileFile = (filename, compilerOptions = {}, namespace = null, templateName = null) ->
     output = ''
 
     try
@@ -27,7 +28,7 @@ module.exports = class CoffeeMaker
       if templateName
         compiler = new Compiler compilerOptions
         compiler.parse source
-        haml = compiler.render templateName
+        haml = compiler.render templateName, namespace
 
       else
         console.log '  \033[91m[haml coffee] no valid Haml extension.\033[0m'

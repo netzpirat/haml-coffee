@@ -22,19 +22,23 @@ argv = require('optimist')
     alias     : 'template'
     describe  : 'Set a custom template name'
   )
-  .options('disable-html-escaping',
-    boolean   : true
-    describe  : 'Disable any HTML output escaping'
+  .options('f',
+    alias     : 'format',
+    default   : 'html5'
+    describe  : 'Set HTML output format, either `xhtml`, `html4` or `html5`'
   )
   .options('e',
     alias: 'custom-html-escape',
     default   : ''
     describe  : 'Set the custom HTML escaping function name'
   )
-  .options('f',
-    alias     : 'format',
-    default   : 'html5'
-    describe  : 'Set HTML output format, either `xhtml`, `html4` or `html5`'
+  .options('disable-html-attribute-escaping',
+    boolean   : true
+    describe  : 'Disable any HTML attribute escaping'
+  )
+  .options('disable-html-escaping',
+    boolean   : true
+    describe  : 'Disable any HTML escaping'
   )
   .argv
 
@@ -52,6 +56,7 @@ exports.run = ->
 
   compilerOptions =
     escapeHtml       : not argv['disable-html-escaping']
+    escapeAttributes : not argv['disable-html-attribute-escaping']
     customHtmlEscape : argv.e
     format           : arv.f
 
@@ -63,7 +68,7 @@ exports.run = ->
         console.log '  \033[90m[Haml Coffee] Compiling file\033[0m %s', inputFilename
 
         outputFilename  = argv.o || "#{ argv.i.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] }.jst"
-        fs.writeFileSync outputFilename, CoffeeMaker.compileFile inputFilename, compilerOptions, templateName
+        fs.writeFileSync outputFilename, CoffeeMaker.compileFile inputFilename, compilerOptions, namespace, templateName
 
         process.exit 0
 
@@ -92,7 +97,7 @@ exports.run = ->
 
               # Combine all files into a single output
               if argv.o
-                compound += CoffeeMaker.compileFile filename, compilerOptions
+                compound += CoffeeMaker.compileFile filename, compilerOptions, namespace
 
               # Compile and write each file on its own
               else
