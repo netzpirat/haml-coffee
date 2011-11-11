@@ -1,5 +1,4 @@
 Node  = require('./node')
-qe    = require('../helper').escape
 
 # HAML node that contains Haml a haml tag that can have attributes
 # and a text or code assignment. There are shortcuts for id and class
@@ -45,7 +44,7 @@ module.exports = class Haml extends Node
 
     # Evaluate Haml doctype
     if tokens.doctype
-      @opener += "#{ @buildDocType(tokens.doctype) }"
+      @opener = @markText "#{ @buildDocType(tokens.doctype) }"
 
     # Evaluate Haml tag
     else
@@ -54,23 +53,25 @@ module.exports = class Haml extends Node
       # Create a Haml node that can contain child nodes
       if @isNotSelfClosing(tokens.tag)
 
-        # A Haml tag that contains an inline text will be closed immediately
-        if tokens.text
-          @opener = "#{ qe(prefix) }>#{ tokens.text }</#{ tokens.tag }>"
+        # Add Haml tag that contains a code assignment will be closed immediately
+        if tokens.assignment
+          code    = if @escapeHtml then "\#{e #{ tokens.assignment }}" else "\#{#{ tokens.assignment }}"
+          @opener = @markText code
+
+        # A Haml tag that contains an inline text
+        else if tokens.text
+          @opener = @markText "#{prefix }>#{ tokens.text }"
+          @closer = @markText "</#{ tokens.tag }>"
 
         # A Haml tag that can get more child nodes
         else
-          @opener = "#{ qe(prefix) }>"
-          @closer = "</#{ tokens.tag}>"
+          @opener = @markText prefix + '>'
+          @closer = @markText "</#{ tokens.tag}>"
 
       # Create a self closing tag that depends on the format `<br>` or `<br/>`
       else
-        htmlTagPrefix = prefix.replace /\/$/, ''
-        @opener = "#{ qe(htmlTagPrefix) }#{ if @format is 'xhtml' then ' /' else '' }>"
-
-      # Add code assignment to the Haml tag
-      if tokens.assignment
-        @opener += if @escapeHtml then "\#{e #{ tokens.assignment }}" else "\#{#{ tokens.assignment }}"
+        prefix  = prefix.replace /\/$/, ''
+        @opener = @markText "#{ prefix }#{ if @format is 'xhtml' then ' /' else '' }>"
 
   # Parses the expression and detect the tag, attributes
   # and any assignment. In addition class and id cleanup

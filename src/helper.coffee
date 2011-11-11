@@ -13,14 +13,6 @@ module.exports =
       a.push ' '
     a.join ''
 
-  # Escape quotation in a text.
-  #
-  # @param [String] text the text containing quotes
-  # @return [String] the escaped text
-  #
-  escape: (text) ->
-    text.replace(/"/g, '\\"')
-
   # HTML Escape a text.
   #
   # @param [String] text the text

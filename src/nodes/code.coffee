@@ -1,5 +1,4 @@
 Node  = require('./node')
-e     = require('../helper').escape
 
 # Code node that represent lines of CoffeeScript code
 # in the Haml template.
@@ -19,34 +18,24 @@ module.exports = class Code extends Node
   #
   evaluate: ->
     codeBlock  = @expression.match(/(-|!=|\&=|=|~)\s?(.*)?/)
-    @identifier = codeBlock[1]
-    @code       = codeBlock[2]
-
-  # Render the node and its children
-  # to CoffeeScript code.
-  #
-  # @return [String] the code
-  #
-  render: ->
-    output = ''
+    identifier = codeBlock[1]
+    code       = codeBlock[2]
 
     # Code block without output
-    if @identifier is '-'
-      output += @outputRunningCode(@code)
+    if identifier is '-'
+      @opener = @markRunningCode(code)
 
     # Code block that preserves whitespace
-    else if @identifier is '~'
-      output += @outputInsertingCode(@findAndPreserve(@code))
+    else if identifier is '~'
+      @opener = @markInsertingCode(@findAndPreserve(code))
 
     # Code block with escaped code block, either `=` in escaped mode or `&=`
-    else if @identifier is '&=' or (@identifier is '=' and @escapeHtml)
-      output += @outputInsertingCode(@code, true)
+    else if identifier is '&=' or (identifier is '=' and @escapeHtml)
+      @opener = @markInsertingCode(code, true)
 
     # Code block with unescaped output, either with `!=` or escaped mode to false
-    else
-      output += @outputInsertingCode(@code)
-
-    output
+    else if identifier is '!=' or (identifier is '=' and not @escapeHtml)
+      @opener = @markInsertingCode(code)
 
   # Find and preserve newlines within the preserve tags
   #

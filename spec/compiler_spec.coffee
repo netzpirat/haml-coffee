@@ -48,15 +48,22 @@ for suite in suites
             compiler.parse haml
             cst = compiler.render 'test'
 
-            report +=  "\n-------------------- Rendered CST template --------------------\n"
+            report +=  "\n-------------------- Marked output nodes ----------------------\n"
+            for line in compiler.lines
+              report += JSON.stringify(line) + '\n'
+
+            report +=  "-------------------- Rendered CST template --------------------\n"
             report +=  cst
 
-            template = CoffeeScript.compile cst
+            try
+              template = CoffeeScript.compile cst
 
-            window = {}
-            eval template
+              window = {}
+              eval template
 
-            html = window.HAML.test(spec.locals)
+              html = window.HAML.test(spec.locals)
+
+            catch error
 
             report +=  "\n-------------------- Rendered HTML ---------------------------\n"
             report +=  html

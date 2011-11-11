@@ -27,22 +27,22 @@ module.exports = class Comment extends Node
       # Silent code block
       when '-#'
         @silent = true
-        @opener = ''
+        @opener = @markText ''
 
       # Conditional comment
       when '\/['
-        @opener = "<!--[#{ comment }>"
-        @closer = '<![endif]-->'
+        @opener = @markText "<!--[#{ comment }>"
+        @closer = @markText '<![endif]-->'
 
       # Normal Haml comment
       when '\/'
 
         # With a inline comment
         if comment
-          @opener = "<!-- #{ comment }"
-          @closer = ' -->'
+          @opener = @markText "<!-- #{ comment }"
+          @closer = @markText ' -->'
 
         # With multi line comment
         else
-          @opener = "<!--"
-          @closer = '-->'
+          @opener = @markText "<!--"
+          @closer = @markText '-->'

@@ -4,6 +4,7 @@ Haml     = require('./nodes/haml')
 Code     = require('./nodes/code')
 Comment  = require('./nodes/comment')
 Filter   = require('./nodes/filter')
+w        = require('./helper').whitespace
 
 # The compiler class parses the source code and creates an syntax tree.
 # In a second step the created tree can be rendered into a CoffeeScript
@@ -56,7 +57,7 @@ module.exports = class Compiler
       node = new Filter(expression, options)
 
     # Detect filter expression node and nested children
-    else if options.parentNode instanceof Filter || expression.match(/^:(escaped|preserve|css|javascript|plain|coffeescript)/)
+    else if options.parentNode instanceof Filter || expression.match(/^:(escaped|preserve|css|javascript|plain)/)
       node = new Filter(expression, options)
 
     # Detect comment node
@@ -239,12 +240,45 @@ module.exports = class Compiler
     output += "  fn = (context) ->\n"
     output += "    o = []\n"
     output += "    e = #{ escapeFn }\n"
-    code    = @root.render()
-    output += code
+    code    = @createCode()
+    output += "#{ code }\n"
     output += "    return o.join(\"\\n\")#{ @cleanupWhitespace(code) }\n"
     output += "  return fn.call(context)"
 
     output
+
+  # Create the CoffeeScript code for the template.
+  #
+  # This gets an array of all lines to be rendered in
+  # the correct sequence.
+  #
+  # @return [String] the CoffeeScript code
+  #
+  createCode: ->
+    code  = []
+
+    @lines = []
+    @lines = @lines.concat(child.render()) for child in @root.children
+
+    for line in @lines
+      switch line.type
+
+        # Insert static HTML tag
+        when 'text'
+          code.push "#{ w(line.cw) }o.push \"#{ w(line.hw) }#{ line.text }\""
+
+        # Insert code that is only evaluated and doesn't generate any output
+        when 'run'
+          code.push "#{ w(line.cw) }#{ line.code }"
+
+        # Insert code that is evaluated and generates an output
+        when 'insert'
+          if line.hw.length is 0
+            code.push "#{ w(line.cw) }o.push #{ if w(line.escape) then 'e ' else '' }#{ line.code }"
+          else
+            code.push "#{ w(line.cw) }o.push #{ if w(line.escape) then 'e' else '' } \"#{ w(line.hw) }\" + #{ line.code }"
+
+    code.join '\n'
 
   # Adds whitespace cleanup function when needed by the
   # template. The cleanup must be done AFTER the template

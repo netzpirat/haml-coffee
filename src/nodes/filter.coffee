@@ -1,5 +1,4 @@
 Node = require('./node')
-e    = require('../helper').escapeHTML
 
 # Filter node for built-in Haml filters:
 #
@@ -10,17 +9,13 @@ e    = require('../helper').escapeHTML
 # * :javascript
 # * :cdata
 #
-# In addition Haml Coffee provides:
-#
-# * :coffeescript
-#
 module.exports = class Filter extends Node
 
   # Evaluate the Haml filters
   #
   evaluate: ->
 
-    # Nested filter content
+    # Every child of a filter will be a filter of the same type
     if @parentNode instanceof Filter
       @filter = @parentNode.filter
       @content = @expression
@@ -32,63 +27,62 @@ module.exports = class Filter extends Node
   # Render the filter
   #
   render: ->
-    output = ''
+    # Just return the content of filter child line
+    return @content  if @parentNode instanceof Filter
 
-    # Nested filter content
-    if @parentNode instanceof Filter
-      output = @content
+    output = []
 
-    # Top level filter expression
-    else
+    switch @filter
+      when 'escaped'
+        output.push @markText(child.render(), true) for child in @children
 
-      switch @filter
-        when 'escaped'
-          for child in @children
-            output += @outputHtml(e(child.render()))
+      when 'preserve'
+        preserve  = ''
+        preserve += "#{ child.render() }&#x000A;" for child in @children
+        preserve  = preserve.replace(/\&\#x000A;$/, '')
 
-        when 'preserve'
-          output += "#{ child.render() }&#x000A;" for child in @children
-          output = output.replace(/\&\#x000A;$/, '')
-          output = @outputHtml(output)
+        output.push @markText(preserve)
 
-        when 'plain'
-          output += child.render() for child in @children
-          output = @outputHtml(output)
+      when 'plain'
+        plain  = ''
+        plain += child.render() for child in @children
 
-        when 'css'
-          output += @outputHtml('<style type=\'text/css\'>')
-          output += @outputHtml('  /*<![CDATA[*/')
+        output.push @markText(plain)
 
-          for child in @children
-            css = child.render()
-            output += @outputHtml("    #{ css }") unless css is '' && child is @children[@children.length - 1]
+      when 'css'
+        output.push @markText('<style type=\'text/css\'>')
+        output.push @markText('  /*<![CDATA[*/')
 
-          output += @outputHtml('  /*]]>*/')
-          output += @outputHtml('</style>')
+        for child in @children
+          css = child.render()
+          output.push @markText("    #{ css }") unless css is '' && child is @children[@children.length - 1]
 
-        when 'javascript'
-          output += @outputHtml('<script type=\'text/javascript\'>')
-          output += @outputHtml('  //<![CDATA[')
+        output.push @markText('  /*]]>*/')
+        output.push @markText('</style>')
 
-          for child in @children
-            js = child.render()
-            output += @outputHtml("    #{ js }") unless js is '' && child is @children[@children.length - 1]
+      when 'javascript'
+        output.push @markText('<script type=\'text/javascript\'>')
+        output.push @markText('  //<![CDATA[')
 
-          output += @outputHtml('  //]]>')
-          output += @outputHtml('</script>')
+        for child in @children
+          js = child.render()
+          output.push @markText("    #{ js }") unless js is '' && child is @children[@children.length - 1]
 
-        when 'cdata'
-          output += @outputHtml('/*<![CDATA[*/')
+        output.push @markText('  //]]>')
+        output.push @markText('</script>')
 
-          for child in @children
-            cdata = child.render()
-            output += @outputHtml("  #{ cdata }") unless cdata is '' && child is @children[@children.length - 1]
+      when 'cdata'
+        output.push @markText('/*<![CDATA[*/')
 
-          output += @outputHtml('/*]]>*/')
+        for child in @children
+          cdata = child.render()
+          output.push @markText("  #{ cdata }") unless cdata is '' && child is @children[@children.length - 1]
 
-        when 'coffeescript'
-          output += child.render() for child in @children
-          output = @opener + '#{' + output + '}' + @closer
+        output.push @markText('/*]]>*/')
+
+      when 'coffeescript'
+        output += child.render() for child in @children
+        output = @opener + '#{' + output + '}' + @closer
 
     output
 

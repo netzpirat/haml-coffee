@@ -1,10 +1,24 @@
-e = require('../helper').escape
-w = require('../helper').whitespace
+e = require('../helper').escapeHTML
 
 # Base class for the syntax tree.
-# A node that is silent will swallow it's children output.
+#
+# This will provide some methods that subclasses must use in order to generate
+# some output:
+#
+# * markText
+# * markRunningCode
+# * markInsertingCode
+#
+# Each node must mark the `@opener` attribute and can optionally mark the `@closer`
+# attribute.
 #
 module.exports = class Node
+
+  # Hidden unicode marker to remove left whitespace after template rendering
+  @CLEAR_WHITESPACE_LEFT  = '\u0091'
+
+# Hidden unicode marker to remove right whitespace after template rendering
+  @CLEAR_WHITESPACE_RIGHT = '\u0092'
 
   # Constructs a syntax node
   #
@@ -18,9 +32,9 @@ module.exports = class Node
   #
   constructor: (@expression = '', options = {}) ->
     @parentNode = options.parentNode
-    @children = []
+    @children   = []
 
-    @opener = @closer = ''
+    @opener = @closer = null
 
     @silent   = false
     @preserve = false
@@ -33,11 +47,9 @@ module.exports = class Node
     @escapeHtml        = options.escapeHtml
     @escapeAttributes  = options.escapeAttributes
     @format            = options.format
+
     @codeBlockLevel    = options.codeBlockLevel
     @blockLevel        = options.blockLevel
-
-    @codeWhitespace    = w(@codeBlockLevel)
-    @htmlWhitespace    = w(@blockLevel)
 
     @evaluate()
 
@@ -60,7 +72,10 @@ module.exports = class Node
   # @return [String] the opening tag
   #
   getOpener: ->
-    (if @wsRemoval.around then '\u0091' else '') + @opener + (if @wsRemoval.inside then '\u0092' else '')
+    @opener.text = Node.CLEAR_WHITESPACE_LEFT + @opener.text if @wsRemoval.around and @opener.text
+    @opener.text += Node.CLEAR_WHITESPACE_RIGHT if @wsRemoval.inside and @opener.text
+
+    @opener
 
   # Get the closing tag for the node.
   #
@@ -73,7 +88,10 @@ module.exports = class Node
   # @return [String] the closing tag
   #
   getCloser: ->
-    (if @wsRemoval.inside then '\u0091' else '') + @closer + (if @wsRemoval.around then '\u0092' else '')
+    @closer.text = Node.CLEAR_WHITESPACE_LEFT + @closer.text if @wsRemoval.inside and @closer.text
+    @closer.text += Node.CLEAR_WHITESPACE_RIGHT if @wsRemoval.around and @closer.text
+
+    @closer
 
   # Traverse up the tree to see if a parent node
   # is preserving output space.
@@ -91,108 +109,125 @@ module.exports = class Node
   # Get the indention for the HTML code. If the node
   # is preserved, then there is no indention.
   #
-  # @return [String] a string of spaces
+  # @return [Number] the number of spaces
   #
   getHtmlIndention: ->
-    if @isPreserved() then '' else @htmlWhitespace
+    if @isPreserved() then 0 else @blockLevel
 
-  # Creates the CoffeeScript code that outputs
-  # the given static HTML.
+  # Creates a marker for static outputted text.
   #
   # @param [String] html the html to output
-  # @return [String] the CoffeeScript code
+  # @param [Boolean] escape whether to escape the generated output
+  # @return [Object] the marker
   #
-  outputHtml: (html) ->
-    "#{ @codeWhitespace }o.push \"#{ @getHtmlIndention() }#{ html }\"\n"
+  markText: (text, escape = false) ->
+    {
+      type    : 'text'
+      cw      : @codeBlockLevel
+      hw      : @getHtmlIndention()
+      text    : if escape then e(text) else text
+    }
 
-  # Adds the CoffeeScript code to the template
-  # to be run at render time without producing
-  # any output.
+  # Creates a marker for running CoffeeScript
+  # code that doesn't generate any output.
   #
   # @param [String] code the CoffeeScript code
-  # @return [String] the CoffeeScript code
+  # @return [Object] the marker
   #
-  outputRunningCode: (code) ->
-    "#{ @codeWhitespace }#{ code }\n"
+  markRunningCode: (code) ->
+    {
+      type : 'run'
+      cw   : @codeBlockLevel
+      code : code
+    }
 
-  # Creates the CoffeeScript code that runs the
-  # given CoffeeScript code at render time and
-  # output it as HTML.
+  # Creates a marker for inserting CoffeeScript
+  # code that generate an output.
   #
-  # @param [String] code the code to run and capture output
+  # @param [String] code the CoffeeScript code
   # @param [Boolean] escape whether to escape the generated output
-  # @return [String] the CoffeeScript code
+  # @return [Object] the marker
   #
-  outputInsertingCode: (code, escape = false) ->
-    htmlIndention = @getHtmlIndention()
-
-    if htmlIndention.length is 0
-      "#{ @codeWhitespace }o.push #{ if escape then 'e ' else '' }#{ code }\n"
-    else
-      "#{ @codeWhitespace }o.push #{ if escape then 'e' else '' } \"#{ @getHtmlIndention() }\" + #{ code }\n"
+  markInsertingCode: (code, escape = false) ->
+    {
+      type    : 'insert'
+      cw      : @codeBlockLevel
+      hw      : @getHtmlIndention()
+      escape  : escape
+      code    : code
+    }
 
   # Template method that must be implemented by each
   # Node subclass. This evaluates the `@expression`
-  # and save the generated HTML tags as `@opener` and
-  # `@closer` if applicable.
+  # and save marks the output type on the `@opener` and
+  # `@closer` attributes if applicable.
   #
   # @abstract
   #
   evaluate: ->
 
-  # Render the node and its children to CoffeeScript code.
-  # This base implementation handles normal and self closing tags
-  # and does no output escaping. Override this in the specific node
-  # implementation if you need special rendering behaviour.
+  # Render the node and its children.
   #
-  # @return [String] the code
+  # Always use `@opener` and `@closer` for content checks,
+  # but `@getOpener()` and `@getCloser()` for outputting,
+  # because they may contain whitespace removal control
+  # characters.
+  #
+  # @return [Array] all markers
   #
   render: ->
-    output = ''
+    output = []
+
+    # Swallow child output when silent
+    return output if @silent
 
     # Nodes without children
     if @children.length is 0
 
       # Non self closing tag
-      if @getOpener().length > 0 && @getCloser().length > 0
-        output = @outputHtml(@getOpener() + @getCloser())
+      if @opener and @closer
+
+        # Merge tag into a single line
+        tag       = @getOpener()
+        tag.text += @getCloser().text
+
+        output.push tag
 
       # Self closing tag
-      else if @getOpener().length > 0
+      else
 
         # Whitespace preserved child tag are outputted by the preserving tag
         if not @preserve && @isPreserved()
-          output = @getOpener()
+          output.push @getOpener()
 
         # Normal self closing tag
         else
-          output = @outputHtml(@getOpener())
+          output.push @getOpener()
 
     # Nodes with children
     else
 
       # Non self closing Haml tag
-      if @getOpener().length > 0 && @getCloser().length > 0
+      if @opener and @closer
 
-        # Whitespace preserving tag
+        # Whitespace preserving tag combines children into a single line
         if @preserve
-          output = @getOpener()
-          output += "#{ child.render() }\\n" for child in @children
-          output = output.replace(/\\n$/, '')
-          output += @getCloser()
-          output = @outputHtml(output)
+          preserve  = @getOpener().text
+          preserve += "#{ child.render()[0].text }\\n" for child in @children
+          preserve  = preserve.replace(/\\n$/, '')
+          preserve += @getCloser().text
+
+          output.push @markText(preserve)
 
         # Non preserving tag
         else
-          output = @outputHtml(@getOpener())
-          output += child.render() for child in @children
-          output += @outputHtml(@getCloser())
+          output.push @getOpener()
+          output = output.concat(child.render()) for child in @children
+          output.push @getCloser()
 
-      # Text and code node or Haml nodes without content (e.g. the root node)
-      # A code node is set to `silent` when it contains a silent comment.
+
+      # Text and code node or Haml nodes without content
       else
-        unless @silent
-          for child in @children
-            output += child.render()
+        output.push @markText(child.render().text) for child in @children
 
     output

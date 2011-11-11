@@ -187,20 +187,16 @@ The spec covers:
 * Attributes: `{}` or `()`
 * Class and ID: `.` and `#`, implicit `div` elements
 * Self-closing tags: `/`
-* Whitespace removal: `>` and `<`
 * Doctype: `!!!`
 * HTML comments: `/`, conditional comments: `/[]`, Haml comments: `-#`
-* CoffeeScript (instead of Ruby) evaluation: running CoffeeScript: `-`
+* Running CoffeeScript: `-`, inserting CoffeeScript: `=`
+* CoffeeScript interpolation: `#{}`
 * Whitespace preservation: `~`
-* CoffeeScript (instead of Ruby) interpolation: `#{}`
+* Whitespace removal: `>` and `<`
+* Escaping `\`
 * Escaping HTML: `&=`, unescaping HTML: `!=`
 * Filters: `:plain`, `:javascript`, `:css`, `:cdata`, `:escaped`, `:preserve`
-* Boolean attributes
-
-In addition the following features are implemented:
-
-* `:coffeescript` filter
-* Escaping `\`
+* Boolean attributes conversion
 
 Please consult the official [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more
 details.

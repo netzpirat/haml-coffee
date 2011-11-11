@@ -8,4 +8,4 @@ module.exports = class Text extends Node
 
   # Evaluate the text node
   #
-  evaluate: -> @opener = @expression
+  evaluate: -> @opener = @markText(@expression)
