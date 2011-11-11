@@ -37,15 +37,17 @@ for suite in suites
             report += "---------------------------------------------------------------\n"
             report += "Compiler settings: { escape_html: #{ escaping }, format: #{ format } }\n"
             report += "-------------------- Haml template ----------------------------\n"
+
+            if spec.haml_template
+              spec.haml = fs.readFileSync("spec/suites/templates/#{ spec.haml_template }.haml").toString()
+
             report += spec.haml
 
             if spec.locals
               report +=  "\n-------------------- Local variables --------------------------\n"
               report +=  JSON.stringify(spec.locals)
 
-            haml = spec.haml || fs.readFileSync(spec.haml_template)
-
-            compiler.parse haml
+            compiler.parse spec.haml
             cst = compiler.render 'test'
 
             report +=  "\n-------------------- Marked output nodes ----------------------\n"
@@ -68,7 +70,7 @@ for suite in suites
             report +=  "\n-------------------- Rendered HTML ---------------------------\n"
             report +=  html
 
-            spec.html = fs.readFileSync(spec.html_template) if spec.html_template
+            spec.html = fs.readFileSync("spec/suites/templates/#{ spec.html_template }.html").toString() if spec.html_template
             result = spec.html
 
             report +=  "\n-------------------- Expected result--------------------------\n"
