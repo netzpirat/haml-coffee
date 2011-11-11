@@ -51,8 +51,6 @@ module.exports = class Node
     @codeBlockLevel    = options.codeBlockLevel
     @blockLevel        = options.blockLevel
 
-    @evaluate()
-
   # Add a child node.
   #
   # @param [Node] child the child node
@@ -225,6 +223,10 @@ module.exports = class Node
           output = output.concat(child.render()) for child in @children
           output.push @getCloser()
 
+      # Block with only an opener
+      else if @opener
+        output.push @getOpener()
+        output = output.concat(child.render()) for child in @children
 
       # Text and code node or Haml nodes without content
       else

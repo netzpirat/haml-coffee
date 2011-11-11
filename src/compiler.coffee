@@ -201,6 +201,16 @@ module.exports = class Compiler
 
       @line_number++
 
+    @evaluate(@root)
+
+  # Evaluate the parsed tree
+  #
+  # @param [Node] node the node to evaluate
+  #
+  evaluate: (node) ->
+    @evaluate(child) for child in node.children
+    node.evaluate()
+
   # Render the parsed source code as CoffeeScript template.
   #
   # @param [String] templateName the name to register the template
