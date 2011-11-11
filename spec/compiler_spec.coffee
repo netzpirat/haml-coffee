@@ -12,9 +12,9 @@ suites = [
 
 beforeEach ->
   @addMatchers
-    toBeCompiledTo: (expect) ->
+    toBeCompiledTo: (expected) ->
       @message = -> @actual.report
-      @actual.generated is expect
+      @actual.generated is expected
 
 for suite in suites
   data = JSON.parse fs.readFileSync("spec/suites/#{ suite }_spec.json")
