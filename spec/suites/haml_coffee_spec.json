@@ -26,6 +26,46 @@
         "title" : "MyPage"
       }
     }
-  }
+  },
 
+  "template tests" : {
+
+    "a blank file" : {
+        "haml_template" : "text/blank",
+        "html_template" : "text/blank"
+    },
+
+    "escaping off" : {
+        "haml_template" : "text/escaping",
+        "html_template" : "text/escaping_off",
+        "config" : {
+          "escape_html" : "false"
+        },
+        "locals" : {
+          "title" : "html <em>escaping</em> test"
+        }
+    },
+
+    "escaping on" : {
+        "haml_template" : "text/escaping",
+        "html_template" : "text/escaping_on",
+        "config" : {
+          "escape_html" : "true"
+        },
+        "locals" : {
+          "title" : "html <em>escaping</em> test"
+        }
+    },
+
+    "long plain text" : {
+        "haml_template" : "text/long",
+        "html_template" : "text/long"
+    },
+
+    "Haml online example" : {
+        "haml_template" : "text/haml_online_example",
+        "html_template" : "text/haml_online_example"
+    }
+
+  }
 }

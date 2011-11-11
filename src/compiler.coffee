@@ -178,7 +178,7 @@ module.exports = class Compiler
       expression = result[2]
 
       # Look ahead for more attributes
-      while lines[0]?.match /([^:|\s|=]+\s*=>\s*(("[^"]+")|('[^']+')|[^\s,\}]+))|([\w]+=(("[^"]+")|('[^']+')|[^\s\)]+))/g
+      while expression.match(/^%/) and lines[0]?.match /([^:|\s|=]+\s*=>\s*(("[^"]+")|('[^']+')|[^\s,\}]+))|([\w]+=(("[^"]+")|('[^']+')|[^\s\)]+))/g
         attributes = lines.shift()
         expression += ' ' + attributes.match(/^(\s*)(.*)/)[2]
         @line_number++
@@ -264,22 +264,23 @@ module.exports = class Compiler
     @lines = @lines.concat(child.render()) for child in @root.children
 
     for line in @lines
-      switch line.type
+      unless line is null
+        switch line.type
 
-        # Insert static HTML tag
-        when 'text'
-          code.push "#{ w(line.cw) }o.push \"#{ w(line.hw) }#{ line.text }\""
+          # Insert static HTML tag
+          when 'text'
+            code.push "#{ w(line.cw) }o.push \"#{ w(line.hw) }#{ line.text }\""
 
-        # Insert code that is only evaluated and doesn't generate any output
-        when 'run'
-          code.push "#{ w(line.cw) }#{ line.code }"
+          # Insert code that is only evaluated and doesn't generate any output
+          when 'run'
+            code.push "#{ w(line.cw) }#{ line.code }"
 
-        # Insert code that is evaluated and generates an output
-        when 'insert'
-          if line.hw is 0
-            code.push "#{ w(line.cw) }o.push #{ if w(line.escape) then 'e ' else '' }#{ line.code }"
-          else
-            code.push "#{ w(line.cw) }o.push #{ if w(line.escape) then 'e' else '' } \"#{ w(line.hw) }\" + #{ line.code }"
+          # Insert code that is evaluated and generates an output
+          when 'insert'
+            if line.hw is 0
+              code.push "#{ w(line.cw) }o.push #{ if w(line.escape) then 'e ' else '' }#{ line.code }"
+            else
+              code.push "#{ w(line.cw) }o.push #{ if w(line.escape) then 'e' else '' } \"#{ w(line.hw) }\" + #{ line.code }"
 
     code.join '\n'
 

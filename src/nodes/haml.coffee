@@ -302,17 +302,16 @@ module.exports = class Haml extends Node
   buildDocType: (doctype) ->
     switch "#{ @format } #{ doctype }"
       when 'xhtml !!! XML' then '<?xml version=\'1.0\' encoding=\'utf-8\' ?>'
-      when 'xhtml !!!' then '<!DOCTYPE html PUBLIC \\"-//W3C//DTD XHTML 1.0 Transitional//EN\\" \\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\\">'
-      when 'xhtml !!! 1.1' then '<!DOCTYPE html PUBLIC \\"-//W3C//DTD XHTML 1.1//EN\\" \\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\\">'
-      when 'xhtml !!! mobile' then '<!DOCTYPE html PUBLIC \\"-//WAPFORUM//DTD XHTML Mobile 1.2//EN\\" \\"http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd\\">'
-      when 'xhtml !!! basic' then '<!DOCTYPE html PUBLIC \\"-//W3C//DTD XHTML Basic 1.1//EN\\" \\"http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd\\">'
-      when 'xhtml !!! frameset' then '<!DOCTYPE html PUBLIC \\"-//W3C//DTD XHTML 1.0 Frameset//EN\\" \\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\\">'
+      when 'xhtml !!!' then '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
+      when 'xhtml !!! 1.1' then '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
+      when 'xhtml !!! mobile' then '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">'
+      when 'xhtml !!! basic' then '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">'
+      when 'xhtml !!! frameset' then '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">'
       when 'xhtml !!! 5', 'html5 !!!' then '<!DOCTYPE html>'
       when 'html5 !!! XML', 'html4 !!! XML' then ''
-      when 'html4 !!!' then '<!DOCTYPE html PUBLIC \\"-//W3C//DTD HTML 4.01 Transitional//EN\\" \\"http://www.w3.org/TR/html4/loose.dtd\\">'
-      when 'html4 !!! frameset' then '<!DOCTYPE html PUBLIC \\"-//W3C//DTD HTML 4.01 Frameset//EN\\" \\"http://www.w3.org/TR/html4/frameset.dtd\\">'
-      when 'html4 !!! strict' then '<!DOCTYPE html PUBLIC \\"-//W3C//DTD HTML 4.01//EN\\" \\"http://www.w3.org/TR/html4/strict.dtd\\">'
-
+      when 'html4 !!!' then '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'
+      when 'html4 !!! frameset' then '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">'
+      when 'html4 !!! strict' then '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">'
 
   # Test if the given tag is a non-self enclosing tag, by
   # matching against a fixed tag list or parse for the self

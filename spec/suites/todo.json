@@ -15,36 +15,5 @@
       "html_template" : "coffee/filter"
     }
 
-  },
-
-  "template tests" : {
-
-    "escaping off" : {
-        "haml_template" : "text/escaping",
-        "html_template" : "text/escaping_off",
-        "config" : {
-          "escape_html" : "false"
-        },
-        "local" : {
-          "title" : "html <em>escaping</em> test"
-        }
-    },
-
-    "escaping on" : {
-        "haml_template" : "text/escaping",
-        "html_template" : "text/escaping_on",
-        "config" : {
-          "escape_html" : "true"
-        },
-        "local" : {
-          "title" : "html <em>escaping</em> test"
-        }
-    },
-
-    "long plain text" : {
-        "haml_template" : "text/long",
-        "html_template" : "text/long"
-    }
-
   }
 }

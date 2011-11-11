@@ -25,18 +25,17 @@ for suite in suites
         describe group, ->
           it "handles #{ desc }", ->
 
-            escaping = spec.config?.escape_html || false
-            format   = spec.config?.format || 'xhtml'
+            config = {
+              escapeHtml : if spec.config?.escape_html is 'true' then true else false
+              format     : spec.config?.format || 'xhtml'
+            }
 
-            compiler = new Compiler({
-              escapeHtml : escaping
-              format     : format
-            })
+            compiler = new Compiler(config)
 
             report = "Generated output doesn't match the expected result.\n\n"
-            report += "---------------------------------------------------------------\n"
-            report += "Compiler settings: { escape_html: #{ escaping }, format: #{ format } }\n"
-            report += "-------------------- Haml template ----------------------------\n"
+            report += "-------------------- Compiler settings ------------------------\n"
+            report += JSON.stringify(config)
+            report += "\n-------------------- Haml template ----------------------------\n"
 
             if spec.haml_template
               spec.haml = fs.readFileSync("spec/suites/templates/#{ spec.haml_template }.haml").toString()
@@ -44,7 +43,7 @@ for suite in suites
             report += spec.haml
 
             if spec.locals
-              report +=  "\n-------------------- Local variables --------------------------\n"
+              report +=  "-------------------- Local variables --------------------------\n"
               report +=  JSON.stringify(spec.locals)
 
             compiler.parse spec.haml

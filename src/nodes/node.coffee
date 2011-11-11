@@ -125,7 +125,7 @@ module.exports = class Node
       type    : 'text'
       cw      : @codeBlockLevel
       hw      : @getHtmlIndention()
-      text    : if escape then e(text) else text
+      text    : if escape then e(text) else text?.replace(/"/g, '\\\"')
     }
 
   # Creates a marker for running CoffeeScript
