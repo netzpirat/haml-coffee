@@ -1,33 +1,4 @@
 {
-  "boolean attributes" : {
-
-    "boolean attribute with XHTML" : {
-      "haml" : "%input(checked=false)",
-      "html" : "<input />",
-      "config" : {
-        "format" : "xhtml"
-      }
-    },
-
-    "boolean attribute with HTML" : {
-      "haml" : "%input(checked=false)",
-      "html" : "<input>",
-      "config" : {
-        "format" : "html5"
-      }
-    }
-  },
-
-  "escaping" : {
-    "plain text escaping" : {
-      "haml" : "%title\n  = @title\n  \\= @title",
-      "html" : "<title>\n  MyPage\n  = @title\n</title>",
-      "locals" : {
-        "title" : "MyPage"
-      }
-    }
-  },
-
   "coffeescript" : {
     "inline function that generates Haml" : {
       "haml" : "- foo = (x) ->\n  #bar= x*10\n= foo(10)",

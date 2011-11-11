@@ -1,9 +1,5 @@
 guard :coffeescript, :input => 'src', :output => 'lib'
 
-guard :process, :name => 'NPM', :command => 'npm install' do
-  watch %r{package.json}
-end
-
-guard :process, :name => 'Expresso', :command => 'expresso' do
-  watch %r{(lib|test).*}
+guard 'process', :name => 'Jasmine specs', :command => 'jasmine-node --coffee --color spec/compiler_spec.coffee' do
+  watch(%r{src|spec})
 end
