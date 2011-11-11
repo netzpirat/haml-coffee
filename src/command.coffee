@@ -48,7 +48,7 @@ argv = require('optimist')
 #
 exports.run = ->
 
-  throw "Unknown template format '#{ arv.f }'" unless ['xhtml', 'html4', 'html5'].indexOf(arv.f) is -1
+  throw "Unknown template format '#{ argv.f }'" if ['xhtml', 'html4', 'html5'].indexOf(argv.f) is -1
 
   inputFilename   = argv.i
   templateName    = argv.t
@@ -58,7 +58,7 @@ exports.run = ->
     escapeHtml       : not argv['disable-html-escaping']
     escapeAttributes : not argv['disable-html-attribute-escaping']
     customHtmlEscape : argv.e
-    format           : arv.f
+    format           : argv.f
 
   fs.stat inputFilename, (err, stat) ->
     unless err
@@ -68,7 +68,7 @@ exports.run = ->
         console.log '  \033[90m[Haml Coffee] Compiling file\033[0m %s', inputFilename
 
         outputFilename  = argv.o || "#{ argv.i.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] }.jst"
-        fs.writeFileSync outputFilename, CoffeeMaker.compileFile inputFilename, compilerOptions, namespace, templateName
+        fs.writeFileSync outputFilename, CoffeeMaker.compileFile(inputFilename, compilerOptions, namespace, templateName)
 
         process.exit 0
 
@@ -97,12 +97,12 @@ exports.run = ->
 
               # Combine all files into a single output
               if argv.o
-                compound += CoffeeMaker.compileFile filename, compilerOptions, namespace
+                compound += CoffeeMaker.compileFile(filename, compilerOptions, namespace)
 
               # Compile and write each file on its own
               else
                 outputFilename  = "#{ filename.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] }.jst"
-                fs.writeFileSync outputFilename,  CoffeeMaker.compileFile filename, compilerOptions
+                fs.writeFileSync outputFilename,  CoffeeMaker.compileFile(filename, compilerOptions)
 
             # Write concatenated output
             if argv.o
@@ -112,5 +112,5 @@ exports.run = ->
             process.exit 0
 
     else
-      console.log '  \033[91m[Haml Coffee] Error compiling file\033[0m %s', process.argv[2]
+      console.log '  \033[91m[Haml Coffee] Error compiling file\033[0m %s: %s', argv.i, err
       process.exit 1
