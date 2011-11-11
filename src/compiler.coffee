@@ -169,6 +169,9 @@ module.exports = class Compiler
     # Parse source line by line
     while (line = lines.shift()) isnt undefined
 
+      # Skip empty lines, expect within a filter
+      continue if line is '' and not @node instanceof Filter
+
       # Get whitespace and Haml expressions
       result = line.match /^(\s*)(.*)/
       whitespace = result[1]
