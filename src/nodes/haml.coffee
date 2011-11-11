@@ -1,4 +1,5 @@
 Node  = require('./node')
+eq    = require('../helper').escapeQuotes
 
 # HAML node that contains Haml a haml tag that can have attributes
 # and a text or code assignment. There are shortcuts for id and class
@@ -44,14 +45,14 @@ module.exports = class Haml extends Node
 
     # Evaluate Haml doctype
     if tokens.doctype
-      @opener = @markText "#{ @buildDocType(tokens.doctype) }"
+      @opener = @markText "#{ eq(@buildDocType(tokens.doctype)) }"
 
     # Evaluate Haml tag
     else
-      prefix = @buildHtmlTagPrefix(tokens)
-
       # Create a Haml node that can contain child nodes
       if @isNotSelfClosing(tokens.tag)
+
+        prefix = eq(@buildHtmlTagPrefix(tokens))
 
         # Add Haml tag that contains a code assignment will be closed immediately
         if tokens.assignment
@@ -71,8 +72,9 @@ module.exports = class Haml extends Node
 
       # Create a self closing tag that depends on the format `<br>` or `<br/>`
       else
-        prefix  = prefix.replace /\/$/, ''
-        @opener = @markText "#{ prefix }#{ if @format is 'xhtml' then ' /' else '' }>"
+        tokens.tag = tokens.tag.replace /\/$/, ''
+        prefix     = eq(@buildHtmlTagPrefix(tokens))
+        @opener    = @markText "#{ prefix }#{ if @format is 'xhtml' then ' /' else '' }>"
 
   # Parses the expression and detect the tag, attributes
   # and any assignment. In addition class and id cleanup
@@ -141,7 +143,7 @@ module.exports = class Haml extends Node
       return { doctype: doctype } if doctype
 
       # Separate Haml tags and inline text
-      tokens     = exp.match /^((?:[#%\.][a-z0-9_:\-]*[\/]?)+)(?:[\(\{].*[\)\}])?([\<\>])?(.*)?$/i
+      tokens     = exp.match /^((?:[#%\.][a-z0-9_:\-]*[\/]?)+)(?:[\(\{].*[\)\}])?([\<\>]{0,2})(.*)?$/i
       haml       = tokens[1]
       text       = tokens[3].replace(/^ /, '') if tokens[3] && !tokens[3].match(/^=/)
 
@@ -209,16 +211,16 @@ module.exports = class Haml extends Node
   #
   parseAttributes: (exp) ->
     pairs = []
-    attributes = exp.match /([^:|\s|=]+\s*=>\s*(("[^"]+")|('[^']+')|[^\s,\}]+))|([\w]+=(("[^"]+")|('[^']+')|[^\s\)]+))/g
+    attributes = exp.match /([^:|\s|=]+\s*=>\s*(("[^"]+")|('[^']+')|[^\s,\}]+))|([\w:]+=(("[^"]+")|('[^']+')|[^\s\)]+))/g
     return [pairs, false] unless attributes
 
     for attribute in attributes
       pair  = attribute.split /\=>|\=/
-      key   = pair[0].trim()
+      key   = pair[0].trim().replace /^:/, ''
       value = pair[1].trim()
 
-      # Ignore attributes that are `false`
-      if value isnt 'false'
+      # Ignore attributes some attribute values
+      if ['false', 'undefined', '0', ''].indexOf(value) is -1
 
         # Set key to value if the value is boolean true
         if value is 'true'

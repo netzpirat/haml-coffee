@@ -36,7 +36,10 @@ module.exports = class Node
 
     @opener = @closer = null
 
+    # A silent node swallows all output
     @silent   = false
+
+    # Preserve whitespace on all children
     @preserve = false
 
     @wsRemoval = {
@@ -123,7 +126,7 @@ module.exports = class Node
       type    : 'text'
       cw      : @codeBlockLevel
       hw      : @getHtmlIndention()
-      text    : if escape then e(text) else text?.replace(/"/g, '\\\"')
+      text    : if escape then e(text) else text
     }
 
   # Creates a marker for running CoffeeScript
