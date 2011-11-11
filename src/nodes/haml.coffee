@@ -56,7 +56,8 @@ module.exports = class Haml extends Node
         # Add Haml tag that contains a code assignment will be closed immediately
         if tokens.assignment
           code    = if @escapeHtml then "\#{e #{ tokens.assignment }}" else "\#{#{ tokens.assignment }}"
-          @opener = @markText code
+          @opener = @markText "#{prefix }>#{ code }"
+          @closer = @markText "</#{ tokens.tag }>"
 
         # A Haml tag that contains an inline text
         else if tokens.text
