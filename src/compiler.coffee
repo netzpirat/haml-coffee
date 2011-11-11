@@ -170,7 +170,7 @@ module.exports = class Compiler
     while (line = lines.shift()) isnt undefined
 
       # Skip empty lines, expect within a filter
-      continue if line is '' and not @node instanceof Filter
+      continue if line is '' and not(@node instanceof Filter)
 
       # Get whitespace and Haml expressions
       result = line.match /^(\s*)(.*)/
@@ -276,7 +276,7 @@ module.exports = class Compiler
 
         # Insert code that is evaluated and generates an output
         when 'insert'
-          if line.hw.length is 0
+          if line.hw is 0
             code.push "#{ w(line.cw) }o.push #{ if w(line.escape) then 'e ' else '' }#{ line.code }"
           else
             code.push "#{ w(line.cw) }o.push #{ if w(line.escape) then 'e' else '' } \"#{ w(line.hw) }\" + #{ line.code }"
