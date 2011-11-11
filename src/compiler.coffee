@@ -118,11 +118,11 @@ module.exports = class Compiler
 
     # Validate current indention
     if @currentBlockLevel - Math.floor(@currentBlockLevel) > 0
-      throw("Indentation error in line #{ @line_number }")
+      throw("Indentation error in line #{ @line_number }") if not (@node instanceof Filter)
 
     # Validate block level
     if (@currentIndent - @previousIndent) / @tabSize > 1
-      throw("Block level too deep in line #{ @line_number }")
+      throw("Block level too deep in line #{ @line_number }") if not (@node instanceof Filter)
 
     # Set the indention delta
     @delta = @previousBlockLevel - @currentBlockLevel
@@ -178,7 +178,7 @@ module.exports = class Compiler
       expression = result[2]
 
       # Look ahead for more attributes
-      while expression.match(/^%/) and lines[0]?.match /([^:|\s|=]+\s*=>\s*(("[^"]+")|('[^']+')|[^\s,\}]+))|([\w]+=(("[^"]+")|('[^']+')|[^\s\)]+))/g
+      while expression.match(/^%/) and not lines[0]?.match(/^(\s*)%/) and lines[0]?.match /([^:|\s|=]+\s*=>\s*(("[^"]+")|('[^']+')|[^\s,\}]+))|([\w]+=(("[^"]+")|('[^']+')|[^\s\)]+))/g
         attributes = lines.shift()
         expression += ' ' + attributes.match(/^(\s*)(.*)/)[2]
         @line_number++
