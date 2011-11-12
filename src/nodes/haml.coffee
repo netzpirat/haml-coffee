@@ -195,8 +195,9 @@ module.exports = class Haml extends Node
     if hasAttributes
       assignment = exp.match /[\}\)]=\s*(\S+)$/
     else
-      assignment = exp.match /\=\s*(\S+)$/
+      assignment = exp.match /\=\s*(\S+.*)$/
 
+    console.log exp, assignment?[1]
     if assignment then assignment[1] else undefined
 
   # Parse attributes either in Ruby style `%tag{ :attr => 'value' }`
