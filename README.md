@@ -1,4 +1,4 @@
-# Haml CoffeeScript Templates
+# Haml CoffeeScript Templates [![Build Status](https://secure.travis-ci.org/9elements/haml-coffee)](http://travis-ci.org/9elements/haml-coffee)
 
 **This is a work in progress fork and a pull request will be made when stable.**
 
