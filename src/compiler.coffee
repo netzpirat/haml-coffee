@@ -322,7 +322,7 @@ module.exports = class Compiler
             if line.hw is 0
               code.push "#{ w(line.cw) }o.push #{ if w(line.escape) then 'e ' else '' }#{ line.code }"
             else
-              code.push "#{ w(line.cw) }o.push #{ if w(line.escape) then 'e' else '' } \"#{ w(line.hw) }\" + #{ line.code }"
+              code.push "#{ w(line.cw) }o.push #{ if w(line.escape) then 'e' else '' } \"#{ w(line.hw - line.cw + 2) }\" + #{ line.code }"
 
     code.join '\n'
 
