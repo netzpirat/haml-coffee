@@ -289,11 +289,25 @@ module.exports = class Haml extends Node
     if tokens.pairs.length > 0
       for pair in tokens.pairs
         if pair.key isnt pair.value || @format isnt 'html5'
-          tagParts.push "#{ pair.key }='#{ pair.value }'"
+          tagParts.push "#{ pair.key }=#{ @quoteAttributeValue(pair.value) }"
         else
           tagParts.push "#{ pair.key }"
 
     tagParts.join(' ')
+
+  # Quote the attribute value, depending on its
+  # content.
+  #
+  # @param [String] value the without start and end quote
+  # @return [String] the quoted value
+  #
+  quoteAttributeValue: (value) ->
+    if value.indexOf("'") is -1
+      quoted = "'#{ value }'"
+    else
+      quoted = "\"#{ value }\""
+
+    quoted
 
   # Build the DocType string depending on the `!!!` token
   # and the currently used HTML format.
