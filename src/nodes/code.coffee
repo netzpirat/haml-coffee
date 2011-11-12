@@ -12,8 +12,14 @@ module.exports = class Code extends Node
       if identifier == '-'
         "#{@cw}#{code}"
       else if identifier == '!=' or not @escape_html
-        "#{@cw}o.push \"#{@hw}\#{#{code}}\""
+        "#{@cw}val = \"#{@hw}\#{#{code}}\"\n#{@cw}o.push val"
+        #"#{@cw}o.push \"#{@hw}\#{#{code}}\""
       else
-        "#{@cw}o.push e \"#{@hw}\#{#{code}}\""
+        "#{@cw}val = \"#{@hw}\#{#{code}}\"\n#{@cw}o.push e val"
+        #"#{@cw}o.push e \"#{@hw}\#{#{code}}\""
     if identifier == '-' and @children.length > 0
-      @closer = "#{@cw}  ''"
+      if @expression.match(/->$/)
+        @opener = "#{@opener}\n#{@cw}  o0 = (k for k in o)\n#{@cw}  o = []"
+        @closer = "#{@cw}  ret = o.join(\"\\n\")\n#{@cw}  o = (k for k in o0)\n#{@cw}  ret\n"
+      else
+        @closer = "#{@cw}  ''"

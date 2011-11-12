@@ -65,7 +65,8 @@ module.exports =
   'Test code with html escaping': ->
     code = new Code('= "abc"', 0, 0, true)
 
-    code.getOpener().should.eql('o.push e "#{"abc"}"')
+    #code.getOpener().should.eql('o.push e "#{"abc"}"')
+    code.getOpener().should.eql('val = "#{"abc"}"\no.push e val')
     code.getCloser().should.eql('')
 
     return
@@ -73,7 +74,8 @@ module.exports =
   'Test code without html escaping': ->
     code = new Code('= "abc"', 0, 0, false)
 
-    code.getOpener().should.eql('o.push "#{"abc"}"')
+    #code.getOpener().should.eql('o.push "#{"abc"}"')
+    code.getOpener().should.eql('val = "#{"abc"}"\no.push val')
     code.getCloser().should.eql('')
 
     return
@@ -81,7 +83,8 @@ module.exports =
   'Test code with unescaping': ->
     code = new Code('!= "abc"', 0, 0, true)
 
-    code.getOpener().should.eql('o.push "#{"abc"}"')
+    #code.getOpener().should.eql('o.push "#{"abc"}"')
+    code.getOpener().should.eql('val = "#{"abc"}"\no.push val')
     code.getCloser().should.eql('')
 
     return
