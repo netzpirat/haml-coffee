@@ -1,4 +1,5 @@
 e = require('../helper').escapeHTML
+w = require('../helper').whitespace
 
 # Base class for the syntax tree.
 #
@@ -107,14 +108,6 @@ module.exports = class Node
     else
       false
 
-  # Get the indention for the HTML code. If the node
-  # is preserved, then there is no indention.
-  #
-  # @return [Number] the number of spaces
-  #
-  getHtmlIndention: ->
-    if @isPreserved() then 0 else @blockLevel
-
   # Creates a marker for static outputted text.
   #
   # @param [String] html the html to output
@@ -125,7 +118,7 @@ module.exports = class Node
     {
       type    : 'text'
       cw      : @codeBlockLevel
-      hw      : @getHtmlIndention()
+      hw      : @blockLevel
       text    : if escape then e(text) else text
     }
 
@@ -153,7 +146,7 @@ module.exports = class Node
     {
       type    : 'insert'
       cw      : @codeBlockLevel
-      hw      : @getHtmlIndention()
+      hw      : @blockLevel
       escape  : escape
       code    : code
     }
@@ -214,8 +207,8 @@ module.exports = class Node
         # Whitespace preserving tag combines children into a single line
         if @preserve
           preserve  = @getOpener().text
-          preserve += "#{ child.render()[0].text }\\n" for child in @children
-          preserve  = preserve.replace(/\\n$/, '')
+          preserve += "#{ child.render()[0].text }\\n#{ w(@blockLevel) }" for child in @children
+          preserve  = preserve.replace(/\\n\s*$/, '')
           preserve += @getCloser().text
 
           output.push @markText(preserve)
