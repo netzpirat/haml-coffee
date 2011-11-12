@@ -118,7 +118,7 @@ module.exports = class Node
     {
       type    : 'text'
       cw      : @codeBlockLevel
-      hw      : @blockLevel
+      hw      : @blockLevel - @codeBlockLevel + 2
       text    : if escape then e(text) else text
     }
 

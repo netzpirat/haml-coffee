@@ -25,6 +25,9 @@ module.exports = class Code extends Node
     if identifier is '-'
       @opener = @markRunningCode(code)
 
+      # Suppress return value from function with Haml tags
+      @closer = @markRunningCode("  ''") if @children.length isnt 0
+
     # Code block that preserves whitespace
     else if identifier is '~'
       @opener = @markInsertingCode(@findAndPreserve(code))
