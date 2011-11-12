@@ -28,7 +28,6 @@ module.exports = class Compiler
   #
   # @return [Boolean] true when indention changed
   #
-  #
   indentChanged: ->
     @currentIndent != @previousIndent
 
