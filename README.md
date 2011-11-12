@@ -230,7 +230,11 @@ You can optionally install [Guard](https://github.com/guard/guard) with the [Bun
 $ bundle install
 ```
 
-and run Guard to automatically compile your CoffeeScripts and run the Jasmine specs on file modification.
+and run Guard to automatically compile your CoffeeScripts and run the Jasmine specs on file modification:
+
+```bash
+$ bundle exec guard
+```
 
 ## Changelog
 
