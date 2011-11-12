@@ -23,73 +23,6 @@ module.exports = class Compiler
     @options.escapeAttributes ?= true
     @options.format           ?= 'html5'
 
-  # Get the options for creating a node
-  #
-  # @return [Object] the node options
-  #
-  getNodeOptions: ->
-    {
-      parentNode       : @parentNode
-      blockLevel       : @currentBlockLevel
-      codeBlockLevel   : @currentCodeBlockLevel
-      escapeHtml       : @options.escapeHtml
-      escapeAttributes : @options.escapeAttributes
-      format           : @options.format
-    }
-
-  # Get the matching node type for the given expression. This
-  # is also responsible for creating the nested tree structure,
-  # since there is an exception for creating the node tree:
-  # Within a filter expression, any empty line without indention
-  # is added as child to the previous filter expression.
-  #
-  # @param [String] expression the HAML expression
-  # @return [Node] the parser node
-  #
-  nodeFactory: (expression = '') ->
-
-    previousNode = @node
-    options      = @getNodeOptions()
-
-    # Detect empty line within a filter
-    if expression is '' && previousNode instanceof Filter
-      options.parentNode = previousNode.getFilterExpressionNode()
-      node = new Filter(expression, options)
-
-    # Detect filter expression node and nested children
-    else if options.parentNode instanceof Filter || expression.match(/^:(escaped|preserve|css|javascript|plain)/)
-      node = new Filter(expression, options)
-
-    # Detect comment node
-    else if expression.match(/^(\/|-#)(.*)/)
-      node = new Comment(expression, options)
-
-    # Detect code node
-    else if expression.match(/^(-#|-|=|!=|\&=|~)\s*(.*)/)
-      node = new Code(expression, options)
-
-    # Detect Haml node
-    else if expression.match(/^(%|#|\.|\!)(.*)/)
-      node = new Haml(expression, options)
-
-    # Everything else is a text node
-    else
-      node = new Text(expression, options)
-
-    options.parentNode?.addChild(node)
-
-    node
-
-  # Update the indention level for a code block.
-  #
-  # @param [Node] node the node to update
-  #
-  updateCodeBlockLevel: (node) ->
-    if node instanceof Code
-      @currentCodeBlockLevel = node.codeBlockLevel + 1
-    else
-      @currentCodeBlockLevel = node.codeBlockLevel
-
   # Test if the indention level has changed, either
   # increased or decreased.
   #
@@ -118,14 +51,33 @@ module.exports = class Compiler
 
     # Validate current indention
     if @currentBlockLevel - Math.floor(@currentBlockLevel) > 0
-      throw("Indentation error in line #{ @line_number }") if not (@node instanceof Filter)
+      throw("Indentation error in line #{ @line_number }")
 
     # Validate block level
     if (@currentIndent - @previousIndent) / @tabSize > 1
-      throw("Block level too deep in line #{ @line_number }") if not (@node instanceof Filter)
+      throw("Block level too deep in line #{ @line_number }")
 
     # Set the indention delta
     @delta = @previousBlockLevel - @currentBlockLevel
+
+  # Update the indention level for a code block.
+  #
+  # @param [Node] node the node to update
+  #
+  updateCodeBlockLevel: (node) ->
+    if node instanceof Code
+      @currentCodeBlockLevel = node.codeBlockLevel + 1
+    else
+      @currentCodeBlockLevel = node.codeBlockLevel
+
+  # Update the parent node. This depends on the indention
+  # if stays the same, goes one down or on up.
+  #
+  updateParent: ->
+    if @isIndent()
+      @pushParent()
+    else
+      @popParent()
 
   # Indention level has been increased:
   # Push the current parent node to the stack and make
@@ -141,6 +93,58 @@ module.exports = class Compiler
   popParent: ->
     for i in [0..@delta-1]
       @parentNode = @stack.pop()
+
+  # Get the options for creating a node
+  #
+  # @param [Object] override the options to override
+  # @return [Object] the node options
+  #
+  getNodeOptions: (override = {})->
+    {
+      parentNode       : override.parentNode       || @parentNode
+      blockLevel       : override.blockLevel       || @currentBlockLevel
+      codeBlockLevel   : override.codeBlockLevel   || @currentCodeBlockLevel
+      escapeHtml       : override.escapeHtml       || @options.escapeHtml
+      escapeAttributes : override.escapeAttributes || @options.escapeAttributes
+      format           : override.format           || @options.format
+    }
+
+  # Get the matching node type for the given expression. This
+  # is also responsible for creating the nested tree structure,
+  # since there is an exception for creating the node tree:
+  # Within a filter expression, any empty line without indention
+  # is added as child to the previous filter expression.
+  #
+  # @param [String] expression the HAML expression
+  # @return [Node] the parser node
+  #
+  nodeFactory: (expression = '') ->
+
+    options = @getNodeOptions()
+
+    # Detect filter node
+    if expression.match(/^:(escaped|preserve|css|javascript|plain)/)
+      node = new Filter(expression, options)
+
+    # Detect comment node
+    else if expression.match(/^(\/|-#)(.*)/)
+      node = new Comment(expression, options)
+
+    # Detect code node
+    else if expression.match(/^(-#|-|=|!=|\&=|~)\s*(.*)/)
+      node = new Code(expression, options)
+
+    # Detect Haml node
+    else if expression.match(/^(%|#|\.|\!)(.*)/)
+      node = new Haml(expression, options)
+
+    # Everything else is a text node
+    else
+      node = new Text(expression, options)
+
+    options.parentNode?.addChild(node)
+
+    node
 
   # Parse the given source and create the nested node
   # structure. This parses the source code line be line, but
@@ -169,35 +173,64 @@ module.exports = class Compiler
     # Parse source line by line
     while (line = lines.shift()) isnt undefined
 
-      # Skip empty lines, expect within a filter
-      continue if line is '' and not(@node instanceof Filter)
+      # After a filter, all lines are captured as text nodes until the end of the filer
+      if (@node instanceof Filter) and not @exitFilter
 
-      # Get whitespace and Haml expressions
-      result = line.match /^(\s*)(.*)/
-      whitespace = result[1]
-      expression = result[2]
+        # Blank lines within a filter goes into the filter
+        if line is ''
+          @node.addChild(new Text('', @getNodeOptions({ parentNode: @node })))
 
-      # Look ahead for more attributes
-      while expression.match(/^%/) and not lines[0]?.match(/^(\s*)%/) and lines[0]?.match /([^:|\s|=]+\s*=>\s*(("[^"]+")|('[^']+')|[^\s,\}]+))|([\w]+=(("[^"]+")|('[^']+')|[^\s\)]+))/g
-        attributes = lines.shift()
-        expression += ' ' + attributes.match(/^(\s*)(.*)/)[2]
-        @line_number++
+        # Detect if filter ends or if there is more text
+        else
+          result = line.match /^(\s*)(.*)/
+          whitespace = result[1]
+          expression = result[2]
 
-      @currentIndent = whitespace.length
+          # When on the same or less indent as the filter, exit and continue normal parsing
+          if @node.blockLevel >= (whitespace.length / 2)
+            @exitFilter = true
+            lines.unshift line
+            continue
 
-      # Update indention levels and set the current parent
-      if @indentChanged()
-        @updateTabSize()
-        @updateBlockLevel()
-        if @isIndent() then @pushParent() else @popParent()
-        @updateCodeBlockLevel(@parentNode)
+          # Get the filter text and remove filter node + indention whitespace
+          text = line.match ///^\s{#{ (@node.blockLevel * 2) + 2 }}(.*)///
+          @node.addChild(new Text(text[1], @getNodeOptions({ parentNode: @node }))) if text
 
-      # Create current node
-      @node = @nodeFactory(expression)
+      # Normal line handling
+      else
 
-      # Save previous indention levels
-      @previousBlockLevel = @currentBlockLevel
-      @previousIndent = @currentIndent
+        # Clear exit filter flag
+        @exitFilter = false
+
+        # Get whitespace and Haml expressions
+        result = line.match /^(\s*)(.*)/
+        whitespace = result[1]
+        expression = result[2]
+
+        # Skip empty lines
+        continue if line is ''
+
+        # Look ahead for more attributes and add them to the current line
+        while expression.match(/^%/) and not lines[0]?.match(/^(\s*)%/) and lines[0]?.match /([^:|\s|=]+\s*=>\s*(("[^"]+")|('[^']+')|[^\s,\}]+))|([\w]+=(("[^"]+")|('[^']+')|[^\s\)]+))/g
+          attributes = lines.shift()
+          expression += ' ' + attributes.match(/^(\s*)(.*)/)[2]
+          @line_number++
+
+        @currentIndent = whitespace.length
+
+        # Update indention levels and set the current parent
+        if @indentChanged()
+          @updateTabSize()
+          @updateBlockLevel()
+          @updateParent()
+          @updateCodeBlockLevel(@parentNode)
+
+        # Create current node
+        @node = @nodeFactory(expression)
+
+        # Save previous indention levels
+        @previousBlockLevel = @currentBlockLevel
+        @previousIndent     = @currentIndent
 
       @line_number++
 
