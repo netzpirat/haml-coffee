@@ -89,6 +89,11 @@
       }
     },
 
+    "multiline assignment" : {
+      "haml_template" : "coffee/multiline",
+      "html_template" : "coffee/multiline"
+    },
+
     "inline function that generates Haml" : {
       "haml" : "- foo = (x) ->\n  #bar= x*10\n- foo(10)",
       "html" : "<div id='bar'>100</div>"
