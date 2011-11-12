@@ -56,7 +56,13 @@
 
   },
 
+
   "CoffeeScript" : {
+
+    "variable assignment" : {
+      "haml_template" : "coffee/variable_assignment",
+      "html_template" : "coffee/variable_assignment"
+    },
 
     "for loop" : {
       "haml_template" : "coffee/for_loop",
