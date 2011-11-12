@@ -143,9 +143,9 @@ module.exports = class Haml extends Node
       return { doctype: doctype } if doctype
 
       # Separate Haml tags and inline text
-      tokens     = exp.match /^((?:[#%\.][a-z0-9_:\-]*[\/]?)+)(?:[\(\{].*[\)\}])?([\<\>]{0,2})(.*)?$/i
-      haml       = tokens[1]
-      text       = tokens[3].replace(/^ /, '') if tokens[3] && !tokens[3].match(/^=/)
+      tokens = exp.match /^((?:[#%\.][a-z0-9_:\-]*[\/]?)+)(?:[\(\{].*[\)\}])?([\<\>]{0,2})(.*)?$/i
+      haml   = tokens[1]
+      text   = tokens[3].replace(/^ /, '') if tokens[3] && !tokens[3].match(/^=/)
 
       # Set whitespace removal markers
       if tokens[2]
@@ -156,9 +156,9 @@ module.exports = class Haml extends Node
           @preserve = true
 
       # Extracts tag name, id and classes
-      tag      = haml.match(/\%([a-z_\-][a-z0-9_:\-]*[\/]?)/i)
-      ids      = haml.match(/\#([a-z_\-][a-z0-9_\-]*)/gi)
-      classes  = haml.match(/\.([a-z0-9_\-]*)/gi)
+      tag     = haml.match(/\%([a-z_\-][a-z0-9_:\-]*[\/]?)/i)
+      ids     = haml.match(/\#([a-z_\-][a-z0-9_\-]*)/gi)
+      classes = haml.match(/\.([a-z0-9_\-]*)/gi)
 
       {
         tag     : if tag then tag[1] else 'div'
