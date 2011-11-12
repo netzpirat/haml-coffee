@@ -50,11 +50,11 @@ module.exports = class Compiler
 
     # Validate current indention
     if @currentBlockLevel - Math.floor(@currentBlockLevel) > 0
-      throw("Indentation error in line #{ @line_number }")
+      throw("Indentation error in line #{ @lineNumber }")
 
     # Validate block level
     if (@currentIndent - @previousIndent) / @tabSize > 1
-      throw("Block level too deep in line #{ @line_number }")
+      throw("Block level too deep in line #{ @lineNumber }")
 
     # Set the indention delta
     @delta = @previousBlockLevel - @currentBlockLevel
