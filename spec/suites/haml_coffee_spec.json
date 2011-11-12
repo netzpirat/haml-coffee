@@ -30,16 +30,16 @@
     },
 
     "boolean attribute with XHTML" : {
-      "haml" : "%input(checked=false)",
-      "html" : "<input />",
+      "haml_template" : "text/attributes_boolean",
+      "html_template" : "text/attributes_boolean_xhtml",
       "config" : {
         "format" : "xhtml"
       }
     },
 
     "boolean attribute with HTML" : {
-      "haml" : "%input(checked=false)",
-      "html" : "<input>",
+      "haml_template" : "text/attributes_boolean",
+      "html_template" : "text/attributes_boolean_html5",
       "config" : {
         "format" : "html5"
       }

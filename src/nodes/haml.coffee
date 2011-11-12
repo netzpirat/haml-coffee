@@ -220,10 +220,10 @@ module.exports = class Haml extends Node
       value = pair[1].trim()
 
       # Ignore attributes some attribute values
-      if ['false', 'undefined', '0', ''].indexOf(value) is -1
+      if ['false', '"false"', "'false'", '', '""', "''"].indexOf(value) is -1
 
         # Set key to value if the value is boolean true
-        if value is 'true'
+        if ['true', '"true"', "'true'"].indexOf(value) isnt -1
           value = "'#{ key }'"
 
         # Wrap plain attributes into an interpolation, expect boolean values
