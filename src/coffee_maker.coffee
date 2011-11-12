@@ -26,8 +26,11 @@ module.exports = class CoffeeMaker
       console.log haml_error.stack
       process.exit 1
 
+    #console.log rendered_haml
+
     try
       compiled_output += CoffeeScript.compile rendered_haml
+      #console.log CoffeeScript.compile rendered_haml
     catch coffee_error
       console.log "CoffeeScript " + coffee_error
       console.log coffee_error.stack
