@@ -43,11 +43,6 @@
       "config" : {
         "format" : "html5"
       }
-    },
-
-    "HTML attributes" : {
-      "haml_template" : "text/non_string_attributes",
-      "html_template" : "text/non_string_attributes"
     }
 
   },
@@ -62,6 +57,31 @@
   },
 
   "CoffeeScript" : {
+
+    "for loop" : {
+      "haml_template" : "coffee/for_loop",
+      "html_template" : "coffee/for_loop",
+      "locals" : {
+        "projects" : [
+          {
+            "name" : "Project A",
+            "tasks" : [
+              { "name" : "Do X" },
+              { "name" : "Do Y" },
+              { "name" : "Do Z" }
+            ]
+          },
+          {
+            "name" : "Project B",
+            "tasks" : [
+              { "name" : "Do A" },
+              { "name" : "Do B" },
+              { "name" : "Do C" }
+            ]
+          }
+        ]
+      }
+    },
 
     "inline function that generates Haml" : {
       "haml" : "- foo = (x) ->\n  #bar= x*10\n- foo(10)",
