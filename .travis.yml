@@ -3,8 +3,6 @@ node_js:
   - 0.4
   - 0.5
   - 0.6
-scripts:
-  test: "jasmine-node --coffee spec"
 branches:
   only:
     - master

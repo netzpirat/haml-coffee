@@ -22,13 +22,16 @@
     "coffee-script": ">= 1.0.1",
     "glob": ">= 2.0.9",
     "optimist": ">= 0.2.6"
-  },  
+  },
   "devDependencies": {
     "jasmine-node": ">= 1.0.12"
-  },  
+  },
   "homepage":     "http://haml-coffee.9elements.com",
   "repository":   {
     "type": "git",
     "url": "git://github.com/9elements/haml-coffee.git"
+  },
+  "scripts": {
+    "test": "jasmine-node --coffee spec"
   }
 }
