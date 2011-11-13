@@ -1,5 +1,3 @@
-assert = require 'assert'
-should = require 'should'
 fs     = require 'fs'
 
 CoffeeScript  = require 'coffee-script'
