@@ -59,6 +59,25 @@
 
   "CoffeeScript" : {
 
+    "attribute assignment" : {
+      "haml_template" : "coffee/attributes",
+      "html_template" : "coffee/attributes",
+        "locals" : {
+          "two" : "We are two",
+          "three" : "We are three",
+          "products" : [
+            {
+              "id" : "12345",
+              "color" : "blue"
+            },
+            {
+              "id" : "999",
+              "color" : "red"
+            }
+          ]
+        }
+    },
+
     "variable assignment" : {
       "haml_template" : "coffee/variable_assignment",
       "html_template" : "coffee/variable_assignment"
