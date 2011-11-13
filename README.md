@@ -1,4 +1,4 @@
-# Haml CoffeeScript Templates [![Build Status](https://secure.travis-ci.org/9elements/haml-coffee)](http://travis-ci.org/9elements/haml-coffee)
+# Haml CoffeeScript Templates [![Build Status](https://secure.travis-ci.org/netzpirat/haml-coffee)](http://travis-ci.org/netzpirat/haml-coffee)
 
 **This is a work in progress fork and a pull request will be made when stable.**
 
@@ -175,12 +175,10 @@ html = HAML.template({
 The generated template function will be called using the hash as context, so inside the templates you can access all
 keys using `this` or `@`.
 
-## Haml Compatibility
+## Haml support
 
 Haml CoffeeScript implements the [Haml Spec](https://github.com/norman/haml-spec) to ensure some degree of compatibility
-to other implementations.
-
-The spec covers:
+to other implementations, and the following sections are fully compatible to Ruby Haml:
 
 * Plain text
 * Element names `%`
@@ -200,6 +198,10 @@ The spec covers:
 
 Please consult the official [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more
 details.
+
+### Differences to Ruby Haml
+
+* HTML5 custom data attributes are not implemented.
 
 ## Related projects
 
