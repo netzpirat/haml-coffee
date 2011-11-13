@@ -1,6 +1,6 @@
-CoffeeMaker   = require('./coffee_maker')
-fs            = require('fs')
-glob          = require('glob')
+CoffeeMaker = require('./coffee_maker')
+fs          = require('fs')
+findit      = require('findit')
 
 argv = require('optimist')
   .usage('Usage: $0')
@@ -81,35 +81,30 @@ exports.run = ->
         console.log '  \033[92m[Haml Coffee] Compiling directory\033[0m %s', inputFilename
 
         # Removing a trailing slash
-        baseDir  = inputFilename.replace(/\/$/, "")
-        cwd      = process.cwd()
+        baseDir  = inputFilename.replace(/\/$/, '')
 
         # When an output filename is given, all templates will be concatenated
         compound = ''
 
-        process.chdir(baseDir)
-
         # Loop through all Haml files and compile them
-        glob.glob '**/*.haml[c]', '', (err, files) ->
-          unless err
-            for filename in files
-              console.log '    \033[90m[Haml Coffee] Compiling file\033[0m %s', filename
+        for filename in findit.sync baseDir
+          if filename.match /([^\.]+)(\.html)?\.haml[c]?$/
+            console.log '    \033[90m[Haml Coffee] Compiling file\033[0m %s', filename
 
-              # Combine all files into a single output
-              if argv.o
-                compound += CoffeeMaker.compileFile(filename, compilerOptions, namespace)
-
-              # Compile and write each file on its own
-              else
-                outputFilename  = "#{ filename.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] }.jst"
-                fs.writeFileSync outputFilename,  CoffeeMaker.compileFile(filename, compilerOptions)
-
-            # Write concatenated output
+            # Combine all files into a single output
             if argv.o
-              fs.writeFileSync argv.o, compound
+              compound += CoffeeMaker.compileFile(filename, compilerOptions, namespace)
 
-            process.chdir cwd
-            process.exit 0
+            # Compile and write each file on its own
+            else
+              outputFilename  = "#{ filename.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] }.jst"
+              fs.writeFileSync outputFilename,  CoffeeMaker.compileFile(filename, compilerOptions)
+
+        # Write concatenated output
+        if argv.o
+          fs.writeFileSync argv.o, compound
+
+        process.exit 0
 
     else
       console.log '  \033[91m[Haml Coffee] Error compiling file\033[0m %s: %s', argv.i, err

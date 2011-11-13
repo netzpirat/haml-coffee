@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "coffee-script": ">= 1.0.1",
-    "glob": ">= 2.0.9",
+    "findit": ">= 0.1.1",
     "optimist": ">= 0.2.6"
   },
   "devDependencies": {
