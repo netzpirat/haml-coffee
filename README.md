@@ -251,6 +251,12 @@ $ bundle exec guard
 
 Feel free to take a look at the [changelog](https://github.com/9elements/haml-coffee/blob/master/CHANGELOG.md).
 
+## Authors
+
+* [Sebastion Deutsch](https://github.com/sebastiandeutsch) ([@](http://twitter.com/#!/sippndipp))
+* [Michael Kessler](https://github.com/netzpirat) ([@netzpirat](http://twitter.com/#!/netzpirat))
+* [Jan Varwig](https://github.com/janv) ([@agento](http://twitter.com/#!/agento))
+
 ## Contributors
 
 See all contributors on [the contributor page](https://github.com/9elements/haml-coffee/contributors).
