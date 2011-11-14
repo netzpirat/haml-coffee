@@ -151,7 +151,7 @@ $ haml-coffee -i template.haml --disable-html-escaping
 Your template is compiled into a JavaScript file that can be rendered by instantiating the template with data that to
 be evaluated.
 
-Consider the given template:
+Consider the given template `template.haml`:
 
 ```haml
 %h1
@@ -163,7 +163,13 @@ Consider the given template:
         = project
 ```
 
-that has been successful compiled and registered under `window.HAML.template`. Now you can simply render the template:
+that has been successful compiled with:
+
+```coffeescript
+$ haml-coffe -i template.haml
+```
+
+Now you can simply render the template `template.jst` in your browser with:
 
 ```coffeescript
 html = HAML.template({
