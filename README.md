@@ -54,6 +54,9 @@ $ haml-coffee -i template.haml
 This will generate a template with the same name but the extension changed to `jst`. The above command for example would
 generate a template named `template.jst`.
 
+Valid Haml CoffeeScript template must have one of the following extensions: `.haml`, `.html.haml`, `.hamlc` or
+`.html.hamlc`.
+
 ### `-o`/`--output` option
 
 You can specify a single output file name to be used instead of the automatic generated output file name:
