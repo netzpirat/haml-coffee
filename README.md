@@ -158,10 +158,11 @@ Consider the given template `template.haml`:
 
 ```haml
 %h1
-  = @title
+  = @project
 %section.content
+  %h2 Tags
   %ul
-    - for project in @projects
+    - for tag in @tags
       %li
         = project
 ```
@@ -172,13 +173,32 @@ that has been successful compiled with:
 $ haml-coffe -i template.haml
 ```
 
-Now you can simply render the template `template.jst` in your browser with:
+Now you can render the template `template.jst` in the browser with:
 
 ```coffeescript
 html = HAML.template({
-  title : "foo bar"
-  projects : ['haml', 'coffee', 'parser']
+  project : "Haml CoffeeScript"
+  tags : ['Haml', 'CoffeeScript']
 })
+```
+
+And the following HTML will be rendered to the variable `haml`:
+
+```html
+<h1>
+  Haml CoffeeScript
+</h1>
+<section class='content'>
+  <h2>Tags</h2>
+  <ul>
+    <li>
+      Haml
+    </li>
+    <li>
+      CoffeeScript
+    </li>
+  </ul>
+</section>
 ```
 
 The generated template function will be called using the hash as context, so inside the templates you can access all
@@ -265,7 +285,7 @@ Feel free to take a look at the [changelog](https://github.com/9elements/haml-co
 
 ## Authors
 
-* [Sebastion Deutsch](https://github.com/sebastiandeutsch) ([@](http://twitter.com/#!/sippndipp))
+* [Sebastion Deutsch](https://github.com/sebastiandeutsch) ([@sippndipp](http://twitter.com/#!/sippndipp))
 * [Michael Kessler](https://github.com/netzpirat) ([@netzpirat](http://twitter.com/#!/netzpirat))
 * [Jan Varwig](https://github.com/janv) ([@agento](http://twitter.com/#!/agento))
 
