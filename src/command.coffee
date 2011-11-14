@@ -65,9 +65,8 @@ exports.run = ->
 
       # Compile a single Haml CoffeeScript template
       unless stat.isDirectory()
-        console.log '  \033[90m[Haml Coffee] Compiling file\033[0m %s', inputFilename
-
         outputFilename  = argv.o || "#{ argv.i.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] }.jst"
+        console.log '  \033[90m[Haml Coffee] Compiling file\033[0m %s to %s', inputFilename, outputFilename
         fs.writeFileSync outputFilename, CoffeeMaker.compileFile(inputFilename, compilerOptions, namespace, templateName)
 
         process.exit 0
@@ -89,19 +88,21 @@ exports.run = ->
         # Loop through all Haml files and compile them
         for filename in findit.sync baseDir
           if filename.match /([^\.]+)(\.html)?\.haml[c]?$/
-            console.log '    \033[90m[Haml Coffee] Compiling file\033[0m %s', filename
 
             # Combine all files into a single output
             if argv.o
+              console.log '    \033[90m[Haml Coffee] Compiling file\033[0m %s', filename
               compound += CoffeeMaker.compileFile(filename, compilerOptions, namespace)
 
             # Compile and write each file on its own
             else
               outputFilename  = "#{ filename.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] }.jst"
+              console.log '  \033[90m[Haml Coffee] Compiling file\033[0m %s to %s', inputFilename, outputFilename
               fs.writeFileSync outputFilename,  CoffeeMaker.compileFile(filename, compilerOptions)
 
         # Write concatenated output
         if argv.o
+          console.log '    \033[90m[Haml Coffee] Writing all templates to\033[0m %s', argv.o
           fs.writeFileSync argv.o, compound
 
         process.exit 0
