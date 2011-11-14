@@ -1,4 +1,4 @@
-# Haml CoffeeScript Templates [![Build Status](https://secure.travis-ci.org/netzpirat/haml-coffee)](http://travis-ci.org/netzpirat/haml-coffee.png)
+# Haml CoffeeScript Templates [![Build Status](https://secure.travis-ci.org/netzpirat/haml-coffee.png)](http://travis-ci.org/netzpirat/haml-coffee)
 
 **This is a work in progress fork and a pull request will be made when stable.**
 
