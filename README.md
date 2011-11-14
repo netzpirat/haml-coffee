@@ -13,7 +13,7 @@ We also written a motivational [blog post](http://9elements.com/io/?p=551) where
 
 ## Installation
 
-Clone the repository and install with `npm`:
+Haml CoffeeScript isn't available in NPM now, you'll have to clone the repository and install it with `npm install`:
 
 ```bash
 $ git clone git://github.com/9elements/haml-coffee.git
@@ -21,7 +21,7 @@ $ cd haml-coffee
 $ npm install
 ```
 
-We will publish it to npm soon.
+You may want to have a look at the related projects section for alternative ways of getting Haml CoffeeScript.
 
 ## Compile Haml CoffeeScript
 
