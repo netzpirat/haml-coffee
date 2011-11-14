@@ -266,8 +266,11 @@ module.exports = class Compiler
     namespace    = segments.shift()
 
     # Create code for file and namespace creation
-    for segment in segments
-      namespace += ".#{ segment }"
+    if segments.length isnt 0
+      for segment in segments
+        namespace += ".#{ segment }"
+        output    += "#{ namespace } ?= {}\n"
+    else
       output    += "#{ namespace } ?= {}\n"
 
     # Always include escape function in the template, since escaping
