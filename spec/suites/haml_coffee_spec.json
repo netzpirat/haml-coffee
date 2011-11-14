@@ -22,6 +22,99 @@
 
   },
 
+  "tags with Ruby 1.9 style attributes": {
+
+    "Ruby 1.9 style one attribute" : {
+      "haml" : "%p{a: 'b'}",
+      "html" : "<p a='b'></p>",
+      "optional" : true
+    },
+
+    "Ruby 1.9 style attributes hash with whitespace" : {
+      "haml" : "%p{  a:  'b'  }",
+      "html" : "<p a='b'></p>",
+      "optional" : true
+    },
+
+    "Ruby 1.9 style interpolated attribute" : {
+      "haml" : "%p{a: \"#{@var}\"}",
+      "html" : "<p a='value'></p>",
+      "optional" : true,
+      "locals" : {
+        "var" : "value"
+      }
+    },
+
+    "Ruby 1.9 style multiple attributes" : {
+      "haml" : "%p{ a: 'b', 'c': 'd' }",
+      "html" : "<p a='b' c='d'></p>",
+      "optional" : true
+    },
+
+    "Ruby 1.9 style attributes separated with newlines" : {
+      "haml" : "%p{ a: 'b',\n  'c': 'd' }",
+      "html" : "<p a='b' c='d'></p>",
+      "optional" : true
+    },
+
+    "Ruby 1.9 style 'class' as an attribute" : {
+      "haml" : "%p{class: 'class1'}",
+      "html" : "<p class='class1'></p>",
+      "optional" : true
+    },
+
+    "Ruby 1.9 style tag with a CSS class and 'class' as an attribute" : {
+      "haml" : "%p.class2{class: 'class1'}",
+      "html" : "<p class='class1 class2'></p>",
+      "optional" : true
+    },
+
+    "Ruby 1.9 style tag with 'id' as an attribute" : {
+      "haml" : "%p{id: '1'}",
+      "html" : "<p id='1'></p>",
+      "optional" : true
+    },
+
+    "Ruby 1.9 style tag with a CSS id and 'id' as an attribute" : {
+      "haml" : "%p#id{id: '1'}",
+      "html" : "<p id='id_1'></p>",
+      "optional" : true
+    },
+
+    "Ruby 1.9 style tag with a CSS id and a numeric 'id' as an attribute" : {
+      "haml" : "%p#id{id: 1}",
+      "html" : "<p id='id_1'></p>",
+      "optional" : true
+    },
+
+    "Ruby 1.9 style tag with a variable attribute" : {
+      "haml" : "%p{class: @var}",
+      "html" : "<p class='hello'></p>",
+      "optional" : true,
+      "locals" : {
+        "var" : "hello"
+      }
+    },
+
+    "Ruby 1.9 style tag with a CSS class and 'class' as a variable attribute" : {
+      "haml" : ".hello{class: @var}",
+      "html" : "<div class='hello world'></div>",
+      "optional" : true,
+      "locals" : {
+        "var" : "world"
+      }
+    },
+
+    "Ruby 1.9 style tag multiple CSS classes (sorted correctly)" : {
+      "haml" : ".z{class: @var}",
+      "html" : "<div class='a z'></div>",
+      "optional" : true,
+      "locals" : {
+        "var" : "a"
+      }
+    }
+  },
+
   "Attributes" : {
 
     "HTML attributes" : {
@@ -55,7 +148,6 @@
     }
 
   },
-
 
   "CoffeeScript" : {
 
