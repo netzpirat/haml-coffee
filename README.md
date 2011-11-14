@@ -208,6 +208,18 @@ to other implementations, and the following sections are fully compatible to Rub
 Please consult the official [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more
 details.
 
+Haml CoffeeScript supports both, Ruby 1.8 and Ruby 1.9 style attributes:
+
+```haml
+%a{ :href => 'http://haml-lang.com/' } Haml
+```
+
+can also be written as:
+
+```haml
+%a{ href: 'http://haml-lang.com/' } Haml
+```
+
 ### Differences to Ruby Haml
 
 * HTML5 custom data attributes are not implemented.
