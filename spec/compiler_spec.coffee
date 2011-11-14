@@ -41,7 +41,7 @@ for suite in suites
             report += spec.haml
 
             if spec.locals
-              report +=  "-------------------- Local variables --------------------------\n"
+              report +=  "\n-------------------- Local variables --------------------------\n"
               report +=  JSON.stringify(spec.locals)
 
             compiler.parse spec.haml
