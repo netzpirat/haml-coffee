@@ -210,7 +210,8 @@ module.exports = class Compiler
         continue if line is ''
 
         # Look ahead for more attributes and add them to the current line
-        while expression.match(/^%/) && not lines[0]?.match(/^(\s*)[%<]/) and lines[0]?.match /([^:|\s|=]+\s*=>\s*(("[^"]+")|('[^']+')|[^\s,\}]+))|([\w]+=(("[^"]+")|('[^']+')|[^\s\)]+))/g
+        while /^%.*[{(]/.test(expression) and not /^(\s*)[%<]/.test(lines[0]) and /^(\s*).*[})]/.test(lines[0]) and /(?:(['"]?\w+[\w:-]*['"]?)\s*=\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[\w@.]+)|(['"]?\w+[\w:-]*['"]?)\s*=>\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[-\w@.()'"]+)|(['"]?\w+[\w:-]*['"]?):\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[-\w@.()'"]+))/.test(lines[0])
+
           attributes = lines.shift()
           expression += ' ' + attributes.match(/^(\s*)(.*)/)[2]
           @line_number++

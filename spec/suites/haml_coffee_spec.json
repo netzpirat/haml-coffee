@@ -8,7 +8,7 @@
 
     "meta tag" : {
         "haml" : "%meta(http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\")",
-        "html" : "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\" />"
+        "html" : "<meta http-equiv='content-type' content='text/html; charset=UTF-8' />"
     }
 
   },

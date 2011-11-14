@@ -35,7 +35,7 @@ eq    = require('../helper').escapeQuotes
 module.exports = class Haml extends Node
 
   @selfCloseTags: ['meta', 'img', 'link', 'br', 'hr', 'input', 'area', 'param', 'col', 'base']
-  @preserveTags:  ['pre', 'textarea']
+  @preserveTags :  ['pre', 'textarea']
 
   # Evaluate the node content and store the opener tag
   # and the closer tag if applicable.
@@ -93,33 +93,33 @@ module.exports = class Haml extends Node
   # @return [Object] the parsed tag and options tokens
   #
   parseExpression: (exp) ->
-    tag     = @parseTag(exp)
-    options = @parseOptions(exp)
+    tag = @parseTag(exp)
 
     @preserve = true if Haml.preserveTags.indexOf(tag.tag) isnt -1
 
-    pairs   = []
-    id      = tag.ids?.pop()
-    classes = tag.classes
+    id         = tag.ids?.pop()
+    classes    = tag.classes
+    attributes = []
 
     # Clean attributes
-    for pair in options.pairs
-      if pair.key is 'id'
-        if id
-          # Merge attribute id into existing id
-          id += '_' + pair.value
+    if tag.attributes
+      for attribute in tag.attributes
+        if attribute.key is 'id'
+          if id
+            # Merge attribute id into existing id
+            id += '_' + attribute.value
+          else
+            # Push id from attribute
+            id = attribute.value
+
+        # Merge classes
+        else if attribute.key is 'class'
+          classes or= []
+          classes.push attribute.value
+
+        # Add to normal attributes
         else
-          # Push id from attribute
-          id = pair.value
-
-      # Merge classes
-      else if pair.key is 'class'
-        classes or= []
-        classes.push pair.value
-
-      # Add to normal attributes
-      else
-        pairs.push pair
+          attributes.push attribute
 
     {
       doctype    : tag.doctype
@@ -127,12 +127,15 @@ module.exports = class Haml extends Node
       id         : id
       classes    : classes
       text       : tag.text
-      pairs      : pairs
-      assignment : options.assignment
+      attributes : attributes
+      assignment : tag.assignment
     }
 
   # Parse a tag line. This recognizes DocType tags `!!!` and
   # HAML tags like `#id.class text`.
+  #
+  # It also parses the code assignment `=`, `}=` and `)=` or
+  # inline text and the whitespace removal markers `<` and `>`.
   #
   # @param [String] exp the HAML expression
   # @return [Object] the parsed tag tokens
@@ -143,15 +146,22 @@ module.exports = class Haml extends Node
       return { doctype: doctype } if doctype
 
       # Separate Haml tags and inline text
-      tokens = exp.match /^((?:[#%\.][a-z0-9_:\-]*[\/]?)+)(?:[\(\{].*[\)\}])?([\<\>]{0,2})(.*)?$/i
-      haml   = tokens[1]
-      text   = tokens[3].replace(/^ /, '') if tokens[3] && !tokens[3].match(/^=/)
+      tokens     = exp.match /^((?:[#%\.][a-z0-9_:\-]*[\/]?)+)([\(\{].*[\)\}])?([\<\>]{0,2})(.*)?$/i
+      haml       = tokens[1]
+      attributes = tokens[2]
+      whitespace = tokens[3]
+
+      # Process inline text or assignment
+      if tokens[4] && !tokens[4].match(/^=/)
+        text = tokens[4].replace(/^ /, '')
+      else
+        assignment = tokens[4]?.match(/\=\s*(\S+.*)$/)?[1]
 
       # Set whitespace removal markers
-      if tokens[2]
-        @wsRemoval.around = true if tokens[2].indexOf('>') isnt -1
+      if whitespace
+        @wsRemoval.around = true if whitespace.indexOf('>') isnt -1
 
-        if tokens[2].indexOf('<') isnt -1
+        if whitespace.indexOf('<') isnt -1
           @wsRemoval.inside = true
           @preserve = true
 
@@ -161,43 +171,16 @@ module.exports = class Haml extends Node
       classes = haml.match(/\.([a-z0-9_\-]*)/gi)
 
       {
-        tag     : if tag then tag[1] else 'div'
-        ids     : (id.substr(1)    for id    in ids)     if ids
-        classes : (klass.substr(1) for klass in classes) if classes
-        text    : text
+        tag        : if tag then tag[1] else 'div'
+        ids        : (id.substr(1)    for id    in ids)     if ids
+        classes    : (klass.substr(1) for klass in classes) if classes
+        attributes : @parseAttributes(attributes)
+        assignment : assignment
+        text       : text
       }
 
     catch error
       throw "Unable to parse tag from #{ exp }: #{ error }"
-
-  # Parse the tag attributes and code assignment.
-  #
-  # @param [String] exp the HAML expression
-  # @return [Object] the parsed option tokens
-  #
-  parseOptions: (exp) ->
-    [pairs, hasAttributes] = @parseAttributes(exp)
-
-    {
-      pairs      : pairs
-      assignment : @parseAssignment(exp, hasAttributes)
-    }
-
-  # Parse for code assignment `=`, `}=` and `)=`.
-  # The parsed assignment contains only the code and no HAML
-  # `)=` or `}=` tokens.
-  #
-  # @param [String] exp the HAML expression
-  # @param [Boolean] hasAttributes if the expression contains attributes
-  # @return [String] the parsed assignment
-  #
-  parseAssignment: (exp, hasAttributes) ->
-    if hasAttributes
-      assignment = exp.match /[\}\)]=\s*(\S+)$/
-    else
-      assignment = exp.match /\=\s*(\S+.*)$/
-
-    if assignment then assignment[1] else undefined
 
   # Parse attributes either in Ruby style `%tag{ :attr => 'value' }`
   # or HTML style `%tag(attr='value)`. Both styles can be mixed:
@@ -207,17 +190,23 @@ module.exports = class Haml extends Node
   # quoted keys and value, e.g. `'a' => 'hello'` becomes `a => hello`.
   #
   # @param [String] exp the HAML expression
-  # @return [Object] the parsed attribute tokens
+  # @return [Array] the parsed attribute tokens
   #
   parseAttributes: (exp) ->
-    pairs = []
-    attributes = exp.match /([^:|\s|=]+\s*=>\s*(("[^"]+")|('[^']+')|[^\s,\}]+))|([\w:]+=(("[^"]+")|('[^']+')|[^\s\)]+))/g
-    return [pairs, false] unless attributes
+    attributes = []
+    findAttributes = /// (?:
+        # HTML attributes
+        (['"]?\w+[\w:-]*['"]?)\s*=\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[\w@.]+)
+        # Ruby 1.8 attributes
+      | (['"]?\w+[\w:-]*['"]?)\s*=>\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[-\w@.()'"]+)
+        # Ruby 1.9 attributes
+      | (['"]?\w+[\w:-]*['"]?):\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[-\w@.()'"]+)
+      ) ///g
 
-    for attribute in attributes
-      pair  = attribute.split /\=>|\=/
-      key   = pair[0].trim().replace /^:/, ''
-      value = pair[1].trim()
+    # Prepare all attributes
+    while match = findAttributes.exec(exp)
+      key   = match[1] || match[3] || match[5]
+      value = match[2] || match[4] || match[6]
 
       # Ignore attributes some attribute values
       if ['false', '"false"', "'false'", '', '""', "''"].indexOf(value) is -1
@@ -239,12 +228,12 @@ module.exports = class Haml extends Node
         # Unwrap key from quotes
         key = quoted[2] if quoted = key.match /^("|')(.*)\1$/
 
-        pairs.push {
+        attributes.push {
           key   : key
           value : value
         }
 
-    [pairs, true]
+    attributes
 
   # Build the HTML tag prefix by concatenating all the
   # tag information together. The result is an unfinished
@@ -286,12 +275,12 @@ module.exports = class Haml extends Node
     tagParts.push "id='#{ tokens.id }'" if tokens.id
 
     # Construct tag attributes
-    if tokens.pairs.length > 0
-      for pair in tokens.pairs
-        if pair.key isnt pair.value || @format isnt 'html5'
-          tagParts.push "#{ pair.key }=#{ @quoteAttributeValue(pair.value) }"
+    if tokens.attributes
+      for attribute in tokens.attributes
+        if attribute.key isnt attribute.value || @format isnt 'html5'
+          tagParts.push "#{ attribute.key }=#{ @quoteAttributeValue(attribute.value) }"
         else
-          tagParts.push "#{ pair.key }"
+          tagParts.push "#{ attribute.key }"
 
     tagParts.join(' ')
 
