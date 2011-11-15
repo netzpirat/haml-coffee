@@ -18,7 +18,7 @@ module.exports = class Filter extends Node
   # Evaluate the Haml filters
   #
   evaluate: ->
-    @filter = @expression.match(/:(escaped|preserve|css|javascript|coffeescript|plain)(.*)?/)?[1]
+    @filter = @expression.match(/:(escaped|preserve|css|javascript|coffeescript|plain|cdata|coffeescript)(.*)?/)?[1]
 
   # Render the filter
   #
@@ -37,10 +37,7 @@ module.exports = class Filter extends Node
         output.push @markText(preserve)
 
       when 'plain'
-        plain  = ''
-        plain += child.render()[0].text for child in @children
-
-        output.push @markText(plain)
+        @renderFilterContent(0, output)
 
       when 'css'
         output.push @markText('<style type=\'text/css\'>')
@@ -57,13 +54,12 @@ module.exports = class Filter extends Node
         output.push @markText('</script>')
 
       when 'cdata'
-        output.push @markText('/*<![CDATA[*/')
-        @renderFilterContent(1, output)
-        output.push @markText('/*]]>*/')
+        output.push @markText('<![CDATA[')
+        @renderFilterContent(2, output)
+        output.push @markText(']]>')
 
       when 'coffeescript'
-        output += child.render()[0].text for child in @children
-        output = @opener + '#{' + output + '}' + @closer
+        @renderFilterContent(0, output, 'run')
 
     output
 
@@ -72,7 +68,7 @@ module.exports = class Filter extends Node
   # @param [Array] output where to append the content
   # @param [Number] indent the content indention
   #
-  renderFilterContent: (indent, output) ->
+  renderFilterContent: (indent, output, type = 'text') ->
     content = []
     empty   = 0
 
@@ -82,6 +78,11 @@ module.exports = class Filter extends Node
       if line is ''
         empty += 1
       else
-        output.push @markText("") for e in [0...empty]
+        switch type
+          when 'text'
+            output.push @markText("") for e in [0...empty]
+            output.push @markText("#{ w(indent) }#{ line }")
+          when 'run'
+            output.push @markRunningCode("#{ line }")
+
         empty = 0
-        output.push @markText("#{ w(indent) }#{ line }")

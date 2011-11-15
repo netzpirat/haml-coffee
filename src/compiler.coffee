@@ -122,7 +122,7 @@ module.exports = class Compiler
     options = @getNodeOptions()
 
     # Detect filter node
-    if expression.match(/^:(escaped|preserve|css|javascript|plain)/)
+    if expression.match(/^:(escaped|preserve|css|javascript|plain|cdata|coffeescript)/)
       node = new Filter(expression, options)
 
     # Detect comment node

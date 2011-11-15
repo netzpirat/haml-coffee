@@ -35,5 +35,4 @@ module.exports =
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
-      .replace(/\'/g, '&apos;')
       .replace(/\"/g, '&quot;')

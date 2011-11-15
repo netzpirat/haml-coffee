@@ -208,11 +208,40 @@
     "inline function that generates Haml" : {
       "haml" : "- foo = (x) ->\n  #bar= x*10\n- foo(10)",
       "html" : "<div id='bar'>100</div>"
+    },
+
+    "complex example" : {
+      "haml_template" : "coffee/complex",
+      "html_template" : "coffee/complex",
+      "locals" : {
+        "items" : ["a", "b", "c"],
+        "project_title": "Hello World"
+      }
     }
 
   },
 
   "Filters" : {
+
+    "Preserve" : {
+      "haml_template" : "filters/preserve",
+      "html_template" : "filters/preserve"
+    },
+
+    "CData" : {
+      "haml_template" : "filters/cdata",
+      "html_template" : "filters/cdata"
+    },
+
+    "Escaped" : {
+      "haml_template" : "filters/escaped",
+      "html_template" : "filters/escaped"
+    },
+
+    "Plain" : {
+      "haml_template" : "filters/plain",
+      "html_template" : "filters/plain"
+    },
 
     "CSS" : {
       "haml_template" : "filters/css",
@@ -221,7 +250,12 @@
 
     "CoffeeScript" : {
       "haml_template" : "filters/coffeescript",
-      "html_template" : "filters/coffeescript"
+      "html_template" : "filters/coffeescript",
+      "locals" : {
+        "visible" : true,
+        "project" : "Haml CoffeeScript",
+        "tags" : ["Haml", "CoffeeScript"]
+      }
     },
 
     "JavaScript and CSS" : {

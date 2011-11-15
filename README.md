@@ -1,8 +1,8 @@
-# Haml CoffeeScript Templates [![Build Status](https://secure.travis-ci.org/netzpirat/haml-coffee.png)](http://travis-ci.org/netzpirat/haml-coffee)
+# Haml Coffee Templates [![Build Status](https://secure.travis-ci.org/netzpirat/haml-coffee.png)](http://travis-ci.org/netzpirat/haml-coffee)
 
 **This is a work in progress fork and a pull request will be made when stable.**
 
-Haml CoffeeScript is a Haml parser that understands CoffeeScript. It will generate a JavaSript template that can be rendered
+Haml Coffee is a Haml parser that understands CoffeeScript. It will generate a JavaSript template that can be rendered
 to HTML. Those templates can be used in your [Backbone.js](http://documentcloud.github.com/backbone/) application.
 
 It is heavily inspired by Tim Caswells [haml-js](https://github.com/creationix/haml-js). We developed it since we love
@@ -13,7 +13,7 @@ We also written a motivational [blog post](http://9elements.com/io/?p=551) where
 
 ## Installation
 
-Haml CoffeeScript isn't available in NPM now, you'll have to clone the repository and install it with `npm install`:
+Haml Coffee isn't available in NPM now, you'll have to clone the repository and install it with `npm install`:
 
 ```bash
 $ git clone git://github.com/9elements/haml-coffee.git
@@ -21,9 +21,9 @@ $ cd haml-coffee
 $ npm install
 ```
 
-You may want to have a look at the related projects section for alternative ways of getting Haml CoffeeScript.
+You may want to have a look at the related projects section for alternative ways of getting Haml Coffee.
 
-## Compile Haml CoffeeScript
+## Compile Haml Coffee
 
 After the installation you will have a `haml-coffee` binary:
 
@@ -54,7 +54,7 @@ $ haml-coffee -i template.haml
 This will generate a template with the same name but the extension changed to `jst`. The above command for example would
 generate a template named `template.jst`.
 
-Valid Haml CoffeeScript template must have one of the following extensions: `.haml`, `.html.haml`, `.hamlc` or
+Valid Haml Coffee template must have one of the following extensions: `.haml`, `.html.haml`, `.hamlc` or
 `.html.hamlc`.
 
 ### `-o`/`--output` option
@@ -149,7 +149,7 @@ Although not recommended, escaping can also be turned off completely:
 $ haml-coffee -i template.haml --disable-html-escaping
 ```
 
-## Render Haml CoffeeScript
+## Render Haml Coffee
 
 Your template is compiled into a JavaScript file that can be rendered by instantiating the template with data that to
 be evaluated.
@@ -177,7 +177,7 @@ Now you can render the template `template.jst` in the browser with:
 
 ```coffeescript
 html = HAML.template({
-  project : "Haml CoffeeScript"
+  project : "Haml Coffee"
   tags : ['Haml', 'CoffeeScript']
 })
 ```
@@ -186,7 +186,7 @@ And the following HTML will be rendered to the variable `haml`:
 
 ```html
 <h1>
-  Haml CoffeeScript
+  Haml Coffee
 </h1>
 <section class='content'>
   <h2>Tags</h2>
@@ -206,7 +206,7 @@ keys using `this` or `@`.
 
 ## Haml support
 
-Haml CoffeeScript implements the [Haml Spec](https://github.com/norman/haml-spec) to ensure some degree of compatibility
+Haml Coffee implements the [Haml Spec](https://github.com/norman/haml-spec) to ensure some degree of compatibility
 to other implementations, and the following sections are fully compatible to Ruby Haml:
 
 * Plain text
@@ -228,7 +228,7 @@ to other implementations, and the following sections are fully compatible to Rub
 Please consult the official [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more
 details.
 
-Haml CoffeeScript supports both, Ruby 1.8 and Ruby 1.9 style attributes:
+Haml Coffee supports both, Ruby 1.8 and Ruby 1.9 style attributes:
 
 ```haml
 %a{ :href => 'http://haml-lang.com/' } Haml
@@ -244,9 +244,115 @@ can also be written as:
 
 * HTML5 custom data attributes are not implemented.
 
+## CoffeeScript support
+
+Haml and CoffeeScript are a winning team, both use indention for block and are a perfect match for this reason.
+You can use CoffeeScript instead of Ruby in your Haml tags and the attributes.
+
+**It's not recommended to put too much logic into the template, but simple switches and loops are fine.**
+
+### Attributes
+
+When you defining a tag attribute without putting it into quotes (single or double quote), it's considered to be code
+to be run at render time. By default, attributes values from CoffeeScript code is escaped before inserted into the
+document. You can turn off attribute escaping with the `--disable-html-attribute-escaping` compile option.
+
+HTML style attributes are the most limited and can only assign a simple local variable:
+
+```haml
+%img(src='/images/demo.png' width=@width height=@height alt=alt)
+```
+
+Both the `@width` and `@height` values must be passed as context when rendering the template, and `alt` mys be defined
+within the template in beforehand.
+
+Ruby style tags can be more complex and call functions:
+
+```haml
+%header
+  %user{ :class => App.currentUser.get('status') }= App.currentUser.getDisplayName()
+```
+
+And are also supported in the 1.9 syntax style:
+
+```haml
+%header
+  %user{ class: App.currentUser.get('status') }= App.currentUser.getDisplayName()
+```
+
+More fancy stuff can be done when use interpolation within a quoted attribute:
+
+```haml
+%header
+  %user{ class: "#{ if @user.get('roles').indexOf('admin') is -1 then 'normal' else 'admin' }" }= @user.getDisplayName()
+```
+
+But think about it twice before putting such fancy stuff into your template, there are better places like models,
+controllers or helpers to put heavy logic into.
+
+### Running Code
+
+You can run any CoffeeScript code in your template:
+
+```haml
+- for project in @projects
+  - if project.visible
+    .project
+      %h1= project.name
+      %p&= project.description
+```
+
+There are several supported types to run your code:
+
+* Run code without insert anything into the document: `-`
+* Run code and insert the result into the document: `=`
+
+By default, all inserted results from running code is escaped. You can turn it off with the `--disable-html-escaping`
+compile option. There are three variations for run code and insert into the document, two of them to change the escaping
+style chosen in the compile option:
+
+* Run code and do not escape the result: `!=`
+* Run code and escape the result: `&=`
+* Preserve whitespace when insert the result: `~`
+
+Again, please consult the official [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more
+details. Haml Coffee implements the same functionality like Ruby Haml.
+
+Running code is able to define functions that generates Haml:
+
+```haml
+- sum(a, b) ->
+  #div
+    #span= a
+    #span= b
+    #span= a+b
+= sum(1,2)
+= sum(3,4)
+```
+
+### CoffeeScript filter
+
+In addition to the filters `:plain`, `:javascript`, `:css`, `:cdata`, `:escaped` and `:preserve`, which are also
+provided by Ruby Haml, Haml Coffee has a `:coffeescript` filter.
+
+The content of the `:coffeescript` filter is run when the template is rendered and doesn't output anything into the
+resulting document. This comes in handy when have code to run over multiple lines and don't want to prefix each line
+with `-`:
+
+```haml
+%body
+  :coffeescript
+    tags = ['CoffeeScript', 'Haml']
+    project = 'Haml Coffee'
+  %h2= project
+  %ul
+    - for tag in tags
+      %li= tag
+```
+
 ## Related projects
 
-Haml CoffeeScript in the  Rails asset pipeline:
+Haml Coffee in the  Rails asset pipeline:
 
 * [haml-coffee-assets](https://github.com/netzpirat/haml_coffee_assets)
 * [ruby-haml-coffe](https://github.com/bfrydl/ruby-haml-coffee)
