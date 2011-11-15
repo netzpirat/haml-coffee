@@ -1,7 +1,5 @@
 # Haml Coffee Templates [![Build Status](https://secure.travis-ci.org/netzpirat/haml-coffee.png)](http://travis-ci.org/netzpirat/haml-coffee)
 
-**This is a work in progress fork and a pull request will be made when stable.**
-
 Haml Coffee is a Haml parser that understands CoffeeScript. It will generate a JavaSript template that can be rendered
 to HTML. Those templates can be used in your [Backbone.js](http://documentcloud.github.com/backbone/) application.
 
