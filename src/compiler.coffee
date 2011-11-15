@@ -262,7 +262,7 @@ module.exports = class Compiler
 
     # Create parameter name from the filename, e.g. a file `users/new.hamlc`
     # will create `window.HAML.user.new`
-    segments     = "#{ namespace }.#{ templateName }".replace(/(\s|-)+/g, '_').split(/\.|\//)
+    segments     = "#{ namespace }.#{ templateName }".replace(/(\s|-)+/g, '_').split(/\./)
     templateName = segments.pop()
     namespace    = segments.shift()
 
@@ -293,7 +293,7 @@ module.exports = class Compiler
           '''
 
     # Render the template
-    output += "#{ namespace }.#{ templateName } = (context) ->\n"
+    output += "#{ namespace }['#{ templateName }'] = (context) ->\n"
     output += "  fn = (context) ->\n"
     output += "    o = []\n"
     output += "    e = #{ escapeFn }\n"
