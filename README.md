@@ -316,7 +316,7 @@ style chosen in the compile option:
 * Preserve whitespace when insert the result: `~`
 
 Again, please consult the official [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more
-details. Haml Coffee implements the same functionality like Ruby Haml.
+details. Haml Coffee implements the same functionality like Ruby Haml, only for CoffeeScript.
 
 Running code is able to define functions that generates Haml:
 
