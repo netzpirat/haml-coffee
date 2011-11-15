@@ -194,6 +194,10 @@ module.exports = class Haml extends Node
   #
   parseAttributes: (exp) ->
     attributes = []
+    return attributes if exp is undefined
+
+    [exp, datas] = @getDataAttributes(exp)
+
     findAttributes = /// (?:
         # HTML attributes
         (['"]?\w+[\w:-]*['"]?)\s*=\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[\w@.]+)
@@ -233,7 +237,28 @@ module.exports = class Haml extends Node
           value : value
         }
 
-    attributes
+    attributes.concat(datas)
+
+  # Extracts the data attributes.
+  #
+  # @example data attribute
+  #
+  # `:data => { :test => '123' }`
+  #
+  # @param [String] exp the expression to check
+  # @return [Array<String, Array>] the expressions and data attributes
+  #
+  getDataAttributes: (exp) ->
+    data = (/:?data:?\s*(?:=>\s*)?\{([^}]*)\},?/gi).exec(exp)
+    return [exp, []] unless data?[1]
+
+    exp = exp.replace(data[0], '')
+    attributes = @parseAttributes(data[1])
+
+    for attribute in attributes
+      attribute.key = "data-#{ attribute.key }"
+
+    [exp, attributes]
 
   # Build the HTML tag prefix by concatenating all the
   # tag information together. The result is an unfinished

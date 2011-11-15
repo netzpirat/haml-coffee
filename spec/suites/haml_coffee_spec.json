@@ -13,13 +13,36 @@
 
   },
 
-  "Elements" : {
+  "elements" : {
 
     "a blank file" : {
         "haml_template" : "text/div_nesting",
         "html_template" : "text/div_nesting"
     }
 
+  },
+
+  "data attributes" : {
+
+    "Ruby 1.8 style" : {
+        "haml" : "%a{ :href => '/link', :data => { :test => '123', :another => 'test' } }",
+        "html" : "<a href='/link' data-test='123' data-another='test'></a>"
+    },
+
+    "Ruby 1.8 style over multiple lines" : {
+        "haml" : "%a{ :href => '/link', :data => {\n  :test => '123',\n  :another => 'test' } }",
+        "html" : "<a href='/link' data-test='123' data-another='test'></a>"
+    },
+
+    "Ruby 1.9 style" : {
+        "haml" : "%a{ href: '/link', data: { test: '123', another: 'test' } }",
+        "html" : "<a href='/link' data-test='123' data-another='test'></a>"
+    },
+
+    "Ruby 1.9 style over multiple lines" : {
+        "haml" : "%a{ href: '/link', data: {\n  test: '123',\n  another: 'test' } }",
+        "html" : "<a href='/link' data-test='123' data-another='test'></a>"
+    }
   },
 
   "tags with Ruby 1.9 style attributes": {
@@ -115,7 +138,7 @@
     }
   },
 
-  "Attributes" : {
+  "attributes" : {
 
     "HTML attributes" : {
       "haml_template" : "text/attributes",
@@ -140,7 +163,7 @@
 
   },
 
-  "Comments" : {
+  "comments" : {
 
     "HTML attributes" : {
       "haml_template" : "text/comments",
@@ -221,7 +244,7 @@
 
   },
 
-  "Filters" : {
+  "filters" : {
 
     "Preserve" : {
       "haml_template" : "filters/preserve",
@@ -339,7 +362,7 @@
     }
   },
 
-  "Special texts" : {
+  "special texts" : {
 
     "embedding HTML" : {
         "haml_template" : "text/embedded_html",

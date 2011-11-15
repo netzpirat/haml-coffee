@@ -237,10 +237,6 @@ can also be written as:
 %a{ href: 'http://haml-lang.com/' } Haml
 ```
 
-### Differences to Ruby Haml
-
-* HTML5 custom data attributes are not implemented.
-
 ## CoffeeScript support
 
 Haml and CoffeeScript are a winning team, both use indention for blocks and are a perfect match for this reason.
