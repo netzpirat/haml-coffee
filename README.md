@@ -246,10 +246,10 @@ can also be written as:
 
 ## CoffeeScript support
 
-Haml and CoffeeScript are a winning team, both use indention for block and are a perfect match for this reason.
+Haml and CoffeeScript are a winning team, both use indention for blocks and are a perfect match for this reason.
 You can use CoffeeScript instead of Ruby in your Haml tags and the attributes.
 
-**It's not recommended to put too much logic into the template, but simple switches and loops are fine.**
+**It's not recommended to put too much logic into the template, but simple conditions and loops are fine.**
 
 ### Attributes
 
@@ -263,17 +263,17 @@ HTML style attributes are the most limited and can only assign a simple local va
 %img(src='/images/demo.png' width=@width height=@height alt=alt)
 ```
 
-Both the `@width` and `@height` values must be passed as context when rendering the template, and `alt` mys be defined
-within the template in beforehand.
+Both the `@width` and `@height` values must be passed as context when rendering the template, and `alt` must be defined
+before it.
 
-Ruby style tags can be more complex and call functions:
+Ruby style tags can be more complex and can call functions:
 
 ```haml
 %header
   %user{ :class => App.currentUser.get('status') }= App.currentUser.getDisplayName()
 ```
 
-And are also supported in the 1.9 syntax style:
+Attribute definitions are also supported in the Ruby 1.9 style:
 
 ```haml
 %header
@@ -307,7 +307,7 @@ There are several supported types to run your code:
 * Run code without insert anything into the document: `-`
 * Run code and insert the result into the document: `=`
 
-By default, all inserted results from running code is escaped. You can turn it off with the `--disable-html-escaping`
+By default, all inserted content from running code is escaped. You can turn it off with the `--disable-html-escaping`
 compile option. There are three variations for run code and insert into the document, two of them to change the escaping
 style chosen in the compile option:
 
