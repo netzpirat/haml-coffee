@@ -283,6 +283,16 @@ More fancy stuff can be done when use interpolation within a quoted attribute:
 But think about it twice before putting such fancy stuff into your template, there are better places like models,
 controllers or helpers to put heavy logic into.
 
+You can define your attributes over multiple lines and the next line must not be indented properly, so you can
+align them:
+ 
+```haml
+%input#password.hint{ type: 'password', name: 'registration[password]',
+                      data: { hint: "Something very imporant", align: 'left' } }
+```
+
+In the above example you see the proper usage for generating HTML data attributes.
+
 ### Running Code
 
 You can run any CoffeeScript code in your template:
