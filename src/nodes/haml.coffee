@@ -1,5 +1,6 @@
 Node  = require('./node')
 eq    = require('../helper').escapeQuotes
+p     = require('../helper').preserve
 
 # HAML node that contains Haml a haml tag that can have attributes
 # and a text or code assignment. There are shortcuts for id and class
@@ -35,7 +36,7 @@ eq    = require('../helper').escapeQuotes
 module.exports = class Haml extends Node
 
   @selfCloseTags: ['meta', 'img', 'link', 'br', 'hr', 'input', 'area', 'param', 'col', 'base']
-  @preserveTags :  ['pre', 'textarea']
+  @preserveTags : ['pre', 'textarea']
 
   # Evaluate the node content and store the opener tag
   # and the closer tag if applicable.
@@ -56,13 +57,29 @@ module.exports = class Haml extends Node
 
         # Add Haml tag that contains a code assignment will be closed immediately
         if tokens.assignment
-          code    = if @escapeHtml then "\#{e #{ tokens.assignment }}" else "\#{#{ tokens.assignment }}"
-          @opener = @markText "#{prefix }>#{ code }"
+
+          match = tokens.assignment.match /^(=|!=|&=|~)\s*(.*)$/
+
+          identifier = match[1]
+          assignment = match[2]
+
+          if identifier is '~'
+            code = p(assignment)
+
+          # Code block with escaped code block, either `=` in escaped mode or `&=`
+          else if identifier is '&=' or (identifier is '=' and @escapeHtml)
+            code = "\#{e #{ assignment }}"
+
+          # Code block with unescaped output, either with `!=` or escaped mode to false
+          else if identifier is '!=' or (identifier is '=' and not @escapeHtml)
+            code = "\#{#{ assignment }}"
+
+          @opener = @markText "#{ prefix }>#{ code }"
           @closer = @markText "</#{ tokens.tag }>"
 
         # A Haml tag that contains an inline text
         else if tokens.text
-          @opener = @markText "#{prefix }>#{ tokens.text }"
+          @opener = @markText "#{ prefix }>#{ tokens.text }"
           @closer = @markText "</#{ tokens.tag }>"
 
         # A Haml tag that can get more child nodes
@@ -146,16 +163,16 @@ module.exports = class Haml extends Node
       return { doctype: doctype } if doctype
 
       # Separate Haml tags and inline text
-      tokens     = exp.match /^((?:[#%\.][a-z0-9_:\-]*[\/]?)+)(?:([\(\{].*[\)\}])?([\<\>]{0,2})(?==)|([\(\{].*[\)\}])?([\<\>]{0,2}))(.*)?/i
+      tokens     = exp.match /^((?:[#%\.][a-z0-9_:\-]*[\/]?)+)(?:([\(\{].*[\)\}])?([\<\>]{0,2})(?=[=&!~])(.*)?|([\(\{].*[\)\}])?([\<\>]{0,2}))(.*)?/i
       haml       = tokens[1]
-      attributes = tokens[2] || tokens[4]
-      whitespace = tokens[3] || tokens[5]
+      attributes = tokens[2] || tokens[5]
+      whitespace = tokens[3] || tokens[6]
+      assignment = tokens[4] || tokens[7]
 
       # Process inline text or assignment
-      if tokens[6] && !tokens[6].match(/^=/)
-        text = tokens[6].replace(/^ /, '')
-      else
-        assignment = tokens[6]?.match(/\=\s*(\S+.*)$/)?[1]
+      if assignment and not assignment.match(/^(=|!=|&=|~)/)
+        text       = assignment.replace(/^ /, '')
+        assignment = undefined
 
       # Set whitespace removal markers
       if whitespace

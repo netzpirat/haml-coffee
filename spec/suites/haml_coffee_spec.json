@@ -159,8 +159,34 @@
       "config" : {
         "format" : "html5"
       }
-    }
+    },
 
+    "Unescape assignment" : {
+      "haml" : "%p#important.text{ a: '1' }!= @text",
+      "html" : "<p class='text' id='important' a='1'><Hello&></p>",
+      "config" : {
+        "escape_html" : "true"
+      },
+      "locals" : {
+        "text" : "<Hello&>"
+      }
+    },
+
+    "Escape assignment" : {
+      "haml" : "%p#important.text{ a: '1' }&= @text",
+      "html" : "<p class='text' id='important' a='1'>&lt;Hello&amp;&gt;</p>",
+      "config" : {
+        "escape_html" : "false"
+      },
+      "locals" : {
+        "text" : "<Hello&>"
+      }
+    },
+
+    "Preserve whitespace assignment" : {
+      "haml" : "%p#important.text{ a: '1' }~ 'Foo\\n<pre>Bar\\nBaz</pre>'",
+      "html" : "<p class='text' id='important' a='1'>'Foo\n<pre>Bar&#x000A;Baz</pre>'</p>"
+    }
   },
 
   "comments" : {

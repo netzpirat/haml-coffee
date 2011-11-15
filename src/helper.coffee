@@ -36,3 +36,13 @@ module.exports =
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/\"/g, '&quot;')
+
+  # Preserve newlines within the preserve tags
+  #
+  # @param [String] code the code to preserve
+  # @return [String] the preserved code
+  #
+  preserve: (code) ->
+    if code
+      code.replace /<(pre|textarea)>(.*?)<\/\1>/g, (text) ->
+        text.replace('\\n', '\&\#x000A;')
