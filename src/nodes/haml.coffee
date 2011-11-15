@@ -146,16 +146,16 @@ module.exports = class Haml extends Node
       return { doctype: doctype } if doctype
 
       # Separate Haml tags and inline text
-      tokens     = exp.match /^((?:[#%\.][a-z0-9_:\-]*[\/]?)+)([\(\{].*[\)\}])?([\<\>]{0,2})(.*)?$/i
+      tokens     = exp.match /^((?:[#%\.][a-z0-9_:\-]*[\/]?)+)(?:([\(\{].*[\)\}])?([\<\>]{0,2})(?==)|([\(\{].*[\)\}])?([\<\>]{0,2}))(.*)?/i
       haml       = tokens[1]
-      attributes = tokens[2]
-      whitespace = tokens[3]
+      attributes = tokens[2] || tokens[4]
+      whitespace = tokens[3] || tokens[5]
 
       # Process inline text or assignment
-      if tokens[4] && !tokens[4].match(/^=/)
-        text = tokens[4].replace(/^ /, '')
+      if tokens[6] && !tokens[6].match(/^=/)
+        text = tokens[6].replace(/^ /, '')
       else
-        assignment = tokens[4]?.match(/\=\s*(\S+.*)$/)?[1]
+        assignment = tokens[6]?.match(/\=\s*(\S+.*)$/)?[1]
 
       # Set whitespace removal markers
       if whitespace
