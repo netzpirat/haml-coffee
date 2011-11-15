@@ -243,9 +243,52 @@
       "html_template" : "filters/plain"
     },
 
-    "CSS" : {
+    "CSS for XHTML" : {
       "haml_template" : "filters/css",
-      "html_template" : "filters/css"
+      "html_template" : "filters/css_xhtml",
+      "config" : {
+        "format" : "xhtml"
+      }
+    },
+
+    "CSS for HTML4" : {
+      "haml_template" : "filters/css",
+      "html_template" : "filters/css_html4",
+      "config" : {
+        "format" : "html4"
+      }
+    },
+
+    "CSS for HTML5" : {
+      "haml_template" : "filters/css",
+      "html_template" : "filters/css_html5",
+      "config" : {
+        "format" : "html5"
+      }
+    },
+
+    "JavaScript for XHTML" : {
+      "haml_template" : "filters/javascript",
+      "html_template" : "filters/javascript_xhtml",
+      "config" : {
+        "format" : "xhtml"
+      }
+    },
+
+    "JavaScript for HTML4" : {
+      "haml_template" : "filters/javascript",
+      "html_template" : "filters/javascript_html4",
+      "config" : {
+        "format" : "html4"
+      }
+    },
+
+    "JavaScript for HTML5" : {
+      "haml_template" : "filters/javascript",
+      "html_template" : "filters/javascript_html5",
+      "config" : {
+        "format" : "html5"
+      }
     },
 
     "CoffeeScript" : {

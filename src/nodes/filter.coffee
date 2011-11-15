@@ -40,17 +40,31 @@ module.exports = class Filter extends Node
         @renderFilterContent(0, output)
 
       when 'css'
-        output.push @markText('<style type=\'text/css\'>')
-        output.push @markText('  /*<![CDATA[*/')
-        @renderFilterContent(2, output)
-        output.push @markText('  /*]]>*/')
+        if @format is 'html5'
+          output.push @markText('<style>')
+        else
+          output.push @markText('<style type=\'text/css\'>')
+
+        output.push @markText('  /*<![CDATA[*/') if @format is 'xhtml'
+
+        indent = if @format is 'xhtml' then 2 else 1
+        @renderFilterContent(indent, output)
+
+        output.push @markText('  /*]]>*/') if @format is 'xhtml'
         output.push @markText('</style>')
 
       when 'javascript'
-        output.push @markText('<script type=\'text/javascript\'>')
-        output.push @markText('  //<![CDATA[')
-        @renderFilterContent(2, output)
-        output.push @markText('  //]]>')
+        if @format is 'html5'
+          output.push @markText('<script>')
+        else
+          output.push @markText('<script type=\'text/javascript\'>')
+
+        output.push @markText('  //<![CDATA[') if @format is 'xhtml'
+
+        indent = if @format is 'xhtml' then 2 else 1
+        @renderFilterContent(indent, output)
+
+        output.push @markText('  //]]>') if @format is 'xhtml'
         output.push @markText('</script>')
 
       when 'cdata'
