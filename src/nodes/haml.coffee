@@ -217,16 +217,16 @@ module.exports = class Haml extends Node
 
     findAttributes = /// (?:
         # HTML attributes
-        (['"]?\w+[\w:-]*['"]?)\s*=\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[\w@.]+)
+        (\w+[\w:-]*\w?|'\w+[\w:-]*\w?'|"\w+[\w:-]*\w?")\s*=\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[\w@.]+)
         # Ruby 1.8 attributes
-      | (['"]?\w+[\w:-]*['"]?)\s*=>\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[-\w@.()\[\]'"]+)
+      | (:\w+[\w:-]*\w?|'\w+[\w:-]*\w?'|"\w+[\w:-]*\w?")\s*=>\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[-\w@.()\[\]'"]+)
         # Ruby 1.9 attributes
-      | (['"]?\w+[\w:-]*['"]?):\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[-\w@.()\[\]'"]+)
+      | (\w+[\w:-]*\w?|'\w+[\w:-]*\w?'|'\w+[\w:-]*\w?'):\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[-\w@.()\[\]'"]+)
       ) ///g
 
     # Prepare all attributes
     while match = findAttributes.exec(exp)
-      key   = match[1] || match[3] || match[5]
+      key   = (match[1] || match[3] || match[5]).replace /^:/, ''
       value = match[2] || match[4] || match[6]
 
       # Ignore attributes some attribute values
