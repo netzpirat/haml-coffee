@@ -249,6 +249,11 @@
       }
     },
 
+    "loop nested arrays" : {
+      "haml_template" : "coffee/loop_nested_array",
+      "html_template" : "coffee/loop_nested_array"
+    },
+
     "multiline assignment" : {
       "haml_template" : "coffee/multiline",
       "html_template" : "coffee/multiline"
