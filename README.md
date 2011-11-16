@@ -207,6 +207,7 @@ Haml Coffee implements the [Haml Spec](https://github.com/norman/haml-spec) to e
 to other implementations, and the following sections are fully compatible to Ruby Haml:
 
 * Plain text
+* Multiline: `|`
 * Element names `%`
 * Attributes: `{}` or `()`
 * Class and ID: `.` and `#`, implicit `div` elements
