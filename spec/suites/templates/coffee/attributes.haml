@@ -1,0 +1,8 @@
+#one
+  .two{ :title => @two }
+    #three.four.five
+      .six#seven(title=@three)
+    #eight
+    #nine
+  - for product in @products
+    %div#product.article.entry{:id => product.id, :class => product.color }
