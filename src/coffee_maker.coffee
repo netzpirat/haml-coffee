@@ -3,33 +3,48 @@ Compiler      = require('./compiler')
 fs            = require('fs')
 
 module.exports = class CoffeeMaker
-  # compiles one file
-  @compileFile = (filename, compiled_output = "", template_name = null, compiler_options = {}) ->
-    try
-      source = fs.readFileSync(filename).toString()
-    catch cant_read_file_error
-      console.log cant_read_file_error
+
+  # Compiles a Haml coffee file to a JavaScript template
+  # When the output template is omitted, it will be derived from the file name.
+  #
+  # @param [String] filename the Haml coffee file to compile
+  # @param [Object] compilerOptions the compiler options
+  # @param [String] namespace the template namespace.
+  # @param [String] templateName the name of the output template.
+  #
+  @compileFile = (filename, compilerOptions = {}, namespace = null, templateName = null) ->
+    output = ''
 
     try
-      # strip optional .html and .haml from filename
-      stripped_filename = filename.match /([^\.]+)(\.html)?\.haml$/
-      if stripped_filename?
-        name = template_name || stripped_filename[1]
-        compiler = new Compiler compiler_options
+      source = fs.readFileSync(filename).toString()
+    catch error
+      console.log '  \033[91mError opening file:\033[0m %s', error
+      console.log error
+
+    try
+      # Derive template name from filename by remove .html and .haml
+      templateName = filename.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] unless templateName
+
+      if templateName
+        compiler = new Compiler compilerOptions
         compiler.parse source
-        rendered_haml = compiler.render name
+        haml = compiler.render templateName, namespace
+
       else
-        console.log '  \033[91m[haml coffee] no valid haml extension\033[0m'
+        console.log '  \033[91m[haml coffee] no valid Haml extension.\033[0m'
         process.exit 1
-    catch haml_error
-      console.log '  \033[91m[haml coffee] error compiling file\033[0m %s', haml_error
-      console.log haml_error.stack
+
+    catch error
+      console.log '  \033[91m[haml coffee] error compiling Haml file:\033[0m %s', error
+      console.log error.stack
       process.exit 1
 
     try
-      compiled_output += CoffeeScript.compile rendered_haml
-    catch coffee_error
-      console.log "CoffeeScript " + coffee_error
-      console.log coffee_error.stack
+      output = CoffeeScript.compile haml
 
-    return compiled_output
+    catch error
+      console.log '  \033[91m[haml coffee] CoffeeScript compilation error:\033[0m %s', error
+      console.log error.stack
+      process.exit 1
+
+    output

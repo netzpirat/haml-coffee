@@ -1,6 +1,12 @@
 Node  = require('./node')
+eq    = require('../helper').escapeQuotes
 
-# Text Node
+# Text node that contains everything that cannot be detected as
+# other node. This is normally plain text to be inserted into the
+# template.
+#
 module.exports = class Text extends Node
-  evaluate: ->
-    @opener = "#{@cw}o.push \"#{@hw}#{@expression}\""
+
+  # Evaluate the text node
+  #
+  evaluate: -> @opener = @markText(eq(@expression))

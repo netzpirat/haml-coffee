@@ -1,12 +1,12 @@
 {
   "name":         "haml-coffee",
-  "description":  "haml + coffeescript preprocessor",
+  "description":  "Haml + CoffeeScript preprocessor",
   "keywords":     ["haml", "html", "javascript", "language", "coffeescript", "compiler"],
   "author":       "Sebastian Deutsch",
   "version":      "0.2.4",
   "licenses":     [{
     "type":       "MIT",
-    "url":        "http://github.com/sebastiandeutsch/haml-coffee/raw/master/LICENSE"
+    "url":        "http://github.com/9elements/haml-coffee/raw/master/LICENSE"
   }],
   "engines":      {
     "node":       ">=0.4.0"
@@ -20,13 +20,18 @@
   },
   "dependencies": {
     "coffee-script": ">= 1.0.1",
-    "should": ">= 0.0.4",
-    "glob": "2.0.5",
+    "findit": ">= 0.1.1",
     "optimist": ">= 0.2.6"
-  },  
+  },
+  "devDependencies": {
+    "jasmine-node": ">= 1.0.12"
+  },
   "homepage":     "http://haml-coffee.9elements.com",
   "repository":   {
     "type": "git",
-    "url": "git://github.com/sebastiandeutsch/haml-coffee.git"
+    "url": "git://github.com/9elements/haml-coffee.git"
+  },
+  "scripts": {
+    "test": "jasmine-node --coffee spec"
   }
 }
