@@ -176,7 +176,7 @@ module.exports = class Compiler
       if (@node instanceof Filter) and not @exitFilter
 
         # Blank lines within a filter goes into the filter
-        if line is ''
+        if /^(\s)*$/.test(line)
           @node.addChild(new Text('', @getNodeOptions({ parentNode: @node })))
 
         # Detect if filter ends or if there is more text
@@ -207,7 +207,7 @@ module.exports = class Compiler
         expression = result[2]
 
         # Skip empty lines
-        continue if line is ''
+        continue if /^(\s)*$/.test(line)
 
         # Look ahead for more attributes and add them to the current line
         while /^%.*[{(]/.test(expression) and not /^(\s*)[%<]/.test(lines[0]) and /(?:(['"]?\w+[\w:-]*['"]?)\s*=\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[\w@.]+)|(['"]?\w+[\w:-]*['"]?)\s*=>\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[-\w@.()'"]+)|(['"]?\w+[\w:-]*['"]?):\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[-\w@.()'"]+))/.test(lines[0])
