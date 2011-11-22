@@ -140,22 +140,33 @@
 
   "attributes" : {
 
-    "HTML attributes" : {
+    "HTML attributes with XHTML" : {
       "haml_template" : "text/attributes",
-      "html_template" : "text/attributes"
+      "html_template" : "text/attributes_xhtml",
+      "config" : {
+        "format" : "xhtml"
+      }
+    },
+
+    "HTML attributes with HTML5" : {
+      "haml_template" : "text/attributes",
+      "html_template" : "text/attributes_html5",
+      "config" : {
+        "format" : "html5"
+      }
     },
 
     "boolean attribute with XHTML" : {
-      "haml_template" : "text/attributes_boolean",
-      "html_template" : "text/attributes_boolean_xhtml",
+      "haml_template" : "text/boolean_attributes",
+      "html_template" : "text/boolean_attributes_xhtml",
       "config" : {
         "format" : "xhtml"
       }
     },
 
     "boolean attribute with HTML" : {
-      "haml_template" : "text/attributes_boolean",
-      "html_template" : "text/attributes_boolean_html5",
+      "haml_template" : "text/boolean_attributes",
+      "html_template" : "text/boolean_attributes_html5",
       "config" : {
         "format" : "html5"
       }

@@ -1,11 +1,15 @@
-%tag(name="value" name2=true ns:tag=100)
-%tag/(name="value" name2=true ns:tag=100)
 %input#space-end(type='hidden' value="3" )
 %input#space-start( type="hidden" value='3' )
 %input#space-middle(type="hidden"  value="3")
 
-%tag{:name => "value", :name2 =>   true, :tag   => 100}
-%tag/{ :name => 'value',   :name2 => true }
 %input#space-end{:type => "hidden", :value => '3' }
 %input#space-start{ :type => 'hidden', :value => "3" }
 %input#space-middle{:type => "hidden",  :value => "3"}
+
+%input{:checked=>  0}
+%input{:checked   => ""}
+
+%input(checked=  0)
+%input(checked  = "")
+
+%input{ name: 'name' }
