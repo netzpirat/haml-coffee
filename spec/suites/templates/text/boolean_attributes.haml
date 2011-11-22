@@ -2,11 +2,13 @@
 %input{:checked=>'true'}
 %input{:checked =>false}
 %input{:checked =>'false'}
-%input{:checked=>  0}
-%input{:checked   => ""}
+
 %input(checked=true)
 %input(checked='true')
 %input(checked= false)
 %input(checked= 'false')
-%input(checked=  0)
-%input(checked  = "")
+
+%tag{:name => "value", :name2 =>   true, :tag   => 100}
+%tag/{ :name => 'value',   :name2 => true }
+%tag(name="value" name2=true ns:tag=100)
+%tag/(name="value" name2=true ns:tag=100)

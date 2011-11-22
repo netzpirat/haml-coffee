@@ -228,13 +228,15 @@ module.exports = class Haml extends Node
     while match = findAttributes.exec(exp)
       key   = (match[1] || match[3] || match[5]).replace /^:/, ''
       value = match[2] || match[4] || match[6]
+      bool  = false
 
       # Ignore attributes some attribute values
-      if ['false', '', '""', "''"].indexOf(value) is -1
+      if ['false', ''].indexOf(value) is -1
 
         # Set key to value if the value is boolean true
         if ['true'].indexOf(value) isnt -1
           value = "'#{ key }'"
+          bool  = true
 
         # Wrap plain attributes into an interpolation, expect boolean values
         else if not value.match /^("|').*\1$/
@@ -252,6 +254,7 @@ module.exports = class Haml extends Node
         attributes.push {
           key   : key
           value : value
+          bool  : bool
         }
 
     attributes.concat(datas)
@@ -319,10 +322,10 @@ module.exports = class Haml extends Node
     # Construct tag attributes
     if tokens.attributes
       for attribute in tokens.attributes
-        if attribute.key isnt attribute.value || @format isnt 'html5'
-          tagParts.push "#{ attribute.key }=#{ @quoteAttributeValue(attribute.value) }"
-        else
+        if attribute.bool and @format is 'html5'
           tagParts.push "#{ attribute.key }"
+        else
+          tagParts.push "#{ attribute.key }=#{ @quoteAttributeValue(attribute.value) }"
 
     tagParts.join(' ')
 
