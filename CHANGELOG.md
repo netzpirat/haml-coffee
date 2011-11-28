@@ -1,3 +1,7 @@
+# Version 0.3.1
+
+  * Fix custom clean value function when escaping function is also custom provided.
+
 # Version 0.3.0
 
   * Add full Haml compatibility (haml-spec passes)
