@@ -1,4 +1,4 @@
-# Master
+# Version 0.3.0
 
   * Add full Haml compatibility (haml-spec passes)
   * Add code documentation and improved README
@@ -7,6 +7,7 @@
   * Add new compiler options
     - Namespace
     - Disable attribute escaping
+    - Custom clean value
     - HTML output format
 
 # Version 0.2.4

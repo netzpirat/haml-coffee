@@ -1,37 +1,53 @@
 {
-  "name":         "haml-coffee",
-  "description":  "Haml + CoffeeScript preprocessor",
-  "keywords":     ["haml", "html", "javascript", "language", "coffeescript", "compiler"],
-  "author":       "Sebastian Deutsch",
-  "version":      "0.2.4",
-  "licenses":     [{
-    "type":       "MIT",
-    "url":        "http://github.com/9elements/haml-coffee/raw/master/LICENSE"
-  }],
-  "engines":      {
-    "node":       ">=0.4.0"
+  "name" : "haml-coffee",
+  "description" : "HAML Parser where you can write inline CoffeeScript.",
+  "keywords" : ["haml", "coffeescript", "templating", "html", "javascript", "language", "compiler"],
+  "author" : "Sebastian Deutsch",
+  "maintainers" : [
+    {
+      "name" : "Sebastian Deutsch"
+    },
+    {
+      "name" : "Michael Kessler"
+    },
+    {
+      "name" : "Jan Varwig"
+    }
+  ],
+  "version" : "0.3.0",
+  "licenses" : [
+    {
+      "type" : "MIT",
+      "url" : "http://github.com/9elements/haml-coffee/raw/master/LICENSE"
+    }
+  ],
+  "engines" : {
+    "node" : ">=0.4.0"
   },
   "directories" : {
     "lib" : "./lib"
   },
   "main" : "./lib/coffee-script",
-  "bin":          {
-    "haml-coffee":     "./bin/haml-coffee"
+  "bin" : {
+    "haml-coffee" : "./bin/haml-coffee"
   },
-  "dependencies": {
-    "coffee-script": ">= 1.0.1",
-    "findit": ">= 0.1.1",
-    "optimist": ">= 0.2.6"
+  "dependencies" : {
+    "coffee-script" : ">= 1.0.1",
+    "findit" : ">= 0.1.1",
+    "optimist" : ">= 0.2.6"
   },
-  "devDependencies": {
-    "jasmine-node": ">= 1.0.12"
+  "devDependencies" : {
+    "jasmine-node" : ">= 1.0.12"
   },
-  "homepage":     "http://haml-coffee.9elements.com",
-  "repository":   {
-    "type": "git",
-    "url": "git://github.com/9elements/haml-coffee.git"
+  "homepage" : "https://github.com/9elements/haml-coffee",
+  "repository" : {
+    "type" : "git",
+    "url" : "git://github.com/9elements/haml-coffee.git"
   },
-  "scripts": {
-    "test": "jasmine-node --coffee spec"
+  "bugs" : {
+    "web" : "https://github.com/9elements/haml-coffee/issues"
+  },
+  "scripts" : {
+    "test" : "jasmine-node --coffee spec"
   }
 }

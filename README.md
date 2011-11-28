@@ -11,12 +11,10 @@ We also written a motivational [blog post](http://9elements.com/io/?p=551) where
 
 ## Installation
 
-Haml Coffee isn't available in NPM now, you'll have to clone the repository and install it with `npm install`:
+Haml Coffee is available in NPM and you can install it with:
 
 ```bash
-$ git clone git://github.com/9elements/haml-coffee.git
-$ cd haml-coffee
-$ npm install
+$ npm install haml-coffee
 ```
 
 You may want to have a look at the related projects section for alternative ways of getting Haml Coffee.
