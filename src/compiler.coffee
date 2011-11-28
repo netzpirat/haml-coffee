@@ -284,7 +284,6 @@ module.exports = class Compiler
         escapeFn +
           '''
           ||= (text, escape) ->
-            return '' if text is null or text is undefined
             "#{ text }"
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
