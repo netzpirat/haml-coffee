@@ -36,6 +36,7 @@ Options:
   -t, --template                     Set a custom template name
   -f, --format                       Set HTML output format, either `xhtml`, `html4` or `html5`  [default: "html5"]
   -e, --custom-html-escape           Set the custom HTML escaping function name
+  -c, --custom-clean-value           Set the custom code value clean function name
   --disable-html-attribute-escaping  Disable any HTML attribute escaping                         [boolean]
   --disable-html-escaping            Disable any HTML escaping                                   [boolean]
 ```
@@ -106,16 +107,16 @@ The Haml parser knows different HTML formats to which a given template can be re
 Doctype, self-closing tags and attributes handling depends on this setting. Please consult the official
 [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more details.
 
-### `-c`/`--custom-html-escape` option
+### `-e`/`--custom-html-escape` option
 
 Every data that is evaluated at render time will be escaped. The escaping function is included in every template and
 with a growing number of templates, there is a lot of duplication that can be avoided in order to reduce your template
 size.
 
-You can specify an escape function that will be used to render the template:
+You can specify a custom escape function that will be used to render the template:
 
 ```bash
-$ haml-coffee -i template.haml -c HAML.escape
+$ haml-coffee -i template.haml -e HAML.escape
 ```
 
 Now the escaping function isn't included in your template anymore and you have to make sure the function is available
@@ -128,6 +129,25 @@ window.HAML.htmlEscape ||= (text) ->
   .replace(/</g, '&lt;')
   .replace(/>/g, '&gt;')
   .replace(/\"/g, '&quot;')
+```
+
+### `-c`/`--custom-clean-value` option
+
+Every data that is evaluated at render time will be cleaned, so that `null` and `undefined` values are shown as empty
+string. The clean value function is included in every template and with a growing number of templates, there is a lot of
+duplication that can be avoided in order to reduce your template size.
+
+You can specify a custom clean value function that will be used to render the template:
+
+```bash
+$ haml-coffee -i template.haml -c HAML.cleanValue
+```
+
+Now the clean value function isn't included in your template anymore and you have to make sure the function is available
+when the template is rendered. The default implementation is quite simple:
+
+```coffeescript
+window.HAML.cleanValue ||= (text) -> if text is null or text is undefined then '' else text
 ```
 
 ### `--disable-html-attribute-escaping` option
