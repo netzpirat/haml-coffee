@@ -292,16 +292,16 @@ module.exports = class Compiler
             .replace(/\"/g, '&quot;')\n
           '''
 
-      # Check rendered attribute values
-      if @options.customCleanValue
-        cleanFn = @options.customCleanValue
-      else
-        cleanFn = "#{ namespace }.cleanValue"
-        output +=
-          cleanFn +
-            '''
-            ||= (text) -> if text is null or text is undefined then '' else text\n
-            '''
+    # Check rendered attribute values
+    if @options.customCleanValue
+      cleanFn = @options.customCleanValue
+    else
+      cleanFn = "#{ namespace }.cleanValue"
+      output +=
+        cleanFn +
+          '''
+          ||= (text) -> if text is null or text is undefined then '' else text\n
+          '''
 
     # Render the template
     output += "#{ namespace }['#{ templateName }'] = (context) ->\n"
