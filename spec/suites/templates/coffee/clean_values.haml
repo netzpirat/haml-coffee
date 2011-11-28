@@ -1,0 +1,19 @@
+.nullValue{ :test => @nullValue }= @nullValue
+.undefinedValue{ :test => @undefinedValue }= @undefinedValue
+.nullValue{ :test => @nullValue }!= @nullValue
+.undefinedValue{ :test => @undefinedValue }!= @undefinedValue
+.nullValue{ :test => @nullValue }&= @nullValue
+.undefinedValue{ :test => @undefinedValue }&= @undefinedValue
+
+.nullValue
+  = @nullValue
+.undefinedValue
+  = @undefinedValue
+.nullValue
+  != @nullValue
+.undefinedValue
+  != @undefinedValue
+.nullValue
+  &= @nullValue
+.undefinedValue
+  &= @undefinedValue

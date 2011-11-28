@@ -283,7 +283,8 @@ module.exports = class Compiler
       output +=
         escapeFn +
           '''
-          ||= (text) ->
+          ||= (text, escape) ->
+            return '' if text is null or text is undefined
             "#{ text }"
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
@@ -292,11 +293,23 @@ module.exports = class Compiler
             .replace(/\"/g, '&quot;')\n
           '''
 
+      # Check rendered attribute values
+      if @options.customCleanValue
+        cleanFn = @options.customCleanValue
+      else
+        cleanFn = "#{ namespace }.cleanValue"
+        output +=
+          cleanFn +
+            '''
+            ||= (text) -> if text is null or text is undefined then '' else text\n
+            '''
+
     # Render the template
     output += "#{ namespace }['#{ templateName }'] = (context) ->\n"
     output += "  fn = (context) ->\n"
     output += "    o = []\n"
     output += "    e = #{ escapeFn }\n"
+    output += "    c = #{ cleanFn }\n"
     code    = @createCode()
     output += "#{ code }\n"
     output += "    return o.join(\"\\n\")#{ @cleanupWhitespace(code) }\n"
@@ -332,9 +345,9 @@ module.exports = class Compiler
           # Insert code that is evaluated and generates an output
           when 'insert'
             if line.hw is 0
-              code.push "#{ w(line.cw) }o.push #{ if w(line.escape) then 'e ' else '' }#{ line.code }"
+              code.push "#{ w(line.cw) }o.push #{ if w(line.escape) then 'e ' else '' }c(#{ line.code })"
             else
-              code.push "#{ w(line.cw) }o.push #{ if w(line.escape) then 'e' else '' } \"#{ w(line.hw - line.cw + 2) }\" + #{ line.code }"
+              code.push "#{ w(line.cw) }o.push #{ if w(line.escape) then 'e' else '' } \"#{ w(line.hw - line.cw + 2) }\" + c(#{ line.code })"
 
     code.join '\n'
 

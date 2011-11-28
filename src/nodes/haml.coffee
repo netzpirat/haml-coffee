@@ -68,11 +68,11 @@ module.exports = class Haml extends Node
 
           # Code block with escaped code block, either `=` in escaped mode or `&=`
           else if identifier is '&=' or (identifier is '=' and @escapeHtml)
-            code = "\#{e #{ assignment }}"
+            code = "\#{e(c(#{ assignment }))}"
 
           # Code block with unescaped output, either with `!=` or escaped mode to false
           else if identifier is '!=' or (identifier is '=' and not @escapeHtml)
-            code = "\#{#{ assignment }}"
+            code = "\#{c(#{ assignment })}"
 
           @opener = @markText "#{ prefix }>#{ code }"
           @closer = @markText "</#{ tokens.tag }>"
@@ -241,9 +241,9 @@ module.exports = class Haml extends Node
         # Wrap plain attributes into an interpolation, expect boolean values
         else if not value.match /^("|').*\1$/
           if @escapeAttributes
-            value = '\'#{ e(' + value + ') }\''
+            value = '\'#{ e(c(' + value + ')) }\''
           else
-            value = '\'#{ ' + value + ' }\''
+            value = '\'#{ c(' + value + ') }\''
 
         # Unwrap value from quotes
         value = quoted[2] if quoted = value.match /^("|')(.*)\1$/

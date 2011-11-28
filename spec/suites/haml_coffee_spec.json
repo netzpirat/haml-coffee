@@ -214,20 +214,44 @@
     "attribute assignment" : {
       "haml_template" : "coffee/attributes",
       "html_template" : "coffee/attributes",
-        "locals" : {
-          "two" : "We are two",
-          "three" : "We are three",
-          "products" : [
-            {
-              "id" : "12345",
-              "color" : "blue"
-            },
-            {
-              "id" : "999",
-              "color" : "red"
-            }
-          ]
-        }
+      "locals" : {
+        "two" : "We are two",
+        "three" : "We are three",
+        "products" : [
+          {
+            "id" : "12345",
+            "color" : "blue"
+          },
+          {
+            "id" : "999",
+            "color" : "red"
+          }
+        ]
+      }
+    },
+
+    "clean escaped code values" : {
+      "haml_template" : "coffee/clean_values",
+      "html_template" : "coffee/clean_values",
+      "config" : {
+        "escape_html" : "true",
+        "escape_attributes" : "true"
+      },      
+      "locals" : {
+        "nullValue" : null
+      }
+    },
+
+    "clean unescaped code values" : {
+      "haml_template" : "coffee/clean_values",
+      "html_template" : "coffee/clean_values",
+      "config" : {
+        "escape_html" : "false",
+        "escape_attributes" : "false"
+      },      
+      "locals" : {
+        "nullValue" : null
+      }
     },
 
     "variable assignment" : {

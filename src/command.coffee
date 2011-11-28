@@ -32,6 +32,11 @@ argv = require('optimist')
     default   : ''
     describe  : 'Set the custom HTML escaping function name'
   )
+  .options('c',
+    alias: 'custom-clean-value',
+    default   : ''
+    describe  : 'Set the custom code value clean function name'
+  )
   .options('disable-html-attribute-escaping',
     boolean   : true
     describe  : 'Disable any HTML attribute escaping'
@@ -58,6 +63,7 @@ exports.run = ->
     escapeHtml       : not argv['disable-html-escaping']
     escapeAttributes : not argv['disable-html-attribute-escaping']
     customHtmlEscape : argv.e
+    customCleanValue : argv.c
     format           : argv.f
 
   fs.stat inputFilename, (err, stat) ->

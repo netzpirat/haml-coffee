@@ -24,8 +24,9 @@ for suite in suites
           it "handles #{ desc }", ->
 
             config = {
-              escapeHtml : if spec.config?.escape_html is 'true' then true else false
-              format     : spec.config?.format || 'xhtml'
+              escapeHtml       : if spec.config?.escape_html is 'true' then true else false
+              escapeAttributes : if spec.config?.escape_attributes is 'true' then true else false
+              format           : spec.config?.format || 'xhtml'
             }
 
             compiler = new Compiler(config)
