@@ -17,7 +17,7 @@ Haml Coffee is available in NPM and you can install it with:
 $ npm install haml-coffee
 ```
 
-You may want to have a look at the related projects section for alternative ways of getting Haml Coffee.
+If you like to integrate haml-coffee into your Rails 3.1 asset pipeline, check out [haml_coffee_assets](https://github.com/netzpirat/haml_coffee_assets).
 
 ## Compile Haml Coffee
 
@@ -377,8 +377,6 @@ with `-`:
 Haml Coffee in the  Rails asset pipeline:
 
 * [haml-coffee-assets](https://github.com/netzpirat/haml_coffee_assets)
-* [ruby-haml-coffe](https://github.com/bfrydl/ruby-haml-coffee)
-* [haml-coffee-rails](https://github.com/voidseeker/haml-coffee-rails)
 
 ## Development
 
