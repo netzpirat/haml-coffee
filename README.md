@@ -185,7 +185,7 @@ Consider the given template `template.haml`:
 that has been successful compiled with:
 
 ```coffeescript
-$ haml-coffe -i template.haml
+$ haml-coffee -i template.haml
 ```
 
 Now you can render the template `template.jst` in the browser with:
