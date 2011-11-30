@@ -179,7 +179,7 @@ Consider the given template `template.haml`:
   %ul
     - for tag in @tags
       %li
-        = project
+        = tag
 ```
 
 that has been successful compiled with:
