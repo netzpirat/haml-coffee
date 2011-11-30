@@ -177,7 +177,7 @@ Consider the given template `template.haml`:
 %section.content
   %h2 Tags
   %ul
-    - for tag in @tags
+    - for tag of @tags
       %li
         = project
 ```
@@ -317,7 +317,7 @@ In the above example you see the proper usage for generating HTML data attribute
 You can run any CoffeeScript code in your template:
 
 ```haml
-- for project in @projects
+- for project of @projects
   - if project.visible
     .project
       %h1= project.name
@@ -368,7 +368,7 @@ with `-`:
     project = 'Haml Coffee'
   %h2= project
   %ul
-    - for tag in tags
+    - for tag of tags
       %li= tag
 ```
 
