@@ -123,7 +123,7 @@ the uglify option and save some bytes and have a minor increased rendering speed
 $ haml-coffee -i template.haml --uglify
 ```
 
-### `--preserve`
+### `--preserve` option
 
 The preserve options defines a list of comma separated HTML tags, which content whitespace will be automatically
 preserved when the content is given on the same line as the tag. By default the list contains `textarea` and `pre`.
@@ -134,7 +134,7 @@ You can specify a custom list of preserved HTML tags:
 $ haml-coffee -i template.haml --preserve textarea,pre,abbr
 ```
 
-### `--autoclose`
+### `--autoclose` option
 
 The autoclose option defines a list of tag names that should be automatically self-closed if they have no content.
 
