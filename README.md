@@ -28,14 +28,15 @@ $ haml-coffee
 Usage: node haml-coffee
 
 Options:
-  -i, --input                        Either a file or a directory name to be compiled            [required]
+  -i, --input                        Either a file or a directory name to be compiled
   -o, --output                       Set the output filename
-  -n, --namespace                    Set a custom template namespace                             [default: "window.HAML"]
+  -n, --namespace                    Set a custom template namespace
   -t, --template                     Set a custom template name
-  -f, --format                       Set HTML output format, either `xhtml`, `html4` or `html5`  [default: "html5"]
-  --preserve                         Set a comma separated list of HTML tags to preserve         [default: "pre,textarea"]
-  --disable-html-attribute-escaping  Disable any HTML attribute escaping                         [boolean]
-  --disable-html-escaping            Disable any HTML escaping                                   [boolean]
+  -f, --format                       Set HTML output format, either `xhtml`, `html4` or `html5`
+  --preserve                         Set a comma separated list of HTML tags to preserve
+  --autoclose                        Set a list of tag names that should be automatically self-closed if they have no content
+  --disable-html-attribute-escaping  Disable any HTML attribute escaping
+  --disable-html-escaping            Disable any HTML escaping
   --custom-html-escape               Set the custom HTML escaping function name
   --custom-preserve                  Set the custom preserve whitespace function name
   --custom-find-and-preserve         Set the custom find and preserve whitespace function name
