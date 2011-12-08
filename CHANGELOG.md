@@ -1,4 +1,4 @@
-# Master
+# Version 0.4.0
 
   * Remove short version for seldom used haml-coffee options
   * Add preserve and findAndPreserve helper and customization options
