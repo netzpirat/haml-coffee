@@ -18,7 +18,7 @@ module.exports = class Node
   # Hidden unicode marker to remove left whitespace after template rendering
   @CLEAR_WHITESPACE_LEFT  = '\u0091'
 
-# Hidden unicode marker to remove right whitespace after template rendering
+  # Hidden unicode marker to remove right whitespace after template rendering
   @CLEAR_WHITESPACE_RIGHT = '\u0092'
 
   # Constructs a syntax node
@@ -41,6 +41,7 @@ module.exports = class Node
     @silent   = false
 
     # Preserve whitespace on all children
+    @preserveTags = options.preserveTags.split(',')
     @preserve = false
 
     @wsRemoval = {
@@ -140,15 +141,19 @@ module.exports = class Node
   #
   # @param [String] code the CoffeeScript code
   # @param [Boolean] escape whether to escape the generated output
+  # @param [Boolean] preserve when preserve all newlines
+  # @param [Boolean] findAndPreserve when preserve newlines within preserved tags
   # @return [Object] the marker
   #
-  markInsertingCode: (code, escape = false) ->
+  markInsertingCode: (code, escape = false, preserve = false, findAndPreserve = false) ->
     {
-      type    : 'insert'
-      cw      : @codeBlockLevel
-      hw      : @blockLevel
-      escape  : escape
-      code    : code
+      type            : 'insert'
+      cw              : @codeBlockLevel
+      hw              : @blockLevel
+      escape          : escape
+      preserve        : preserve
+      findAndPreserve : findAndPreserve
+      code            : code
     }
 
   # Template method that must be implemented by each
@@ -206,12 +211,19 @@ module.exports = class Node
 
         # Whitespace preserving tag combines children into a single line
         if @preserve
-          preserve  = @getOpener().text
-          preserve += "#{ child.render()[0].text }\\n#{ w(@blockLevel) }" for child in @children
-          preserve  = preserve.replace(/\\n\s*$/, '')
-          preserve += @getCloser().text
 
-          output.push @markText(preserve)
+          # Preserved tags removes the inside whitespace
+          @wsRemoval.inside = true
+
+          output.push @getOpener()
+
+          for child in @children
+            for rendered in child.render()
+              # Move all children's block level to the preserving tag
+              rendered.hw = @blockLevel
+              output.push rendered
+
+          output.push @getCloser()
 
         # Non preserving tag
         else

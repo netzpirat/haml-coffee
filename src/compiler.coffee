@@ -22,6 +22,7 @@ module.exports = class Compiler
     @options.escapeHtml       ?= true
     @options.escapeAttributes ?= true
     @options.format           ?= 'html5'
+    @options.preserveTags     ?= 'pre,textarea'
 
   # Test if the indention level has changed, either
   # increased or decreased.
@@ -106,6 +107,7 @@ module.exports = class Compiler
       escapeHtml       : override.escapeHtml       || @options.escapeHtml
       escapeAttributes : override.escapeAttributes || @options.escapeAttributes
       format           : override.format           || @options.format
+      preserveTags     : override.preserveTags     || @options.preserveTags
     }
 
   # Get the matching node type for the given expression. This
@@ -303,12 +305,36 @@ module.exports = class Compiler
           ||= (text) -> if text is null or text is undefined then '' else text\n
           '''
 
+    if @options.customPreserve
+      preserveFn = @options.customPreserve
+    else
+      preserveFn = "#{ namespace }.preserve"
+      output +=
+        preserveFn +
+          """
+          ||= (text) -> text.replace /\\n/g, '&#x000A;'\n
+          """
+
+    if @options.customFindAndPreserve
+      findAndPreserveFn = @options.customFindAndPreserve
+    else
+      findAndPreserveFn = "#{ namespace }.findAndPreserve"
+      output +=
+        findAndPreserveFn +
+          """
+          ||= (text) ->
+            text.replace /<(#{ @options.preserveTags.split(',').join('|') })>([^]*?)<\\/\\1>/g, (str, tag, content) ->
+              "<\#{ tag }>\#{ #{ preserveFn }(content) }</\#{ tag }>"\n
+          """
+
     # Render the template
     output += "#{ namespace }['#{ templateName }'] = (context) ->\n"
     output += "  fn = (context) ->\n"
     output += "    o = []\n"
     output += "    e = #{ escapeFn }\n"
     output += "    c = #{ cleanFn }\n"
+    output += "    p = #{ preserveFn }\n"
+    output += "    fp = findAndPreserve = #{ findAndPreserveFn }\n"
     code    = @createCode()
     output += "#{ code }\n"
     output += "    return o.join(\"\\n\")#{ @cleanupWhitespace(code) }\n"
@@ -344,9 +370,9 @@ module.exports = class Compiler
           # Insert code that is evaluated and generates an output
           when 'insert'
             if line.hw is 0
-              code.push "#{ w(line.cw) }o.push #{ if w(line.escape) then 'e ' else '' }c(#{ line.code })"
+              code.push "#{ w(line.cw) }o.push #{ if w(line.findAndPreserve) then 'fp ' else '' }#{ if w(line.preserve) then 'p ' else '' }#{ if w(line.escape) then 'e ' else '' }c #{ line.code }"
             else
-              code.push "#{ w(line.cw) }o.push #{ if w(line.escape) then 'e' else '' } \"#{ w(line.hw - line.cw + 2) }\" + c(#{ line.code })"
+              code.push "#{ w(line.cw) }o.push \"#{ w(line.hw - line.cw + 2) }\" + #{ if w(line.findAndPreserve) then 'fp ' else '' }#{ if w(line.preserve) then 'p ' else '' }#{ if w(line.escape) then 'e ' else '' }c #{ line.code }"
 
     code.join '\n'
 

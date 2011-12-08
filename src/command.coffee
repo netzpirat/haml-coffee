@@ -27,15 +27,9 @@ argv = require('optimist')
     default   : 'html5'
     describe  : 'Set HTML output format, either `xhtml`, `html4` or `html5`'
   )
-  .options('e',
-    alias: 'custom-html-escape',
-    default   : ''
-    describe  : 'Set the custom HTML escaping function name'
-  )
-  .options('c',
-    alias: 'custom-clean-value',
-    default   : ''
-    describe  : 'Set the custom code value clean function name'
+  .options('preserve',
+    default   : 'pre,textarea'
+    describe  : 'Set a comma separated list of HTML tags to preserve'
   )
   .options('disable-html-attribute-escaping',
     boolean   : true
@@ -44,6 +38,22 @@ argv = require('optimist')
   .options('disable-html-escaping',
     boolean   : true
     describe  : 'Disable any HTML escaping'
+  )
+  .options('custom-html-escape',
+    default   : ''
+    describe  : 'Set the custom HTML escaping function name'
+  )
+  .options('custom-preserve',
+    default   : ''
+    describe  : 'Set the custom preserve whitespace function name'
+  )
+  .options('custom-find-and-preserve',
+    default   : ''
+    describe  : 'Set the custom find and preserve whitespace function name'
+  )
+  .options('custom-clean-value',
+    default   : ''
+    describe  : 'Set the custom code value clean function name'
   )
   .argv
 
@@ -60,11 +70,14 @@ exports.run = ->
   namespace       = argv.n
 
   compilerOptions =
-    escapeHtml       : not argv['disable-html-escaping']
-    escapeAttributes : not argv['disable-html-attribute-escaping']
-    customHtmlEscape : argv.e
-    customCleanValue : argv.c
-    format           : argv.f
+    format                : argv.f
+    preserveTags          : argv.preserve
+    escapeHtml            : not argv['disable-html-escaping']
+    escapeAttributes      : not argv['disable-html-attribute-escaping']
+    customHtmlEscape      : argv['custom-html-escape']
+    customCleanValue      : argv['custom-clean-value']
+    customFindAndPreserve : argv['custom-find-and-preserve']
+    customPreserve        : argv['custom-preserve']
 
   fs.stat inputFilename, (err, stat) ->
     unless err

@@ -1,3 +1,9 @@
+# Master
+
+  * Remove short version for seldom used haml-coffee options
+  * Add preserve and findAndPreserve helper and customization options
+  * Add `--preserve` option to define the whitespace preserved tag list
+
 # Version 0.3.1
 
   * Fix custom clean value function when escaping function is also custom provided.

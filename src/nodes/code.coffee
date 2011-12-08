@@ -31,7 +31,10 @@ module.exports = class Code extends Node
 
     # Code block that preserves whitespace
     else if identifier is '~'
-      @opener = @markInsertingCode(p code)
+      if @escapeHtml
+        @opener = @markInsertingCode(code, true, false, true)
+      else
+        @opener = @markInsertingCode(code, false, false, true)
 
     # Code block with escaped code block, either `=` in escaped mode or `&=`
     else if identifier is '&=' or (identifier is '=' and @escapeHtml)

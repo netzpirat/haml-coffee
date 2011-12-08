@@ -196,7 +196,7 @@
 
     "Preserve whitespace assignment" : {
       "haml" : "%p#important.text{ a: '1' }~ 'Foo\\n<pre>Bar\\nBaz</pre>'",
-      "html" : "<p class='text' id='important' a='1'>'Foo\n<pre>Bar&#x000A;Baz</pre>'</p>"
+      "html" : "<p class='text' id='important' a='1'>Foo\n<pre>Bar&#x000A;Baz</pre></p>"
     }
   },
 
@@ -236,7 +236,7 @@
       "config" : {
         "escape_html" : "true",
         "escape_attributes" : "true"
-      },      
+      },
       "locals" : {
         "nullValue" : null
       }
@@ -248,7 +248,7 @@
       "config" : {
         "escape_html" : "false",
         "escape_attributes" : "false"
-      },      
+      },
       "locals" : {
         "nullValue" : null
       }
@@ -306,8 +306,15 @@
         "items" : ["a", "b", "c"],
         "project_title": "Hello World"
       }
-    }
+    },
 
+    "Whitespace preservation" : {
+      "haml_template" : "coffee/preserve",
+      "html_template" : "coffee/preserve",
+      "locals" : {
+        "title" : "This is a\nmulti line example"
+      }
+    }
   },
 
   "filters" : {

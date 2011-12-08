@@ -33,10 +33,13 @@ Options:
   -n, --namespace                    Set a custom template namespace                             [default: "window.HAML"]
   -t, --template                     Set a custom template name
   -f, --format                       Set HTML output format, either `xhtml`, `html4` or `html5`  [default: "html5"]
-  -e, --custom-html-escape           Set the custom HTML escaping function name
-  -c, --custom-clean-value           Set the custom code value clean function name
+  --preserve                         Set a comma separated list of HTML tags to preserve         [default: "pre,textarea"]
   --disable-html-attribute-escaping  Disable any HTML attribute escaping                         [boolean]
   --disable-html-escaping            Disable any HTML escaping                                   [boolean]
+  --custom-html-escape               Set the custom HTML escaping function name
+  --custom-preserve                  Set the custom preserve whitespace function name
+  --custom-find-and-preserve         Set the custom find and preserve whitespace function name
+  --custom-clean-value               Set the custom code value clean function name
 ```
 
 ### `-i`/`--input` option
@@ -105,47 +108,15 @@ The Haml parser knows different HTML formats to which a given template can be re
 Doctype, self-closing tags and attributes handling depends on this setting. Please consult the official
 [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more details.
 
-### `-e`/`--custom-html-escape` option
+### `--preserve`
 
-Every data that is evaluated at render time will be escaped. The escaping function is included in every template and
-with a growing number of templates, there is a lot of duplication that can be avoided in order to reduce your template
-size.
+The preserve options defines a list of comma separated HTML tags, which content whitespace will be automatically
+preserved when the content is given on the same line as the tag. By default the list contains `textarea` and `pre`.
 
-You can specify a custom escape function that will be used to render the template:
-
-```bash
-$ haml-coffee -i template.haml -e HAML.escape
-```
-
-Now the escaping function isn't included in your template anymore and you have to make sure the function is available
-when the template is rendered. The default implementation is quite simple:
-
-```coffeescript
-window.HAML.htmlEscape ||= (text) ->
-  "#{ text }"
-  .replace(/&/g, '&amp;')
-  .replace(/</g, '&lt;')
-  .replace(/>/g, '&gt;')
-  .replace(/\"/g, '&quot;')
-```
-
-### `-c`/`--custom-clean-value` option
-
-Every data that is evaluated at render time will be cleaned, so that `null` and `undefined` values are shown as empty
-string. The clean value function is included in every template and with a growing number of templates, there is a lot of
-duplication that can be avoided in order to reduce your template size.
-
-You can specify a custom clean value function that will be used to render the template:
+You can specify a custom list of preserved HTML tags:
 
 ```bash
-$ haml-coffee -i template.haml -c HAML.cleanValue
-```
-
-Now the clean value function isn't included in your template anymore and you have to make sure the function is available
-when the template is rendered. The default implementation is quite simple:
-
-```coffeescript
-window.HAML.cleanValue ||= (text) -> if text is null or text is undefined then '' else text
+$ haml-coffee -i template.haml --preserve textarea,pre,abbr
 ```
 
 ### `--disable-html-attribute-escaping` option
@@ -162,6 +133,84 @@ Although not recommended, escaping can also be turned off completely:
 
 ```bash
 $ haml-coffee -i template.haml --disable-html-escaping
+```
+
+
+### `--custom-html-escape` option
+
+Every data that is evaluated at render time will be escaped. The escaping function is included in every template and
+with a growing number of templates, there is a lot of duplication that can be avoided in order to reduce your template
+size.
+
+You can specify a custom escape function that will be used to render the template:
+
+```bash
+$ haml-coffee -i template.haml --custom-html-escape HAML.escape
+```
+
+Now the escaping function isn't included in your template anymore and you have to make sure the function is available
+when the template is rendered. The default implementation is quite simple:
+
+```coffeescript
+window.HAML.htmlEscape ||= (text) ->
+  "#{ text }"
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/\"/g, '&quot;')
+```
+
+### `--custom-preserve` option
+
+You can replace the given preserve function that comes with every template by supplying the name of your custom preserve
+function:
+
+```bash
+$ haml-coffee -i template.haml --custom-preserve App.preserve
+```
+
+Now the template doesn't contain the preserve function, it uses the defined `HAML.preserve` function. The default
+implementation is just a single line:
+
+```coffeescript
+window.HAML.escape ||= (text) -> text.replace /\\n/g, '&#x000A;'
+```
+
+### `--custom-find-and-preserve` option
+
+Like Haml for Ruby, haml-coffee supports the whitespace preservation helper `~` that makes use of the function
+`HAML.findAndReplace` that is contained in every template. You can also supply a custom function:
+
+```bash
+$ haml-coffee -i template.haml --custom-find-and-preserve App.findAndPreserve
+```
+
+The default implementation recognizes the tags that are defined with the `--preserve` option and makes use of the
+preserve function that is defined with `--custom-preserve`:
+
+```coffeescript
+window.HAML.htmlEscape ||= (text) ->
+  text.replace /<(#{ @options.preserveTags.split(',').join('|') })>([^]*?)<\\/\\1>/g, (str, tag, content) ->
+    "<\#{ tag }>\#{ #{ preserveFn }(content) }</\#{ tag }>"\n
+```
+
+### `--custom-clean-value` option
+
+Every data that is evaluated at render time will be cleaned, so that `null` and `undefined` values are shown as empty
+string. The clean value function is included in every template and with a growing number of templates, there is a lot of
+duplication that can be avoided in order to reduce your template size.
+
+You can specify a custom clean value function that will be used to render the template:
+
+```bash
+$ haml-coffee -i template.haml -c HAML.cleanValue
+```
+
+Now the clean value function isn't included in your template anymore and you have to make sure the function is available
+when the template is rendered. The default implementation is quite simple:
+
+```coffeescript
+window.HAML.cleanValue ||= (text) -> if text is null or text is undefined then '' else text
 ```
 
 ## Render Haml Coffee
@@ -240,6 +289,7 @@ to other implementations, and the following sections are fully compatible to Rub
 * Escaping HTML: `&=`, unescaping HTML: `!=`
 * Filters: `:plain`, `:javascript`, `:css`, `:cdata`, `:escaped`, `:preserve`
 * Boolean attributes conversion
+* findAndPreserve helper
 
 Please consult the official [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more
 details.
@@ -304,7 +354,7 @@ controllers or helpers to put heavy logic into.
 
 You can define your attributes over multiple lines and the next line must not be indented properly, so you can
 align them:
- 
+
 ```haml
 %input#password.hint{ type: 'password', name: 'registration[password]',
                       data: { hint: "Something very imporant", align: 'left' } }
