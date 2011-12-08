@@ -53,6 +53,7 @@ module.exports = class Node
     @escapeAttributes  = options.escapeAttributes
     @format            = options.format
     @selfCloseTags     = options.selfCloseTags.split(',')
+    @uglify            = options.uglify
 
     @codeBlockLevel    = options.codeBlockLevel
     @blockLevel        = options.blockLevel
@@ -120,7 +121,7 @@ module.exports = class Node
     {
       type    : 'text'
       cw      : @codeBlockLevel
-      hw      : @blockLevel - @codeBlockLevel + 2
+      hw      : if @uglify then 0 else @blockLevel - @codeBlockLevel + 2
       text    : if escape then e(text) else text
     }
 
@@ -150,7 +151,7 @@ module.exports = class Node
     {
       type            : 'insert'
       cw              : @codeBlockLevel
-      hw              : @blockLevel
+      hw              : if @uglify then 0 else @blockLevel
       escape          : escape
       preserve        : preserve
       findAndPreserve : findAndPreserve

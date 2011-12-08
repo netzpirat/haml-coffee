@@ -21,6 +21,7 @@ module.exports = class Compiler
   constructor: (@options = {}) ->
     @options.escapeHtml       ?= true
     @options.escapeAttributes ?= true
+    @options.uglify           ?= false
     @options.format           ?= 'html5'
     @options.preserveTags     ?= 'pre,textarea'
     @options.selfCloseTags    ?= 'meta,img,link,br,hr,input,area,param,col,base'
@@ -110,6 +111,7 @@ module.exports = class Compiler
       format           : override.format           || @options.format
       preserveTags     : override.preserveTags     || @options.preserveTags
       selfCloseTags    : override.selfCloseTags    || @options.selfCloseTags
+      uglify           : override.uglify           || @options.uglify
     }
 
   # Get the matching node type for the given expression. This

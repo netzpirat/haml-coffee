@@ -4,6 +4,7 @@
   * Add preserve and findAndPreserve helper and customization options
   * Add `--preserve` option to define the whitespace preserved tag list
   * Add `--autoclose` option to define self-closing tags
+  * Add `--uglify` option to generate non-indented HTML tags
 
 # Version 0.3.1
 

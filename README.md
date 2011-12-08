@@ -33,6 +33,7 @@ Options:
   -n, --namespace                    Set a custom template namespace
   -t, --template                     Set a custom template name
   -f, --format                       Set HTML output format, either `xhtml`, `html4` or `html5`
+  -u, --uglify                       Do not properly indent or format the HTML output
   --preserve                         Set a comma separated list of HTML tags to preserve
   --autoclose                        Set a list of tag names that should be automatically self-closed if they have no content
   --disable-html-attribute-escaping  Disable any HTML attribute escaping
@@ -106,8 +107,21 @@ The Haml parser knows different HTML formats to which a given template can be re
 * html4
 * html5
 
+``` bash
+$ haml-coffee -i template.haml -f xhtml
+```
+
 Doctype, self-closing tags and attributes handling depends on this setting. Please consult the official
 [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more details.
+
+### `-u`/`--uglify` option
+
+By default all generated HTML tags are properly indented and looks nice to view. You can skip indention by providing
+the uglify option and save some bytes and have a minor increased rendering speed.
+
+``` bash
+$ haml-coffee -i template.haml --uglify
+```
 
 ### `--preserve`
 

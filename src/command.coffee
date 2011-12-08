@@ -27,6 +27,12 @@ argv = require('optimist')
     default   : 'html5'
     describe  : 'Set HTML output format, either `xhtml`, `html4` or `html5`'
   )
+  .options('u',
+    alias     : 'uglify',
+    boolean   : true
+    default   : false
+    describe  : 'Do not properly indent or format the HTML output'
+  )
   .options('preserve',
     default   : 'pre,textarea'
     describe  : 'Set a comma separated list of HTML tags to preserve'
@@ -75,6 +81,7 @@ exports.run = ->
 
   compilerOptions =
     format                : argv.f
+    uglify                : argv.u
     preserveTags          : argv.preserve
     escapeHtml            : not argv['disable-html-escaping']
     escapeAttributes      : not argv['disable-html-attribute-escaping']
