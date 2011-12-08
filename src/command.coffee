@@ -31,6 +31,10 @@ argv = require('optimist')
     default   : 'pre,textarea'
     describe  : 'Set a comma separated list of HTML tags to preserve'
   )
+  .options('autoclose',
+    default   : 'meta,img,link,br,hr,input,area,param,col,base'
+    describe  : 'Set a comma separated list of self-closed HTML tags'
+  )
   .options('disable-html-attribute-escaping',
     boolean   : true
     describe  : 'Disable any HTML attribute escaping'

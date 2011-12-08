@@ -35,8 +35,6 @@ p     = require('../helper').preserve
 #
 module.exports = class Haml extends Node
 
-  @selfCloseTags: ['meta', 'img', 'link', 'br', 'hr', 'input', 'area', 'param', 'col', 'base']
-
   # Evaluate the node content and store the opener tag
   # and the closer tag if applicable.
   #
@@ -376,4 +374,4 @@ module.exports = class Haml extends Node
   # @return [Boolean] true when a non self closing tag
   #
   isNotSelfClosing: (tag) ->
-    Haml.selfCloseTags.indexOf(tag) == -1 && !tag.match(/\/$/)
+    @selfCloseTags.indexOf(tag) == -1 && !tag.match(/\/$/)

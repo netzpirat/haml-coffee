@@ -3,6 +3,7 @@
   * Remove short version for seldom used haml-coffee options
   * Add preserve and findAndPreserve helper and customization options
   * Add `--preserve` option to define the whitespace preserved tag list
+  * Add `--autoclose` option to define self-closing tags
 
 # Version 0.3.1
 

@@ -52,6 +52,7 @@ module.exports = class Node
     @escapeHtml        = options.escapeHtml
     @escapeAttributes  = options.escapeAttributes
     @format            = options.format
+    @selfCloseTags     = options.selfCloseTags.split(',')
 
     @codeBlockLevel    = options.codeBlockLevel
     @blockLevel        = options.blockLevel

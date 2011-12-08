@@ -119,6 +119,16 @@ You can specify a custom list of preserved HTML tags:
 $ haml-coffee -i template.haml --preserve textarea,pre,abbr
 ```
 
+### `--autoclose`
+
+The autoclose option defines a list of tag names that should be automatically self-closed if they have no content.
+
+You can specify a custom list of auto closed HTML tags:
+
+```bash
+$ haml-coffee -i template.haml --autoclose meta,img,link,br,hr,input,area,param,col,base
+```
+
 ### `--disable-html-attribute-escaping` option
 
 All dynamic generated HTML attributes are escaped by default, but can be turned off with:

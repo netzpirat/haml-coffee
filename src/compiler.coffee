@@ -23,6 +23,7 @@ module.exports = class Compiler
     @options.escapeAttributes ?= true
     @options.format           ?= 'html5'
     @options.preserveTags     ?= 'pre,textarea'
+    @options.selfCloseTags    ?= 'meta,img,link,br,hr,input,area,param,col,base'
 
   # Test if the indention level has changed, either
   # increased or decreased.
@@ -108,6 +109,7 @@ module.exports = class Compiler
       escapeAttributes : override.escapeAttributes || @options.escapeAttributes
       format           : override.format           || @options.format
       preserveTags     : override.preserveTags     || @options.preserveTags
+      selfCloseTags    : override.selfCloseTags    || @options.selfCloseTags
     }
 
   # Get the matching node type for the given expression. This
