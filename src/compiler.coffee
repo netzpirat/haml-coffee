@@ -334,14 +334,14 @@ module.exports = class Compiler
     # Render the template
     output += "#{ namespace }['#{ templateName }'] = (context) ->\n"
     output += "  fn = (context) ->\n"
-    output += "    o = []\n"
-    output += "    e = #{ escapeFn }\n"
-    output += "    c = #{ cleanFn }\n"
-    output += "    p = #{ preserveFn }\n"
-    output += "    fp = findAndPreserve = #{ findAndPreserveFn }\n"
+    output += "    $o = []\n"
+    output += "    $e = #{ escapeFn }\n"
+    output += "    $c = #{ cleanFn }\n"
+    output += "    $p = #{ preserveFn }\n"
+    output += "    $fp = findAndPreserve = #{ findAndPreserveFn }\n"
     code    = @createCode()
     output += "#{ code }\n"
-    output += "    return o.join(\"\\n\")#{ @cleanupWhitespace(code) }\n"
+    output += "    return $o.join(\"\\n\")#{ @cleanupWhitespace(code) }\n"
     output += "  return fn.call(context)"
 
     output
@@ -365,7 +365,7 @@ module.exports = class Compiler
 
           # Insert static HTML tag
           when 'text'
-            code.push "#{ w(line.cw) }o.push \"#{ w(line.hw) }#{ line.text }\""
+            code.push "#{ w(line.cw) }$o.push \"#{ w(line.hw) }#{ line.text }\""
 
           # Insert code that is only evaluated and doesn't generate any output
           when 'run'
@@ -374,9 +374,9 @@ module.exports = class Compiler
           # Insert code that is evaluated and generates an output
           when 'insert'
             if line.hw is 0
-              code.push "#{ w(line.cw) }o.push #{ if w(line.findAndPreserve) then 'fp ' else '' }#{ if w(line.preserve) then 'p ' else '' }#{ if w(line.escape) then 'e ' else '' }c #{ line.code }"
+              code.push "#{ w(line.cw) }$o.push #{ if w(line.findAndPreserve) then '$fp ' else '' }#{ if w(line.preserve) then '$p ' else '' }#{ if w(line.escape) then '$e ' else '' }$c #{ line.code }"
             else
-              code.push "#{ w(line.cw) }o.push \"#{ w(line.hw - line.cw + 2) }\" + #{ if w(line.findAndPreserve) then 'fp ' else '' }#{ if w(line.preserve) then 'p ' else '' }#{ if w(line.escape) then 'e ' else '' }c #{ line.code }"
+              code.push "#{ w(line.cw) }$o.push \"#{ w(line.hw - line.cw + 2) }\" + #{ if w(line.findAndPreserve) then '$fp ' else '' }#{ if w(line.preserve) then '$p ' else '' }#{ if w(line.escape) then '$e ' else '' }$c #{ line.code }"
 
     code.join '\n'
 

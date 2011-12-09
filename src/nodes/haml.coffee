@@ -61,21 +61,21 @@ module.exports = class Haml extends Node
           assignment = match[2]
 
           if identifier is '~'
-            code = "\#{fp(#{ assignment })}"
+            code = "\#{$fp(#{ assignment })}"
 
           # Code block with escaped code block, either `=` in escaped mode or `&=`
           else if identifier is '&=' or (identifier is '=' and @escapeHtml)
             if @preserve
-              code = "\#{p(e(c(#{ assignment })))}"
+              code = "\#{$p($e($c(#{ assignment })))}"
             else
-              code = "\#{e(c(#{ assignment }))}"
+              code = "\#{$e($c(#{ assignment }))}"
 
           # Code block with unescaped output, either with `!=` or escaped mode to false
           else if identifier is '!=' or (identifier is '=' and not @escapeHtml)
             if @preserve
-              code = "\#{p(c(#{ assignment }))}"
+              code = "\#{$p($c(#{ assignment }))}"
             else
-              code = "\#{c(#{ assignment })}"
+              code = "\#{$c(#{ assignment })}"
 
           @opener = @markText "#{ prefix }>#{ code }"
           @closer = @markText "</#{ tokens.tag }>"
@@ -244,9 +244,9 @@ module.exports = class Haml extends Node
         # Wrap plain attributes into an interpolation, expect boolean values
         else if not value.match /^("|').*\1$/
           if @escapeAttributes
-            value = '\'#{ e(c(' + value + ')) }\''
+            value = '\'#{ $e($c(' + value + ')) }\''
           else
-            value = '\'#{ c(' + value + ') }\''
+            value = '\'#{ $c(' + value + ') }\''
 
         # Unwrap value from quotes
         value = quoted[2] if quoted = value.match /^("|')(.*)\1$/
