@@ -1,10 +1,11 @@
-Node     = require('./nodes/node')
-Text     = require('./nodes/text')
-Haml     = require('./nodes/haml')
-Code     = require('./nodes/code')
-Comment  = require('./nodes/comment')
-Filter   = require('./nodes/filter')
-w        = require('./helper').whitespace
+CoffeeScript = require('coffee-script')
+Node         = require('./nodes/node')
+Text         = require('./nodes/text')
+Haml         = require('./nodes/haml')
+Code         = require('./nodes/code')
+Comment      = require('./nodes/comment')
+Filter       = require('./nodes/filter')
+w            = require('./helper').whitespace
 
 # The compiler class parses the source code and creates an syntax tree.
 # In a second step the created tree can be rendered into a CoffeeScript
@@ -15,8 +16,16 @@ module.exports = class Compiler
   # Construct the HAML Coffee compiler.
   #
   # @param [Object] options the compiler options
-  # @option options [Boolean] escape_haml whether to escape the output or not
+  # @option options [Boolean] escape_haml escape the output when true
+  # @option options [Boolean] escapeAttributes escape the tag attributes when true
+  # @option options [Boolean] uglify don't indent generated HTML when true
   # @option options [String] format the template format, either `xhtml`, `html4` or `html5`
+  # @option options [String] preserveTags a comma separated list of tags to preserve content whitespace
+  # @option options [String] selfCloseTags a comma separated list of self closing HTML tags
+  # @option options [String] customHtmlEscape the name of the function for HTML escaping
+  # @option options [String] customCleanValue the name of the function to clean code insertion values before output
+  # @option options [String] customFindAndPreserve the name of the function used to find and preserve whitespace
+  # @option options [String] customPreserve the name of the function used to preserve the whitespace
   #
   constructor: (@options = {}) ->
     @options.escapeHtml       ?= true
@@ -165,7 +174,7 @@ module.exports = class Compiler
   parse: (source) ->
     # Initialize line and indent markers
     @line_number = @previousIndent = @tabSize = @currentBlockLevel = @previousBlockLevel = 0
-    @currentCodeBlockLevel = @previousCodeBlockLevel = 2
+    @currentCodeBlockLevel = @previousCodeBlockLevel = 0
 
     # Initialize nodes
     @node = null
@@ -264,7 +273,7 @@ module.exports = class Compiler
   # @param [String] namespace the namespace to register the template
   #
   render: (templateName, namespace = 'window.HAML') ->
-    output = ''
+    template = ''
 
     # Create parameter name from the filename, e.g. a file `users/new.hamlc`
     # will create `window.HAML.user.new`
@@ -276,75 +285,75 @@ module.exports = class Compiler
     if segments.length isnt 0
       for segment in segments
         namespace += ".#{ segment }"
-        output    += "#{ namespace } ?= {}\n"
+        template  += "#{ namespace } ?= {}\n"
     else
-      output    += "#{ namespace } ?= {}\n"
-
-    # Always include escape function in the template, since escaping
-    # can be forced with `&=` event when turned off
-    if @options.customHtmlEscape
-      escapeFn = @options.customHtmlEscape
-    else
-      escapeFn = "#{ namespace }.htmlEscape"
-      output +=
-        escapeFn +
-          '''
-          ||= (text, escape) ->
-            "#{ text }"
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/\'/g, '&apos;')
-            .replace(/\"/g, '&quot;')\n
-          '''
-
-    # Check rendered attribute values
-    if @options.customCleanValue
-      cleanFn = @options.customCleanValue
-    else
-      cleanFn = "#{ namespace }.cleanValue"
-      output +=
-        cleanFn +
-          '''
-          ||= (text) -> if text is null or text is undefined then '' else text\n
-          '''
-
-    if @options.customPreserve
-      preserveFn = @options.customPreserve
-    else
-      preserveFn = "#{ namespace }.preserve"
-      output +=
-        preserveFn +
-          """
-          ||= (text) -> text.replace /\\n/g, '&#x000A;'\n
-          """
-
-    if @options.customFindAndPreserve
-      findAndPreserveFn = @options.customFindAndPreserve
-    else
-      findAndPreserveFn = "#{ namespace }.findAndPreserve"
-      output +=
-        findAndPreserveFn +
-          """
-          ||= (text) ->
-            text.replace /<(#{ @options.preserveTags.split(',').join('|') })>([^]*?)<\\/\\1>/g, (str, tag, content) ->
-              "<\#{ tag }>\#{ #{ preserveFn }(content) }</\#{ tag }>"\n
-          """
+      template += "#{ namespace } ?= {}\n"
 
     # Render the template
-    output += "#{ namespace }['#{ templateName }'] = (context) ->\n"
-    output += "  fn = () ->\n"
-    output += "    $o = []\n"
-    output += "    $e = #{ escapeFn }\n"
-    output += "    $c = #{ cleanFn }\n"
-    output += "    $p = #{ preserveFn }\n"
-    output += "    $fp = findAndPreserve = #{ findAndPreserveFn }\n"
-    code    = @createCode()
-    output += "#{ code }\n"
-    output += "    return $o.join(\"\\n\")#{ @cleanupWhitespace(code) }\n"
-    output += "  return fn.call(context)"
+    template += "#{ namespace }['#{ templateName }'] = (context) ->\n"
+    template += @precompile().replace(/^/mg, '  ')
+    template += "fn.call(context)"
 
-    output
+    template
+
+  # Compiles the parsed source into a function.
+  #
+  # @return [Function] the compiled template
+  #
+  compile: ->
+    CoffeeScript.eval @precompile()
+
+  # Pre-compiles the parsed source and generates
+  # the function source code.
+  #
+  # @return [String] the template function source code
+  #
+  precompile: ->
+    fn = ''
+
+    # Escape HTML entities
+    if @options.customHtmlEscape
+      fn += "$e = #{ @options.customHtmlEscape }\n"
+    else
+      fn += """
+            $e ?= (text, escape) ->
+              "\#{ text }"
+              .replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/\'/g, '&apos;')
+              .replace(/\"/g, '&quot;')\n
+            """
+
+    # Check values generated from template code
+    if @options.customCleanValue
+      fn += "$c = #{ @options.customCleanValue }\n"
+    else
+      fn += "$c ?= (text) -> if text is null or text is undefined then '' else text\n"
+
+    # Preserve whitespace
+    if @options.customPreserve
+      fn += "$p = #{ @options.customPreserve }\n"
+    else
+      fn += "$p ?= (text) -> text.replace /\\n/g, '&#x000A;'\n"
+
+    # Find whitespace sensitive tags and preserve
+    if @options.customFindAndPreserve
+      fn += "$fp = #{ @options.customFindAndPreserve }\n"
+    else
+      fn +=
+        """
+        $fp ?= (text) ->
+          text.replace /<(#{ @options.preserveTags.split(',').join('|') })>([^]*?)<\\/\\1>/g, (str, tag, content) ->
+            "<\#{ tag }>\#{ $p content }</\#{ tag }>"\n
+        """
+
+    fn  += "$o = []\n"
+    code = @createCode()
+    fn  += "#{ code }\n"
+    fn  += "$o.join(\"\\n\")#{ @cleanupWhitespace(code) }"
+
+    "fn = ->\n#{ fn.replace(/^/mg, '  ') }\n"
 
   # Create the CoffeeScript code for the template.
   #
@@ -374,10 +383,13 @@ module.exports = class Compiler
 
           # Insert code that is evaluated and generates an output
           when 'insert'
-            if line.hw is 0
-              code.push "#{ w(line.cw) }$o.push #{ if w(line.findAndPreserve) then '$fp ' else '' }#{ if w(line.preserve) then '$p ' else '' }#{ if w(line.escape) then '$e ' else '' }$c #{ line.code }"
-            else
-              code.push "#{ w(line.cw) }$o.push \"#{ w(line.hw - line.cw + 2) }\" + #{ if w(line.findAndPreserve) then '$fp ' else '' }#{ if w(line.preserve) then '$p ' else '' }#{ if w(line.escape) then '$e ' else '' }$c #{ line.code }"
+            processors  = ''
+            processors += '$fp ' if line.findAndPreserve
+            processors += '$p '  if line.preserve
+            processors += '$e '  if line.escape
+            processors += '$c '
+
+            code.push "#{ w(line.cw) }$o.push \"#{ w(line.hw) }\" + #{ processors }#{ line.code }"
 
     code.join '\n'
 

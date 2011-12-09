@@ -61,7 +61,7 @@ module.exports = class Haml extends Node
           assignment = match[2]
 
           if identifier is '~'
-            code = "\#{$fp(#{ assignment })}"
+            code = "\#{$fp #{ assignment } }"
 
           # Code block with escaped code block, either `=` in escaped mode or `&=`
           else if identifier is '&=' or (identifier is '=' and @escapeHtml)
