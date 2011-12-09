@@ -64,6 +64,8 @@ for suite in suites
               html = window.HAML.test(spec.locals)
 
             catch error
+              report +=  "\n-------------- Error compiling JST -------------------------\n"
+              report += "#{ error }"
 
             report +=  "\n-------------------- Rendered HTML ---------------------------\n"
             report +=  html
