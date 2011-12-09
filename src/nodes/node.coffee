@@ -121,7 +121,7 @@ module.exports = class Node
     {
       type    : 'text'
       cw      : @codeBlockLevel
-      hw      : if @uglify then 0 else @blockLevel - this.codeBlockLevel
+      hw      : if @uglify then 0 else @blockLevel - @codeBlockLevel
       text    : if escape then e(text) else text
     }
 
@@ -151,7 +151,7 @@ module.exports = class Node
     {
       type            : 'insert'
       cw              : @codeBlockLevel
-      hw              : if @uglify then 0 else @blockLevel - this.codeBlockLevel
+      hw              : if @uglify then 0 else @blockLevel - @codeBlockLevel
       escape          : escape
       preserve        : preserve
       findAndPreserve : findAndPreserve
