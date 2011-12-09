@@ -333,7 +333,7 @@ module.exports = class Compiler
 
     # Render the template
     output += "#{ namespace }['#{ templateName }'] = (context) ->\n"
-    output += "  fn = (context) ->\n"
+    output += "  fn = () ->\n"
     output += "    $o = []\n"
     output += "    $e = #{ escapeFn }\n"
     output += "    $c = #{ cleanFn }\n"
