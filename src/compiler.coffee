@@ -358,6 +358,7 @@ module.exports = class Compiler
 
     @lines = []
     @lines = @lines.concat(child.render()) for child in @root.children
+    @lines = @combineText(@lines)
 
     for line in @lines
       unless line is null
@@ -379,6 +380,25 @@ module.exports = class Compiler
               code.push "#{ w(line.cw) }$o.push \"#{ w(line.hw - line.cw + 2) }\" + #{ if w(line.findAndPreserve) then '$fp ' else '' }#{ if w(line.preserve) then '$p ' else '' }#{ if w(line.escape) then '$e ' else '' }$c #{ line.code }"
 
     code.join '\n'
+
+  # Optimize the lines to be rendered by combining subsequent text
+  # nodes that are on the same code line indention into a single line.
+  #
+  # @param [Array<Object>] lines the code lines
+  # @return [Array<Object>] the optimized lines
+  #
+  combineText: (lines) ->
+    combined = []
+
+    while (line = lines.shift()) isnt undefined
+      if line.type is 'text'
+        while lines[0] and lines[0].type is 'text' and line.cw is lines[0].cw
+          nextLine = lines.shift()
+          line.text += "\\n#{ w(nextLine.hw) }#{ nextLine.text }"
+
+      combined.push line
+
+    combined
 
   # Adds whitespace cleanup function when needed by the
   # template. The cleanup must be done AFTER the template
