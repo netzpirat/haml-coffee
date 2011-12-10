@@ -38,6 +38,7 @@ Options:
   --autoclose                        Set a list of tag names that should be automatically self-closed if they have no content
   --disable-html-attribute-escaping  Disable any HTML attribute escaping
   --disable-html-escaping            Disable any HTML escaping
+  --disable-clean-value              Disable any CoffeeScript code value cleaning
   --custom-html-escape               Set the custom HTML escaping function name
   --custom-preserve                  Set the custom preserve whitespace function name
   --custom-find-and-preserve         Set the custom find and preserve whitespace function name
@@ -160,6 +161,14 @@ Although not recommended, escaping can also be turned off completely:
 $ haml-coffee -i template.haml --disable-html-escaping
 ```
 
+### `--disable-clean-value` option
+
+Every output that is generated from the inline CoffeeScript code is cleaned before inserting into the document. The
+default implementation converts any `null` or `undefined` value into an empty string. You can turn this off with:
+
+```bash
+$ haml-coffee -i template.haml --disable-clean-value
+```
 
 ### `--custom-html-escape` option
 

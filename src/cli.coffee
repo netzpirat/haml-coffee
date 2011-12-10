@@ -49,6 +49,10 @@ argv = require('optimist')
     boolean   : true
     describe  : 'Disable any HTML escaping'
   )
+  .options('disable-clean-value',
+    boolean   : true
+    describe  : 'Disable any CoffeeScript code value cleaning'
+  )
   .options('custom-html-escape',
     default   : ''
     describe  : 'Set the custom HTML escaping function name'
@@ -85,6 +89,7 @@ exports.run = ->
     preserveTags          : argv.preserve
     escapeHtml            : not argv['disable-html-escaping']
     escapeAttributes      : not argv['disable-html-attribute-escaping']
+    cleanValue            : not argv['disable-clean-value']
     customHtmlEscape      : argv['custom-html-escape']
     customCleanValue      : argv['custom-clean-value']
     customFindAndPreserve : argv['custom-find-and-preserve']

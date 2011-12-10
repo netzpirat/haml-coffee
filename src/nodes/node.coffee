@@ -51,6 +51,7 @@ module.exports = class Node
 
     @escapeHtml        = options.escapeHtml
     @escapeAttributes  = options.escapeAttributes
+    @cleanValue        = options.cleanValue
     @format            = options.format
     @selfCloseTags     = options.selfCloseTags.split(',')
     @uglify            = options.uglify

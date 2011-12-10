@@ -16,8 +16,9 @@ module.exports = class HamlCoffee
   # Construct the HAML Coffee compiler.
   #
   # @param [Object] options the compiler options
-  # @option options [Boolean] escape_haml escape the output when true
+  # @option options [Boolean] escapeHtml escape the output when true
   # @option options [Boolean] escapeAttributes escape the tag attributes when true
+  # @option options [Boolean] cleanValue clean CoffeeScript values before inserting
   # @option options [Boolean] uglify don't indent generated HTML when true
   # @option options [String] format the template format, either `xhtml`, `html4` or `html5`
   # @option options [String] preserveTags a comma separated list of tags to preserve content whitespace
@@ -30,6 +31,7 @@ module.exports = class HamlCoffee
   constructor: (@options = {}) ->
     @options.escapeHtml       ?= true
     @options.escapeAttributes ?= true
+    @options.cleanValue       ?= true
     @options.uglify           ?= false
     @options.format           ?= 'html5'
     @options.preserveTags     ?= 'pre,textarea'
@@ -117,6 +119,7 @@ module.exports = class HamlCoffee
       codeBlockLevel   : override.codeBlockLevel   || @currentCodeBlockLevel
       escapeHtml       : override.escapeHtml       || @options.escapeHtml
       escapeAttributes : override.escapeAttributes || @options.escapeAttributes
+      cleanValue       : override.cleanValue       || @options.cleanValue
       format           : override.format           || @options.format
       preserveTags     : override.preserveTags     || @options.preserveTags
       selfCloseTags    : override.selfCloseTags    || @options.selfCloseTags
@@ -380,7 +383,7 @@ module.exports = class HamlCoffee
             processors += '$fp ' if line.findAndPreserve
             processors += '$p '  if line.preserve
             processors += '$e '  if line.escape
-            processors += '$c '
+            processors += '$c '  if @options.cleanValue
 
             code.push "#{ w(line.cw) }$o.push \"#{ w(line.hw) }\" + #{ processors }#{ line.code }"
 

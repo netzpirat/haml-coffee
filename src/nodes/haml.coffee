@@ -66,16 +66,28 @@ module.exports = class Haml extends Node
           # Code block with escaped code block, either `=` in escaped mode or `&=`
           else if identifier is '&=' or (identifier is '=' and @escapeHtml)
             if @preserve
-              code = "\#{$p($e($c(#{ assignment })))}"
+              if @cleanValue
+                code = "\#{ $p($e($c(#{ assignment }))) }"
+              else
+                code = "\#{ $p($e(#{ assignment })) }"
             else
-              code = "\#{$e($c(#{ assignment }))}"
+              if @cleanValue
+                code = "\#{ $e($c(#{ assignment })) }"
+              else
+                code = "\#{ $e(#{ assignment }) }"
 
           # Code block with unescaped output, either with `!=` or escaped mode to false
           else if identifier is '!=' or (identifier is '=' and not @escapeHtml)
             if @preserve
-              code = "\#{$p($c(#{ assignment }))}"
+              if @cleanValue
+                code = "\#{ $p($c(#{ assignment })) }"
+              else
+                code = "\#{ $p(#{ assignment }) }"
             else
-              code = "\#{$c(#{ assignment })}"
+              if @cleanValue
+                code = "\#{ $c(#{ assignment }) }"
+              else
+                code = "\#{ #{ assignment } }"
 
           @opener = @markText "#{ prefix }>#{ code }"
           @closer = @markText "</#{ tokens.tag }>"
@@ -244,9 +256,15 @@ module.exports = class Haml extends Node
         # Wrap plain attributes into an interpolation, expect boolean values
         else if not value.match /^("|').*\1$/
           if @escapeAttributes
-            value = '\'#{ $e($c(' + value + ')) }\''
+            if @cleanValue
+              value = '\'#{ $e($c(' + value + ')) }\''
+            else
+              value = '\'#{ $e(' + value + ') }\''
           else
-            value = '\'#{ $c(' + value + ') }\''
+            if @cleanValue
+              value = '\'#{ $c(' + value + ') }\''
+            else
+              value = '\'#{ (' + value + ') }\''
 
         # Unwrap value from quotes
         value = quoted[2] if quoted = value.match /^("|')(.*)\1$/
