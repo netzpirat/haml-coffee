@@ -1,11 +1,10 @@
-CoffeeScript = require('coffee-script')
-Node         = require('./nodes/node')
-Text         = require('./nodes/text')
-Haml         = require('./nodes/haml')
-Code         = require('./nodes/code')
-Comment      = require('./nodes/comment')
-Filter       = require('./nodes/filter')
-w            = require('./helper').whitespace
+Node    = require('./nodes/node')
+Text    = require('./nodes/text')
+Haml    = require('./nodes/haml')
+Code    = require('./nodes/code')
+Comment = require('./nodes/comment')
+Filter  = require('./nodes/filter')
+w       = require('./helper').whitespace
 
 # The compiler class parses the source code and creates an syntax tree.
 # In a second step the created tree can be rendered into a CoffeeScript
@@ -295,13 +294,6 @@ module.exports = class Compiler
     template += "fn.call(context)"
 
     template
-
-  # Compiles the parsed source into a function.
-  #
-  # @return [Function] the compiled template
-  #
-  compile: ->
-    CoffeeScript.eval @precompile()
 
   # Pre-compiles the parsed source and generates
   # the function source code.
