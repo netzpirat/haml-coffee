@@ -1,4 +1,4 @@
-CoffeeMaker = require('./coffee_maker')
+CoffeeMaker = require('./coffee-maker')
 fs          = require('fs')
 findit      = require('findit')
 
@@ -31,7 +31,7 @@ argv = require('optimist')
     alias     : 'uglify',
     boolean   : true
     default   : false
-    describe  : 'Do not properly indent or format the HTML output'
+    describe  : 'Do not properlyªª indent or format the HTML output'
   )
   .options('preserve',
     default   : 'pre,textarea'
