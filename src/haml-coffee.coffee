@@ -306,46 +306,50 @@ module.exports = class HamlCoffee
   #
   precompile: ->
     fn = ''
+    code = @createCode()
 
     # Escape HTML entities
-    if @options.customHtmlEscape
-      fn += "$e = #{ @options.customHtmlEscape }\n"
-    else
-      fn += """
-            $e ?= (text, escape) ->
-              "\#{ text }"
-              .replace(/&/g, '&amp;')
-              .replace(/</g, '&lt;')
-              .replace(/>/g, '&gt;')
-              .replace(/\'/g, '&apos;')
-              .replace(/\"/g, '&quot;')\n
-            """
+    if code.indexOf('$e') isnt -1
+      if @options.customHtmlEscape
+        fn += "$e = #{ @options.customHtmlEscape }\n"
+      else
+        fn += """
+              $e ?= (text, escape) ->
+                "\#{ text }"
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/\'/g, '&apos;')
+                .replace(/\"/g, '&quot;')\n
+              """
 
     # Check values generated from template code
-    if @options.customCleanValue
-      fn += "$c = #{ @options.customCleanValue }\n"
-    else
-      fn += "$c ?= (text) -> if text is null or text is undefined then '' else text\n"
+    if code.indexOf('$c') isnt -1
+      if @options.customCleanValue
+        fn += "$c = #{ @options.customCleanValue }\n"
+      else
+        fn += "$c ?= (text) -> if text is null or text is undefined then '' else text\n"
 
     # Preserve whitespace
-    if @options.customPreserve
-      fn += "$p = #{ @options.customPreserve }\n"
-    else
-      fn += "$p ?= (text) -> text.replace /\\n/g, '&#x000A;'\n"
+    if code.indexOf('$p') isnt -1 || code.indexOf('$fp') isnt -1
+      if @options.customPreserve
+        fn += "$p = #{ @options.customPreserve }\n"
+      else
+        fn += "$p ?= (text) -> text.replace /\\n/g, '&#x000A;'\n"
 
     # Find whitespace sensitive tags and preserve
-    if @options.customFindAndPreserve
-      fn += "$fp = #{ @options.customFindAndPreserve }\n"
-    else
-      fn +=
-        """
-        $fp ?= (text) ->
-          text.replace /<(#{ @options.preserveTags.split(',').join('|') })>([^]*?)<\\/\\1>/g, (str, tag, content) ->
-            "<\#{ tag }>\#{ $p content }</\#{ tag }>"\n
-        """
+    if code.indexOf('$fp') isnt -1
+      if @options.customFindAndPreserve
+        fn += "$fp = #{ @options.customFindAndPreserve }\n"
+      else
+        fn +=
+          """
+          $fp ?= (text) ->
+            text.replace /<(#{ @options.preserveTags.split(',').join('|') })>([^]*?)<\\/\\1>/g, (str, tag, content) ->
+              "<\#{ tag }>\#{ $p content }</\#{ tag }>"\n
+          """
 
     fn  += "$o = []\n"
-    code = @createCode()
     fn  += "#{ code }\n"
     fn  += "$o.join(\"\\n\")#{ @cleanupWhitespace(code) }"
 
