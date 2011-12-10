@@ -5,6 +5,7 @@ Code    = require('./nodes/code')
 Comment = require('./nodes/comment')
 Filter  = require('./nodes/filter')
 w       = require('./helper').whitespace
+indent  = require('./helper').indent
 
 # The HamlCoffee class is the compiler that parses the source code and creates an syntax tree.
 # In a second step the created tree can be rendered into either a JavaScript function or a
@@ -290,7 +291,7 @@ module.exports = class HamlCoffee
 
     # Render the template
     template += "#{ namespace }['#{ templateName }'] = (context) ->\n"
-    template += @indent(@precompile(), 2)
+    template += indent(@precompile(), 2)
     template += "fn.call(context)"
 
     template
@@ -345,7 +346,7 @@ module.exports = class HamlCoffee
     fn  += "#{ code }\n"
     fn  += "$o.join(\"\\n\")#{ @cleanupWhitespace(code) }"
 
-    "fn = ->\n#{ @indent(fn, 2) }\n"
+    "fn = ->\n#{ indent(fn, 2) }\n"
 
   # Create the CoffeeScript code for the template.
   #
@@ -419,12 +420,3 @@ module.exports = class HamlCoffee
       ".replace(/[\\s\\n]*\\u0091/mg, '').replace(/\\u0092[\\s\\n]*/mg, '')"
     else
       ''
-
-  # Indent the given text.
-  #
-  # @param [String] text the text to indent
-  # @param [Integer] the amount of spaced to insert
-  # @return [String] the indented text
-  #
-  indent: (text, spaces) ->
-    text.replace /^(.*)$/mg, w(spaces) + '$1'

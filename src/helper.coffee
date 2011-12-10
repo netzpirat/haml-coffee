@@ -46,3 +46,12 @@ module.exports =
     if code
       code.replace /<(pre|textarea)>(.*?)<\/\1>/g, (text) ->
         text.replace('\\n', '\&\#x000A;')
+
+  # Indent the given text.
+  #
+  # @param [String] text the text to indent
+  # @param [Integer] the amount of spaced to insert
+  # @return [String] the indented text
+  #
+  indent: (text, spaces) ->
+    text.replace /^(.*)$/mg, module.exports.whitespace(spaces) + '$1'
