@@ -6,11 +6,11 @@ Comment = require('./nodes/comment')
 Filter  = require('./nodes/filter')
 w       = require('./helper').whitespace
 
-# The compiler class parses the source code and creates an syntax tree.
-# In a second step the created tree can be rendered into a CoffeeScript
-# template.
+# The HamlCoffee class is the compiler that parses the source code and creates an syntax tree.
+# In a second step the created tree can be rendered into either a JavaScript function or a
+# CoffeeScript template.
 #
-module.exports = class Compiler
+module.exports = class HamlCoffee
 
   # Construct the HAML Coffee compiler.
   #

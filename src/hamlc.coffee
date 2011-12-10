@@ -1,4 +1,4 @@
-Compiler     = require('./compiler')
+Compiler     = require('./haml-coffee')
 CoffeeScript = require('coffee-script')
 
 # Facade to Haml Coffee for easy template function
@@ -17,7 +17,7 @@ module.exports =
   # @return [Function] the template
   #
   compile: (source, options = {}) ->
-    compiler = new Compiler(options)
+    compiler = new HamlCoffee(options)
     compiler.parse source
 
     CoffeeScript.eval compiler.precompile()
@@ -32,7 +32,7 @@ module.exports =
   # @return [String] the template source code
   #
   template: (source, name, namespace, options = {}) ->
-    compiler = new Compiler(options)
+    compiler = new HamlCoffee(options)
     compiler.parse source
 
     CoffeeScript.compile compiler.render(name, namespace)

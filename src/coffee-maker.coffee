@@ -1,5 +1,5 @@
 CoffeeScript  = require('coffee-script')
-Compiler      = require('./compiler')
+HamlCoffee    = require('./haml-coffee')
 fs            = require('fs')
 
 module.exports = class CoffeeMaker
@@ -26,7 +26,7 @@ module.exports = class CoffeeMaker
       templateName = filename.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] unless templateName
 
       if templateName
-        compiler = new Compiler compilerOptions
+        compiler = new HamlCoffee compilerOptions
         compiler.parse source
         haml = compiler.render templateName, namespace
 

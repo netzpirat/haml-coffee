@@ -1,7 +1,7 @@
 fs     = require 'fs'
 
 CoffeeScript  = require 'coffee-script'
-Compiler      = require '../lib/compiler'
+HamlCoffee    = require '../lib/haml-coffee'
 
 suites = [
   'haml'
@@ -29,7 +29,7 @@ for suite in suites
               format           : spec.config?.format || 'xhtml'
             }
 
-            compiler = new Compiler(config)
+            compiler = new HamlCoffee(config)
 
             report = "Generated output doesn't match the expected result.\n\n"
             report += "-------------------- Compiler settings ------------------------\n"
