@@ -291,7 +291,7 @@ module.exports = class Compiler
 
     # Render the template
     template += "#{ namespace }['#{ templateName }'] = (context) ->\n"
-    template += @precompile().replace(/^/mg, '  ')
+    template += @indent(@precompile(), 2)
     template += "fn.call(context)"
 
     template
@@ -353,7 +353,7 @@ module.exports = class Compiler
     fn  += "#{ code }\n"
     fn  += "$o.join(\"\\n\")#{ @cleanupWhitespace(code) }"
 
-    "fn = ->\n#{ fn.replace(/^/mg, '  ') }\n"
+    "fn = ->\n#{ @indent(fn, 2) }\n"
 
   # Create the CoffeeScript code for the template.
   #
@@ -427,3 +427,12 @@ module.exports = class Compiler
       ".replace(/[\\s\\n]*\\u0091/mg, '').replace(/\\u0092[\\s\\n]*/mg, '')"
     else
       ''
+
+  # Indent the given text.
+  #
+  # @param [String] text the text to indent
+  # @param [Integer] the amount of spaced to insert
+  # @return [String] the indented text
+  #
+  indent: (text, spaces) ->
+    text.replace /^(.*)$/mg, w(spaces) + '$1'
