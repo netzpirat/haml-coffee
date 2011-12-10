@@ -1,6 +1,6 @@
 Node  = require('./node')
-eq    = require('../helper').escapeQuotes
-p     = require('../helper').preserve
+eq    = require('../util/text').escapeQuotes
+p     = require('../util/text').preserve
 
 # HAML node that contains Haml a haml tag that can have attributes
 # and a text or code assignment. There are shortcuts for id and class

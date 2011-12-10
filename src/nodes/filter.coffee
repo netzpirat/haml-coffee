@@ -1,5 +1,5 @@
 Node = require('./node')
-w    = require('../helper').whitespace
+w    = require('../util/text').whitespace
 
 # Filter node for built-in Haml filters:
 #

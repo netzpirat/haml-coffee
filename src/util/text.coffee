@@ -1,4 +1,4 @@
-# Global helpers
+# Global text helpers
 #
 module.exports =
 

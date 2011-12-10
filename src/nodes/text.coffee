@@ -1,5 +1,5 @@
 Node  = require('./node')
-eq    = require('../helper').escapeQuotes
+eq    = require('../util/text').escapeQuotes
 
 # Text node that contains everything that cannot be detected as
 # other node. This is normally plain text to be inserted into the

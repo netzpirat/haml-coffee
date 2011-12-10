@@ -1,5 +1,5 @@
-e = require('../helper').escapeHTML
-w = require('../helper').whitespace
+e = require('../util/text').escapeHTML
+w = require('../util/text').whitespace
 
 # Base class for the syntax tree.
 #
