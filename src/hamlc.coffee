@@ -20,7 +20,7 @@ module.exports =
     compiler = new Compiler(options)
     compiler.parse source
 
-    compiler.compile()
+    (args...) -> compiler.compile().call args...
 
   # Render a JavaScript Template.
   #
