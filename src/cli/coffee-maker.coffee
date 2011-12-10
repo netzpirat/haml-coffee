@@ -1,5 +1,5 @@
 CoffeeScript  = require('coffee-script')
-HamlCoffee    = require('./haml-coffee')
+HamlCoffee    = require('../haml-coffee')
 fs            = require('fs')
 
 module.exports = class CoffeeMaker
