@@ -1,7 +1,7 @@
 # Haml Coffee Templates [![Build Status](https://secure.travis-ci.org/9elements/haml-coffee.png)](http://travis-ci.org/9elements/haml-coffee)
 
 Haml Coffee is a [Haml](http://haml-lang.com/) parser that understands [CoffeeScript](http://jashkenas.github.com/coffee-script/)
-and generate a JavaScript template that can be rendered to HTML in any JavaScript application like
+and generates a JavaScript template that can be rendered to HTML in any JavaScript application like
 [Backbone.js](http://documentcloud.github.com/backbone/), [Express](http://expressjs.com/), [Spine.js](http://spinejs.com/),
 [JavaScriptMVC](http://javascriptmvc.com/), [KnockoutJS](http://knockoutjs.com/) and many others.
 
