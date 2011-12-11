@@ -20,7 +20,8 @@ module.exports =
     compiler = new Compiler(options)
     compiler.parse source
 
-    CoffeeScript.eval compiler.precompile()
+    (params) ->
+      CoffeeScript.eval(compiler.precompile()).call params
 
   # Render a JavaScript Template.
   #
