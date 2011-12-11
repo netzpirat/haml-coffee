@@ -1,11 +1,9 @@
 # Haml Coffee Templates [![Build Status](https://secure.travis-ci.org/9elements/haml-coffee.png)](http://travis-ci.org/9elements/haml-coffee)
 
-Haml Coffee is a Haml parser that understands CoffeeScript. It will generate a JavaScript template that can be rendered
-to HTML.
-
-Those templates can be used in any JavaScript application like [Backbone.js](http://documentcloud.github.com/backbone/),
-[Express](http://expressjs.com/), [Spine.js](http://spinejs.com/), [JavaScriptMVC](http://javascriptmvc.com/),
-[KnockoutJS](http://knockoutjs.com/) and many others.
+Haml Coffee is a [Haml](http://haml-lang.com/) parser that understands [CoffeeScript](http://jashkenas.github.com/coffee-script/)
+and generate a JavaScript template that can be rendered to HTML in any JavaScript application like
+[Backbone.js](http://documentcloud.github.com/backbone/), [Express](http://expressjs.com/), [Spine.js](http://spinejs.com/),
+[JavaScriptMVC](http://javascriptmvc.com/), [KnockoutJS](http://knockoutjs.com/) and many others.
 
 ## Table of content
 
@@ -14,7 +12,7 @@ Those templates can be used in any JavaScript application like [Backbone.js](htt
 * [Haml support](#haml-support)
 * [CoffeeScript support](#coffee-script-support)
 * [Using with Express](#using-with-express)
-* [Advanced Haml Coffee options](#advanced-haml-coffee-options
+* [Advanced Haml Coffee options](#advanced-haml-coffee-options)
 * [Development information](#development-information)
 
 <a name="installation" />
@@ -27,8 +25,7 @@ $ npm install haml-coffee
 ```
 
 If you like to integrate Haml Coffee into the Rails 3.1 asset pipeline, check out
-[haml_coffee_assets](https://github.com/netzpirat/haml_coffee_assets). When you're using express, you may want to skip
-the command line compilation section and proceed to the `Using Haml Coffee with Express` section.
+[haml_coffee_assets](https://github.com/netzpirat/haml_coffee_assets).
 
 <a name="compile-on-cli" />
 ## Compile Haml Coffee on the command line
@@ -503,6 +500,12 @@ $ bundle exec guard
 ## Changelog
 
 Feel free to take a look at the [changelog](https://github.com/9elements/haml-coffee/blob/master/CHANGELOG.md).
+
+## Related projects
+
+Haml Coffee in the  Rails asset pipeline:
+
+* [haml-coffee-assets](https://github.com/netzpirat/haml_coffee_assets)
 
 ## Authors
 
