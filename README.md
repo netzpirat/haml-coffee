@@ -290,14 +290,14 @@ with `-`:
 You can configure [Express](http://expressjs.com/) to use Haml Coffee as template engine.
 
 ```coffee-script
-express = require "express"
-hamlc = require "haml-coffee"
+express = require 'express'
+hamlc = require 'haml-coffee'
 
 app = express.createServer()
-app.register ".hamlc", hamlc
+app.register '.hamlc', hamlc
 
-app.get "/", (req, res) ->
-  res.render "index.hamlc", title: "Haml-coffee sample"
+app.get '/', (req, res) ->
+  res.render 'index.hamlc', title: 'Haml-coffee sample'
 
 app.listen 3000
 ```
@@ -326,8 +326,8 @@ app.set 'view engine', 'hamlc'
 which allows you to omit then `.hamlc` extension when rendering a template:
 
 ```coffee-script
-app.get "/", (req, res) ->
-  res.render "index", project: "It works"
+app.get '/', (req, res) ->
+  res.render 'index', project: 'It works'
 ```
 
 <a name="advanced-haml-coffee-options" />
