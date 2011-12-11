@@ -5,10 +5,10 @@ and generates a JavaScript template that can be rendered to HTML in any JavaScri
 [Backbone.js](http://documentcloud.github.com/backbone/), [Express](http://expressjs.com/), [Spine.js](http://spinejs.com/),
 [JavaScriptMVC](http://javascriptmvc.com/), [KnockoutJS](http://knockoutjs.com/) and many others.
 
-## Table of content
+## Contents
 
 * [Installation](#installation)
-* [Compile Haml Coffee on the command line](#compile-on-cli)
+* [Compile Haml Coffee](#compile-haml-coffee)
 * [Haml support](#haml-support)
 * [CoffeeScript support](#coffee-script-support)
 * [Using with Express](#using-with-express)
@@ -27,10 +27,11 @@ $ npm install haml-coffee
 If you like to integrate Haml Coffee into the Rails 3.1 asset pipeline, check out
 [haml_coffee_assets](https://github.com/netzpirat/haml_coffee_assets).
 
-<a name="compile-on-cli" />
-## Compile Haml Coffee on the command line
+<a name="compile-haml-coffee" />
+## Compile Haml Coffee
 
-After the installation you will have a `haml-coffee` binary:
+After the installation you will have a `haml-coffee` binary that can be used to compile single templates and
+even compile multiple templates recursively into a single file.
 
 ```bash
 $ haml-coffee
@@ -45,8 +46,8 @@ Options:
   -u, --uglify                       Do not properly indent or format the HTML output
 ```
 
-This introduction section describes only the most common options, for more options have a look at the 'Advanced Haml
-Coffee options` section at the bottom.
+This introduction section describes only the most common options, for more options have a look at the
+[Advanced Haml Coffee options](#advanced-haml-coffee-options) section.
 
 ### `-i`/`--input` option
 
@@ -91,11 +92,11 @@ $ haml-coffee -i template.haml -n exports.JST
 ### `-t`/`--template` option
 
 Each template must have a unique name under which it can be addressed. By default the template name is derived from the
-template file name, by stripping of all extensions and remove illegal characters. Directory names are converted to
+template file name by stripping of all extensions and remove illegal characters. Directory names are converted to
 nested namespaces under the default namespace.
 
 For example, a template named `user/show-admin.html.haml` will result in a template name `window.HAML.user.show_admin`,
-but you can override this behaviour:
+but you can override this behavior:
 
 ``` bash
 $ haml-coffee -i template.haml -n exports.JST -t other
@@ -121,7 +122,7 @@ Doctype, self-closing tags and attributes handling depends on this setting. Plea
 ### `-u`/`--uglify` option
 
 By default all generated HTML tags are properly indented and looks nice to view. You can skip indention by providing
-the uglify option and save some bytes and have a minor increased rendering speed.
+the uglify option and save some bytes and have increased rendering speed.
 
 ``` bash
 $ haml-coffee -i template.haml --uglify
@@ -131,7 +132,7 @@ $ haml-coffee -i template.haml --uglify
 ## Haml support
 
 Haml Coffee implements the [Haml Spec](https://github.com/norman/haml-spec) to ensure some degree of compatibility
-to other implementations, and the following sections are fully compatible to Ruby Haml:
+to other implementations and the following sections are fully compatible to Ruby Haml:
 
 * Plain text
 * Multiline: `|`
@@ -312,6 +313,9 @@ You can also turn off the layout rendering by setting the `view option`:
 ```coffee-script
 app.set 'view options', layout: false
 ```
+
+The view options can take any option the Haml Coffee command line tool supports, just remember to
+convert the dashed options to camel case, e.g. `--disable-html-escaping` becomes `disableHtmlEscaping`.
 
 It's possible to use Haml Coffee as the default template engine by setting the `view engine`:
 
