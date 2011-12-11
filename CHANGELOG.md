@@ -1,3 +1,7 @@
+# Version 0.5.1
+
+  * Improve template compilation for Express
+
 # Version 0.5.0
 
   * Express support
