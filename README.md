@@ -327,13 +327,35 @@ You can also turn off the layout rendering by setting the `view option`:
 app.set 'view options', layout: false
 ```
 
-The view options can take any option the Haml Coffee command line tool supports, just remember to
-convert the dashed options to camel case, e.g. `--disable-html-escaping` becomes `disableHtmlEscaping`.
+In addition to the Express options, Haml Coffee supports the following view options:
+
+  * `escapeHtml` escape the output when true [Boolean]
+  * `escapeAttributes` escape the tag attributes when true [Boolean]
+  * `cleanValue` clean CoffeeScript values before inserting [Boolean]
+  * `uglify` don't indent generated HTML when true [Boolean]
+  * `format` the template format, either `xhtml`, `html4` or `html5` [String]
+  * `preserveTags` a comma separated list of tags to preserve content whitespace [String]
+  * `selfCloseTags` a comma separated list of self closing HTML tags [String]
+  * `customHtmlEscape` the name of the function for HTML escaping [String]
+  * `customCleanValue` the name of the function to clean code insertion values before output [String]
+  * `customFindAndPreserve` the name of the function used to find and preserve whitespace [String]
+  * `customPreserve` the name of the function used to preserve the whitespace [String]
+
+```coffee-script
+app.set 'view options'
+  layout: false
+  escapeHtml: false
+  format: 'xhtml'
+```
+
+Please consult the  [Compile Haml Coffee](#compile-haml-coffee) and
+[Advanced Haml Coffee options](#advanced-haml-coffee-options) section for a complete description.
 
 It's possible to use Haml Coffee as the default template engine by setting the `view engine`:
 
 ```coffee-script
-app.set 'view engine', 'hamlc'
+app.configure ->
+  app.set 'view engine', 'hamlc'
 ```
 
 which allows you to omit then `.hamlc` extension when rendering a template:
