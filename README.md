@@ -85,7 +85,7 @@ This will create all the templates under the `templates` directory into a single
 
 Each template will register itself by default under the `window.HAML` namespace, but you can change the namespace with:
 
-``` bash
+```bash
 $ haml-coffee -i template.haml -n exports.JST
 ```
 
@@ -98,7 +98,7 @@ nested namespaces under the default namespace.
 For example, a template named `user/show-admin.html.haml` will result in a template name `window.HAML.user.show_admin`,
 but you can override this behavior:
 
-``` bash
+```bash
 $ haml-coffee -i template.haml -n exports.JST -t other
 ```
 
@@ -112,7 +112,7 @@ The Haml parser knows different HTML formats to which a given template can be re
 * html4
 * html5
 
-``` bash
+```bash
 $ haml-coffee -i template.haml -f xhtml
 ```
 
@@ -124,7 +124,7 @@ Doctype, self-closing tags and attributes handling depends on this setting. Plea
 By default all generated HTML tags are properly indented and looks nice to view. You can skip indention by providing
 the uglify option and save some bytes and have increased rendering speed.
 
-``` bash
+```bash
 $ haml-coffee -i template.haml --uglify
 ```
 
@@ -295,17 +295,30 @@ hamlc = require 'haml-coffee'
 
 app = express.createServer()
 app.register '.hamlc', hamlc
-
-app.get '/', (req, res) ->
-  res.render 'index.hamlc', title: 'Haml-coffee sample'
-
-app.listen 3000
 ```
 
-Express uses a layout file `layout.hamlc` by default. The simplest implementation is a follows:
+Express uses a layout file `layout.hamlc` by default and you have to insert the rendered view body into the layout.
 
 ```haml
-!= @body
+!!! 5
+%head
+  %title Express App
+%body
+  != @body
+```
+
+Now you can create a Haml Coffee view
+
+```haml
+%h1= "Welcome #{ @name }"
+%p You've rendered your first Haml Coffee view.
+```
+
+That you can render with:
+
+```coffee-script
+app.get '/', (req, res) ->
+  res.render 'index.hamlc', name: 'Express user'
 ```
 
 You can also turn off the layout rendering by setting the `view option`:
@@ -327,8 +340,11 @@ which allows you to omit then `.hamlc` extension when rendering a template:
 
 ```coffee-script
 app.get '/', (req, res) ->
-  res.render 'index', project: 'It works'
+  res.render 'index', name: 'Express user'
 ```
+
+You can read more about the view rednering in the
+[Express documentation](http://expressjs.com/guide.html#view-rendering).
 
 <a name="advanced-haml-coffee-options" />
 ## Advanced Haml Coffee options
