@@ -1,9 +1,9 @@
-# Master
+# Version 0.5.0
 
   * Express support
   * Optimizations for enhanced rendering speed and template size
   * Add `--disable-clean-value` option
-  
+
 # Version 0.4.0
 
   * Remove short version for seldom used haml-coffee options
