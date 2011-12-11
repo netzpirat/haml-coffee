@@ -314,7 +314,7 @@ module.exports = class HamlCoffee
         fn += "$e = #{ @options.customHtmlEscape }\n"
       else
         fn += """
-              $e ?= (text, escape) ->
+              $e = (text, escape) ->
                 "\#{ text }"
                 .replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
@@ -328,14 +328,14 @@ module.exports = class HamlCoffee
       if @options.customCleanValue
         fn += "$c = #{ @options.customCleanValue }\n"
       else
-        fn += "$c ?= (text) -> if text is null or text is undefined then '' else text\n"
+        fn += "$c = (text) -> if text is null or text is undefined then '' else text\n"
 
     # Preserve whitespace
     if code.indexOf('$p') isnt -1 || code.indexOf('$fp') isnt -1
       if @options.customPreserve
         fn += "$p = #{ @options.customPreserve }\n"
       else
-        fn += "$p ?= (text) -> text.replace /\\n/g, '&#x000A;'\n"
+        fn += "$p = (text) -> text.replace /\\n/g, '&#x000A;'\n"
 
     # Find whitespace sensitive tags and preserve
     if code.indexOf('$fp') isnt -1
@@ -344,7 +344,7 @@ module.exports = class HamlCoffee
       else
         fn +=
           """
-          $fp ?= (text) ->
+          $fp = (text) ->
             text.replace /<(#{ @options.preserveTags.split(',').join('|') })>([^]*?)<\\/\\1>/g, (str, tag, content) ->
               "<\#{ tag }>\#{ $p content }</\#{ tag }>"\n
           """
