@@ -1,18 +1,27 @@
 # Haml Coffee Templates [![Build Status](https://secure.travis-ci.org/9elements/haml-coffee.png)](http://travis-ci.org/9elements/haml-coffee)
 
-Haml Coffee is a [Haml](http://haml-lang.com/) parser that understands [CoffeeScript](http://jashkenas.github.com/coffee-script/)
-and generates a JavaScript template that can be rendered to HTML in any JavaScript application like
-[Backbone.js](http://documentcloud.github.com/backbone/), [Express](http://expressjs.com/), [Spine.js](http://spinejs.com/),
-[JavaScriptMVC](http://javascriptmvc.com/), [KnockoutJS](http://knockoutjs.com/) and many others.
+Haml Coffee is a JavaScript templating solution that uses [Haml](http://haml-lang.com/) as markup and understands inline
+[CoffeeScript](http://jashkenas.github.com/coffee-script/) to generate a JavaScript function that renders to HTML. It
+can be used in client-side JavaScript applications that are using
+[Backbone.js](http://documentcloud.github.com/backbone/), [Spine.js](http://spinejs.com/),
+[JavaScriptMVC](http://javascriptmvc.com/), [KnockoutJS](http://knockoutjs.com/) and others, or on the server-side in
+framworks like [Express](http://expressjs.com/).
 
 ## Contents
 
 * [Installation](#installation)
 * [Compile Haml Coffee](#compile-haml-coffee)
+  * [Using the API](#using-the-api)
+  * [Using with Express](#using-with-express)
+  * [Using the CLI tool](#using-the-cli-tool)
 * [Haml support](#haml-support)
 * [CoffeeScript support](#coffee-script-support)
-* [Using with Express](#using-with-express)
-* [Advanced Haml Coffee options](#advanced-haml-coffee-options)
+  * [Attributes](#coffee-script-attributes)
+  * [Running code](#coffee-script-running-code)
+  * [Filter](#coffee-script-filter)
+* [Compiler options](#compiler-options)
+  * [HTML generation options](#html-generation-compiler-options)
+  * [Custom helper function options](#custom-helper-function-compiler-options)
 * [Development information](#development-information)
 
 <a name="installation" />
@@ -27,11 +36,107 @@ $ npm install haml-coffee
 If you like to integrate Haml Coffee into the Rails 3.1 asset pipeline, check out
 [haml_coffee_assets](https://github.com/netzpirat/haml_coffee_assets).
 
+For using Haml Coffee compiler in the Browser, a [browserified](https://github.com/substack/node-browserify) version is
+provided:
+
+* [Client-side compiler](https://raw.github.com/9elements/haml-coffee/master/dist/compiler/hamlcoffee.js) ([minified](https://raw.github.com/9elements/haml-coffee/master/dist/compiler/hamlcoffee.min.js))
+
 <a name="compile-haml-coffee" />
 ## Compile Haml Coffee
 
-After the installation you will have a `haml-coffee` binary that can be used to compile single templates and
-even compile multiple templates recursively into a single file.
+<a name="using-the-api" />
+### Using the API
+
+You can compile a Haml Coffee template to a JavaScript function and execute the function with the locals to render the
+HTML. The following code
+
+```coffee-script
+hamlc = require 'haml-coffee'
+tmpl = hamlc.compile '%h1= @title'
+html = tmpl title: 'Introduction'
+```
+
+will create the HTML `<h1>Introduction</h1>`.
+
+The `compile` function can take the compiler options as second parameter to customize the template function:
+
+```coffee-script
+options =
+  cleanValue: false
+  escapeHtml: false
+hamlc.compile '%h1= @title', options
+```
+
+See the [compiler options](#compiler-options) for detailed information about all the available options.
+
+<a name="using-with-express" />
+## Using with Express
+
+You can configure [Express](http://expressjs.com/) to use Haml Coffee as template engine:
+
+```coffee-script
+express = require 'express'
+hamlc = require 'haml-coffee'
+
+app = express.createServer()
+app.register '.hamlc', hamlc
+```
+
+Express uses a layout file `layout.hamlc` by default and you have to insert the rendered view body into the layout like
+this:
+
+```haml
+!!! 5
+%head
+  %title Express App
+%body
+  != @body
+```
+
+Now you can create a Haml Coffee view
+
+```haml
+%h1= "Welcome #{ @name }"
+%p You've rendered your first Haml Coffee view.
+```
+
+that you can render with:
+
+```coffee-script
+app.get '/', (req, res) ->
+  res.render 'index.hamlc', name: 'Express user'
+```
+
+You can also turn off the layout rendering by configure the `view options`:
+
+```coffee-script
+app.set 'view options', layout: false
+```
+
+See the [compiler options](#compiler-options) for detailed information about all the available options.
+
+It's possible to use Haml Coffee as the default template engine by setting the `view engine`:
+
+```coffee-script
+app.configure ->
+  app.set 'view engine', 'hamlc'
+```
+
+which allows you to omit then `.hamlc` extension when rendering a template:
+
+```coffee-script
+app.get '/', (req, res) ->
+  res.render 'index', name: 'Express user'
+```
+
+You can read more about the view rednering in the
+[Express documentation](http://expressjs.com/guide.html#view-rendering).
+
+<a name="using-the-cli-tool" />
+### Using the CLI tool
+
+After the installation you will have a `haml-coffee` binary that can be used to compile single templates and even
+compile multiple templates recursively into a single file.
 
 ```bash
 $ haml-coffee
@@ -42,29 +147,28 @@ Options:
   -o, --output                       Set the output filename
   -n, --namespace                    Set a custom template namespace
   -t, --template                     Set a custom template name
-  -f, --format                       Set HTML output format, either `xhtml`, `html4` or `html5`
-  -u, --uglify                       Do not properly indent or format the HTML output
 ```
 
-This introduction section describes only the most common options, for more options have a look at the
-[Advanced Haml Coffee options](#advanced-haml-coffee-options) section.
+The following section describes only the options that are unique to the command line tool. You can see all the available
+options by executing `haml-coffee --help` and have a look at the [compiler options](#compiler-options) for detailed
+information about all the options.
 
-### `-i`/`--input` option
+#### `-i`/`--input` argument
 
 You can either specify a single template or a directory. When you supply a directory, templates are being searched
-within it:
+recursively:
 
 ```bash
 $ haml-coffee -i template.haml
 ```
 
-This will generate a template with the same name but the extension changed to `jst`. The above command for example would
-generate a template named `template.jst`.
+This will generate a template with the same name as the file but the extension changed to `jst`. The above command for
+example would generate a template named `template.jst`.
 
-Valid Haml Coffee template must have one of the following extensions: `.haml`, `.html.haml`, `.hamlc` or
+A valid Haml Coffee template must have one of the following extensions: `.haml`, `.html.haml`, `.hamlc` or
 `.html.hamlc`.
 
-### `-o`/`--output` option
+#### `-o`/`--output` argument
 
 You can specify a single output file name to be used instead of the automatic generated output file name:
 
@@ -72,8 +176,8 @@ You can specify a single output file name to be used instead of the automatic ge
 $ haml-coffee -i template.haml -o t.js
 ```
 
-This creates a template named `t.js`. You can also set a directory as input and give a output file name for
-concatenating all output into a single file:
+This creates a template named `t.js`. You can also set a directory as input and give an output file name for
+concatenating all templates into a single file:
 
 ```bash
 $ haml-coffee -i templates -o all.js
@@ -81,7 +185,7 @@ $ haml-coffee -i templates -o all.js
 
 This will create all the templates under the `templates` directory into a single, combined output file `all.js`.
 
-### `-n`/`--namespace` option
+### `-n`/`--namespace` argument
 
 Each template will register itself by default under the `window.HAML` namespace, but you can change the namespace with:
 
@@ -89,50 +193,26 @@ Each template will register itself by default under the `window.HAML` namespace,
 $ haml-coffee -i template.haml -n exports.JST
 ```
 
-### `-t`/`--template` option
+### `-t`/`--template` argument
 
 Each template must have a unique name under which it can be addressed. By default the template name is derived from the
-template file name by stripping of all extensions and remove illegal characters. Directory names are converted to
+template file name by stripping off all extensions and remove illegal characters. Directory names are converted to
 nested namespaces under the default namespace.
 
-For example, a template named `user/show-admin.html.haml` will result in a template name `window.HAML.user.show_admin`,
-but you can override this behavior:
+For example, a template named `user/show-admin.html.haml` will result in a template that can be accessed by
+`window.HAML.user.show_admin`. You can set a template name manually with:
 
 ```bash
 $ haml-coffee -i template.haml -n exports.JST -t other
 ```
 
-Will result in a template that can be accessed with `exports.JST.other`.
-
-### `-f`/`--format` option
-
-The Haml parser knows different HTML formats to which a given template can be rendered and it must be one of:
-
-* xhtml
-* html4
-* html5
-
-```bash
-$ haml-coffee -i template.haml -f xhtml
-```
-
-Doctype, self-closing tags and attributes handling depends on this setting. Please consult the official
-[Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more details.
-
-### `-u`/`--uglify` option
-
-By default all generated HTML tags are properly indented and looks nice to view. You can skip indention by providing
-the uglify option and save some bytes and have increased rendering speed.
-
-```bash
-$ haml-coffee -i template.haml --uglify
-```
+This will result in a template that can be accessed by `exports.JST.other`.
 
 <a name="haml-support" />
 ## Haml support
 
-Haml Coffee implements the [Haml Spec](https://github.com/norman/haml-spec) to ensure some degree of compatibility
-to other implementations and the following sections are fully compatible to Ruby Haml:
+Haml Coffee implements the [Haml Spec](https://github.com/norman/haml-spec) to ensure some degree of compatibility to
+other Haml implementations and the following sections are fully compatible to Ruby Haml:
 
 * Plain text
 * Multiline: `|`
@@ -155,13 +235,13 @@ to other implementations and the following sections are fully compatible to Ruby
 Please consult the official [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more
 details.
 
-Haml Coffee supports both, Ruby 1.8 and Ruby 1.9 style attributes:
+Haml Coffee supports both Ruby 1.8 and Ruby 1.9 style attributes. So the following Ruby 1.8 style attributes
 
 ```haml
 %a{ :href => 'http://haml-lang.com/' } Haml
 ```
 
-can also be written as:
+can also be written in Ruby 1.9 style:
 
 ```haml
 %a{ href: 'http://haml-lang.com/' } Haml
@@ -170,25 +250,26 @@ can also be written as:
 <a name="coffee-script-support" />
 ## CoffeeScript support
 
-Haml and CoffeeScript are a winning team, both use indention for blocks and are a perfect match for this reason.
-You can use CoffeeScript instead of Ruby in your Haml tags and the attributes.
+Haml and CoffeeScript are a winning team, both use indention for blocks and are a perfect match for this reason. You can
+use CoffeeScript instead of Ruby in your Haml tags and the attributes.
 
 **It's not recommended to put too much logic into the template, but simple conditions and loops are fine.**
 
+<a name="coffee-script-attributes" />
 ### Attributes
 
-When you defining a tag attribute without putting it into quotes (single or double quote), it's considered to be code
-to be run at render time. By default, attributes values from CoffeeScript code is escaped before inserted into the
-document. You can turn off attribute escaping with the `--disable-html-attribute-escaping` compile option.
+When you define a tag attribute without putting it into quotes (single or double quote), it's considered to be
+CoffeeScript code to be run at render time. By default, attributes values from CoffeeScript code are escaped before
+inserting into the document. You can change this behaviour by setting the appropriate compiler option.
 
-HTML style attributes are the most limited and can only assign a simple local variable:
+HTML style attributes are the most limited and can only assign a simple variable:
 
 ```haml
 %img(src='/images/demo.png' width=@width height=@height alt=alt)
 ```
 
-Both the `@width` and `@height` values must be passed as context when rendering the template, and `alt` must be defined
-before it.
+Both the `@width` and `@height` values must be passed as locals when rendering the template and `alt` must be defined
+before the `%img` tag.
 
 Ruby style tags can be more complex and can call functions:
 
@@ -214,16 +295,17 @@ More fancy stuff can be done when use interpolation within a quoted attribute:
 But think about it twice before putting such fancy stuff into your template, there are better places like models,
 controllers or helpers to put heavy logic into.
 
-You can define your attributes over multiple lines and the next line must not be indented properly, so you can
-align them:
+You can define your attributes over multiple lines and the next line must not be indented properly, so you can align
+them properly:
 
 ```haml
 %input#password.hint{ type: 'password', name: 'registration[password]',
                       data: { hint: "Something very imporant", align: 'left' } }
 ```
 
-In the above example you see the proper usage for generating HTML data attributes.
+In the above example you see the usage for generating HTML data attributes.
 
+<a name="coffee-script-running-code" />
 ### Running Code
 
 You can run any CoffeeScript code in your template:
@@ -241,9 +323,11 @@ There are several supported types to run your code:
 * Run code without insert anything into the document: `-`
 * Run code and insert the result into the document: `=`
 
-By default, all inserted content from running code is escaped. You can turn it off with the `--disable-html-escaping`
-compile option. There are three variations for run code and insert into the document, two of them to change the escaping
-style chosen in the compile option:
+All inserted content from running code is escaped by default. You can change this behaviour by setting the appropriate
+compiler option.
+
+There are three variations to run code and insert its result into the document, two of them to change the escaping style
+chosen in the compile option:
 
 * Run code and do not escape the result: `!=`
 * Run code and escape the result: `&=`
@@ -252,7 +336,7 @@ style chosen in the compile option:
 Again, please consult the official [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more
 details. Haml Coffee implements the same functionality like Ruby Haml, only for CoffeeScript.
 
-Running code is able to define functions that generates Haml:
+You can also create functions that generate Haml:
 
 ```haml
 - sum(a, b) ->
@@ -264,13 +348,14 @@ Running code is able to define functions that generates Haml:
 = sum(3,4)
 ```
 
+<a name="coffee-script-filter" />
 ### CoffeeScript filter
 
-In addition to the filters `:plain`, `:javascript`, `:css`, `:cdata`, `:escaped` and `:preserve`, which are also
+In addition to the `:plain`, `:javascript`, `:css`, `:cdata`, `:escaped` and `:preserve` filters, which are also
 provided by Ruby Haml, Haml Coffee has a `:coffeescript` filter.
 
 The content of the `:coffeescript` filter is run when the template is rendered and doesn't output anything into the
-resulting document. This comes in handy when have code to run over multiple lines and don't want to prefix each line
+resulting document. This comes in handy when you have code to run over multiple lines and don't want to prefix each line
 with `-`:
 
 ```haml
@@ -284,232 +369,112 @@ with `-`:
       %li= tag
 ```
 
-<a name="using-with-express" />
-## Using with Express
+<a name="compiler-options" />
+## Compiler options
 
-You can configure [Express](http://expressjs.com/) to use Haml Coffee as template engine.
+The following section describes all the available compiler options that use can use through the JavaScript API,
+as Express view option or as argument to the command line utility.
 
-```coffee-script
-express = require 'express'
-hamlc = require 'haml-coffee'
+The command line arguments may be slightly different. For example instead of passing `--escape-html=false` you have to
+use the `--disable-html-escaping` argument. You can see a list of all the command line arguments by executing
+`haml-coffee --help`.
 
-app = express.createServer()
-app.register '.hamlc', hamlc
-```
+<a name="html-generation-compiler-options" />
+### HTML generation options
 
-Express uses a layout file `layout.hamlc` by default and you have to insert the rendered view body into the layout.
+The HTML options change the way how the generated HTML will look.
 
-```haml
-!!! 5
-%head
-  %title Express App
-%body
-  != @body
-```
+#### The `format` option
 
-Now you can create a Haml Coffee view
+* Type: `String`
+* Default: `html5`
 
-```haml
-%h1= "Welcome #{ @name }"
-%p You've rendered your first Haml Coffee view.
-```
+The Haml parser knows different HTML formats to which a given template can be rendered and it must be one of:
 
-That you can render with:
+* xhtml
+* html4
+* html5
 
-```coffee-script
-app.get '/', (req, res) ->
-  res.render 'index.hamlc', name: 'Express user'
-```
+Doctype, self-closing tags and attributes handling depends on this setting. Please consult the official
+[Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more details.
 
-You can also turn off the layout rendering by setting the `view option`:
+#### The `uglify` option
 
-```coffee-script
-app.set 'view options', layout: false
-```
+* Type: `Boolean`
+* Default: `false`
 
-In addition to the Express options, Haml Coffee supports the following view options:
+All generated HTML tags are properly indented by default and the output looks nice, which can be helpful for debugging.
+You can skip the indention by setting the `uglify` option to false. This save you some bytes and you'll have increased
+rendering speed.
 
-  * `escapeHtml` escape the output when true [Boolean]
-  * `escapeAttributes` escape the tag attributes when true [Boolean]
-  * `cleanValue` clean CoffeeScript values before inserting [Boolean]
-  * `uglify` don't indent generated HTML when true [Boolean]
-  * `format` the template format, either `xhtml`, `html4` or `html5` [String]
-  * `preserveTags` a comma separated list of tags to preserve content whitespace [String]
-  * `selfCloseTags` a comma separated list of self closing HTML tags [String]
-  * `customHtmlEscape` the name of the function for HTML escaping [String]
-  * `customCleanValue` the name of the function to clean code insertion values before output [String]
-  * `customFindAndPreserve` the name of the function used to find and preserve whitespace [String]
-  * `customPreserve` the name of the function used to preserve the whitespace [String]
+#### The `htmlEscape` option
 
-```coffee-script
-app.set 'view options'
-  layout: false
-  escapeHtml: false
-  format: 'xhtml'
-```
+* Type: `Boolean`
+* Default: `true`
 
-Please consult the  [Compile Haml Coffee](#compile-haml-coffee) and
-[Advanced Haml Coffee options](#advanced-haml-coffee-options) section for a complete description.
+The reserved HTML characters `"`, `'`, `&`, `<` and `>` are converted to their HTML entities by default when they are
+inserted into the HTML document from evaluated CoffeeScript.
 
-It's possible to use Haml Coffee as the default template engine by setting the `view engine`:
+You can always change the escaping mode within the template to either force escaping with `&=` or force unescaping with
+`!=`.
 
-```coffee-script
-app.configure ->
-  app.set 'view engine', 'hamlc'
-```
+#### The `escapeAttributes` option
 
-which allows you to omit then `.hamlc` extension when rendering a template:
+* Type: `Boolean`
+* Default: `true`
 
-```coffee-script
-app.get '/', (req, res) ->
-  res.render 'index', name: 'Express user'
-```
+All HTML attributes that are generated by evaluating CoffeeScript are also escaped by default. You can turn of HTML
+escaping of the attributes only by setting `escapeAttributes` to false. You can't change this behaviour in the template
+since there is no Haml markup for this to instruct the compiler to change the escaping mode.
 
-You can read more about the view rednering in the
-[Express documentation](http://expressjs.com/guide.html#view-rendering).
+#### The `cleanValue` option
 
-<a name="advanced-haml-coffee-options" />
-## Advanced Haml Coffee options
+* Type: `Boolean`
+* Default: `true`
 
-The introduction section to Haml Coffee shows only the most important options, but you can customize many aspects how
-the template will be compiled and rendered. Below a list of the more advanced and more seldom used options:
+Every output that is generated from evaluating CoffeeScript code is cleaned before inserting into the document. The
+default implementation converts `null` or `undefined` values into an empty string.
 
-```bash
-Options:
-  --preserve                         Set a comma separated list of HTML tags to preserve
-  --autoclose                        Set a list of tag names that should be automatically self-closed if they have no content
-  --disable-html-attribute-escaping  Disable any HTML attribute escaping
-  --disable-html-escaping            Disable any HTML escaping
-  --disable-clean-value              Disable any CoffeeScript code value cleaning
-  --custom-html-escape               Set the custom HTML escaping function name
-  --custom-preserve                  Set the custom preserve whitespace function name
-  --custom-find-and-preserve         Set the custom find and preserve whitespace function name
-  --custom-clean-value               Set the custom code value clean function name
-```
+#### The `preserve` option
 
-### `--preserve` option
+* Type: `String`
+* Default: `textarea,pre`
 
-The preserve options defines a list of comma separated HTML tags, which content whitespace will be automatically
-preserved when the content is given on the same line as the tag. By default the list contains `textarea` and `pre`.
+The `preserve` option defines a list of comma separated HTML tags that are whitespace sensitive. Content from these tags
+must be preserved, so that the indention has no influence on the displayed content. This is simply done by converting
+the newline characters to their equivalent HTML entity and the content is merged into a single line.
 
-You can specify a custom list of preserved HTML tags:
+#### The `autoclose` option
 
-```bash
-$ haml-coffee -i template.haml --preserve textarea,pre,abbr
-```
+* Type: `String`
+* Default: `meta,img,link,br,hr,input,area,param,col,base`
 
-### `--autoclose` option
+The autoclose option defines a list of tag names that should be automatically closed if they have no content.
 
-The autoclose option defines a list of tag names that should be automatically self-closed if they have no content.
+<a name="custom-helper-function-compiler-options" />
+### Custom helper function options
 
-You can specify a custom list of auto closed HTML tags:
+Haml Coffee provides a bunch of helper functions for HTML escaping, value cleaning, whitespace preservation that must be
+available at render time. By default every generated template function is self-contained and includes all of the helper
+functions.
 
-```bash
-$ haml-coffee -i template.haml --autoclose meta,img,link,br,hr,input,area,param,col,base
-```
+However you can change the reference to each helper function by providing the appropriate compiler option, and there
+are good reasons to do so:
 
-### `--disable-html-attribute-escaping` option
+* You want to reduce the template size and provide all the helpers from a central place.
+* You want to customize a helper function to better fit your needs.
 
-All dynamic generated HTML attributes are escaped by default, but can be turned off with:
+To change these functions, simply assign the new function name to one of the following options:
 
-```bash
-$ haml-coffee -i template.haml --disable-html-attribute-escaping
-```
+  * `customHtmlEscape`: Escape the reserved HTML characters into their equivalent HTML entity.
+  * `customPreserve`: Converting newlines into their HTML entity.
+  * `customFindAndPreserve`: Find whitespace sensitive tags and preserve their content.
+  * `customCleanValue`: Clean the value that is returned after evaluating some inline CoffeeScript.
 
-### `--disable-html-escaping` option
+You can find the default implementation for all these helpers functions in the `dist` directory:
 
-Although not recommended, escaping can also be turned off completely:
-
-```bash
-$ haml-coffee -i template.haml --disable-html-escaping
-```
-
-### `--disable-clean-value` option
-
-Every output that is generated from the inline CoffeeScript code is cleaned before inserting into the document. The
-default implementation converts any `null` or `undefined` value into an empty string. You can turn this off with:
-
-```bash
-$ haml-coffee -i template.haml --disable-clean-value
-```
-
-### `--custom-html-escape` option
-
-Every data that is evaluated at render time will be escaped. The escaping function is included in every template and
-with a growing number of templates, there is a lot of duplication that can be avoided in order to reduce your template
-size.
-
-You can specify a custom escape function that will be used to render the template:
-
-```bash
-$ haml-coffee -i template.haml --custom-html-escape HAML.escape
-```
-
-Now the escaping function isn't included in your template anymore and you have to make sure the function is available
-when the template is rendered. The default implementation is quite simple:
-
-```coffeescript
-window.HAML.htmlEscape ||= (text) ->
-  "#{ text }"
-  .replace(/&/g, '&amp;')
-  .replace(/</g, '&lt;')
-  .replace(/>/g, '&gt;')
-  .replace(/\'/g, '&apos;')
-  .replace(/\"/g, '&quot;')
-```
-
-### `--custom-preserve` option
-
-You can replace the given preserve function that comes with every template by supplying the name of your custom preserve
-function:
-
-```bash
-$ haml-coffee -i template.haml --custom-preserve App.preserve
-```
-
-Now the template doesn't contain the preserve function, it uses the defined `HAML.preserve` function. The default
-implementation is just a single line:
-
-```coffeescript
-window.HAML.escape ||= (text) -> text.replace /\\n/g, '&#x000A;'
-```
-
-### `--custom-find-and-preserve` option
-
-Like Haml for Ruby, haml-coffee supports the whitespace preservation helper `~` that makes use of the function
-`HAML.findAndReplace` that is contained in every template. You can also supply a custom function:
-
-```bash
-$ haml-coffee -i template.haml --custom-find-and-preserve App.findAndPreserve
-```
-
-The default implementation recognizes the tags that are defined with the `--preserve` option and makes use of the
-preserve function that is defined with `--custom-preserve`:
-
-```coffeescript
-window.HAML.htmlEscape ||= (text) ->
-  text.replace /<(#{ @options.preserveTags.split(',').join('|') })>([^]*?)<\\/\\1>/g, (str, tag, content) ->
-    "<\#{ tag }>\#{ #{ preserveFn }(content) }</\#{ tag }>"\n
-```
-
-### `--custom-clean-value` option
-
-Every data that is evaluated at render time will be cleaned, so that `null` and `undefined` values are shown as empty
-string. The clean value function is included in every template and with a growing number of templates, there is a lot of
-duplication that can be avoided in order to reduce your template size.
-
-You can specify a custom clean value function that will be used to render the template:
-
-```bash
-$ haml-coffee -i template.haml -c HAML.cleanValue
-```
-
-Now the clean value function isn't included in your template anymore and you have to make sure the function is available
-when the template is rendered. The default implementation is quite simple:
-
-```coffeescript
-window.HAML.cleanValue ||= (text) -> if text is null or text is undefined then '' else text
-```
+  * [CoffeeScript helpers](https://raw.github.com/9elements/haml-coffee/master/dist/helpers/haml_coffee_helpers.coffee)
+  * [JavaScript helpers](https://raw.github.com/9elements/haml-coffee/master/dist/helpers/haml_coffee_helpers.js)
 
 <a name="development-information" />
 ## Development information
@@ -527,7 +492,7 @@ And run the tests by calling:
 $ jasmine-node
 ```
 
-You can optionally install [Guard](https://github.com/guard/guard) with the [Bundler](http://gembundler.com/):
+You can optionally install [Guard](https://github.com/guard/guard) with the Ruby [Bundler](http://gembundler.com/):
 
 ```bash
 $ bundle install
@@ -541,7 +506,8 @@ $ bundle exec guard
 
 ## Changelog
 
-Feel free to take a look at the [changelog](https://github.com/9elements/haml-coffee/blob/master/CHANGELOG.md).
+Feel free to take a look at the crispy [changelog](https://github.com/9elements/haml-coffee/blob/master/CHANGELOG.md)
+instead of crawling through the commit history.
 
 ## Related projects
 
@@ -551,8 +517,8 @@ Haml Coffee in the  Rails asset pipeline:
 
 ## Authors
 
-* [Sebastion Deutsch](https://github.com/sebastiandeutsch) ([@sippndipp](http://twitter.com/#!/sippndipp))
 * [Michael Kessler](https://github.com/netzpirat) ([@netzpirat](http://twitter.com/#!/netzpirat))
+* [Sebastion Deutsch](https://github.com/sebastiandeutsch) ([@sippndipp](http://twitter.com/#!/sippndipp))
 * [Jan Varwig](https://github.com/janv) ([@agento](http://twitter.com/#!/agento))
 
 ## Contributors
@@ -563,7 +529,7 @@ See all contributors on [the contributor page](https://github.com/9elements/haml
 
 (The MIT License)
 
-Copyright (c) 2011 9elements
+Copyright (c) 2011 9elements, Michael Kessler
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
