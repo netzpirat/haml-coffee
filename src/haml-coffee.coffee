@@ -293,9 +293,9 @@ module.exports = class HamlCoffee
       template += "#{ namespace } ?= {}\n"
 
     # Render the template
-    template += "#{ namespace }['#{ templateName }'] = (context) ->\n"
-    template += indent(@precompile(), 1)
-    template += "fn.call(context)"
+    template += "#{ namespace }['#{ templateName }'] = (context) -> (\n"
+    template += "#{ indent(@precompile(), 1) }"
+    template += ").call(context)"
 
     template
 
@@ -353,7 +353,7 @@ module.exports = class HamlCoffee
     fn  += "#{ code }\n"
     fn  += "$o.join(\"\\n\")#{ @cleanupWhitespace(code) }"
 
-    "fn = ->\n#{ indent(fn, 1) }\n"
+    "->\n#{ indent(fn, 1) }\n"
 
   # Create the CoffeeScript code for the template.
   #
