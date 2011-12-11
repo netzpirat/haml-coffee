@@ -53,10 +53,10 @@ HTML. The following code
 ```coffee-script
 hamlc = require 'haml-coffee'
 tmpl = hamlc.compile '%h1= @title'
-html = tmpl title: 'Introduction'
+html = tmpl title: 'Haml Coffee rocks!'
 ```
 
-will create the HTML `<h1>Introduction</h1>`.
+will create the HTML `<h1>Haml Coffee rocks!</h1>`.
 
 The `compile` function can take the compiler options as second parameter to customize the template function:
 
