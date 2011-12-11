@@ -17,7 +17,7 @@ module.exports =
   # @return [Function] the template
   #
   compile: (source, options = {}) ->
-    compiler = new HamlCoffee(options)
+    compiler = new Compiler(options)
     compiler.parse source
 
     CoffeeScript.eval compiler.precompile()
@@ -32,7 +32,7 @@ module.exports =
   # @return [String] the template source code
   #
   template: (source, name, namespace, options = {}) ->
-    compiler = new HamlCoffee(options)
+    compiler = new Compiler(options)
     compiler.parse source
 
     CoffeeScript.compile compiler.render(name, namespace)
