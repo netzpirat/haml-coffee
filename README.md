@@ -27,7 +27,7 @@ framworks like [Express](http://expressjs.com/).
 <a name="installation" />
 ## Installation
 
-Haml Coffee is available in NPM and you can be installed with:
+Haml Coffee is available in NPM and can be installed with:
 
 ```bash
 $ npm install haml-coffee
