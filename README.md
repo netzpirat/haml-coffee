@@ -285,7 +285,7 @@ with `-`:
 ```
 
 <a name="using-with-express" />
-## Using with Express]
+## Using with Express
 
 You can configure [Express](http://expressjs.com/) to use Haml Coffee as template engine.
 
