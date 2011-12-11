@@ -319,9 +319,9 @@ exports.extname = function(path) {
 
 });
 
-require.define("/compiler.js", function (require, module, exports, __dirname, __filename) {
+require.define("/haml-coffee.js", function (require, module, exports, __dirname, __filename) {
     (function() {
-  var Code, Comment, Compiler, Filter, Haml, Node, Text, w;
+  var Code, Comment, Filter, Haml, HamlCoffee, Node, Text, indent, w;
 
   Node = require('./nodes/node');
 
@@ -335,12 +335,14 @@ require.define("/compiler.js", function (require, module, exports, __dirname, __
 
   Filter = require('./nodes/filter');
 
-  w = require('./helper').whitespace;
+  w = require('./util/text').whitespace;
 
-  module.exports = Compiler = (function() {
+  indent = require('./util/text').indent;
 
-    function Compiler(options) {
-      var _base, _base2, _base3, _base4, _base5, _base6, _ref, _ref2, _ref3, _ref4, _ref5, _ref6;
+  module.exports = HamlCoffee = (function() {
+
+    function HamlCoffee(options) {
+      var _base, _base2, _base3, _base4, _base5, _base6, _base7, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
       this.options = options != null ? options : {};
       if ((_ref = (_base = this.options).escapeHtml) == null) {
         _base.escapeHtml = true;
@@ -348,33 +350,36 @@ require.define("/compiler.js", function (require, module, exports, __dirname, __
       if ((_ref2 = (_base2 = this.options).escapeAttributes) == null) {
         _base2.escapeAttributes = true;
       }
-      if ((_ref3 = (_base3 = this.options).uglify) == null) _base3.uglify = false;
-      if ((_ref4 = (_base4 = this.options).format) == null) {
-        _base4.format = 'html5';
+      if ((_ref3 = (_base3 = this.options).cleanValue) == null) {
+        _base3.cleanValue = true;
       }
-      if ((_ref5 = (_base5 = this.options).preserveTags) == null) {
-        _base5.preserveTags = 'pre,textarea';
+      if ((_ref4 = (_base4 = this.options).uglify) == null) _base4.uglify = false;
+      if ((_ref5 = (_base5 = this.options).format) == null) {
+        _base5.format = 'html5';
       }
-      if ((_ref6 = (_base6 = this.options).selfCloseTags) == null) {
-        _base6.selfCloseTags = 'meta,img,link,br,hr,input,area,param,col,base';
+      if ((_ref6 = (_base6 = this.options).preserveTags) == null) {
+        _base6.preserveTags = 'pre,textarea';
+      }
+      if ((_ref7 = (_base7 = this.options).selfCloseTags) == null) {
+        _base7.selfCloseTags = 'meta,img,link,br,hr,input,area,param,col,base';
       }
     }
 
-    Compiler.prototype.indentChanged = function() {
+    HamlCoffee.prototype.indentChanged = function() {
       return this.currentIndent !== this.previousIndent;
     };
 
-    Compiler.prototype.isIndent = function() {
+    HamlCoffee.prototype.isIndent = function() {
       return this.currentIndent > this.previousIndent;
     };
 
-    Compiler.prototype.updateTabSize = function() {
+    HamlCoffee.prototype.updateTabSize = function() {
       if (this.tabSize === 0) {
         return this.tabSize = this.currentIndent - this.previousIndent;
       }
     };
 
-    Compiler.prototype.updateBlockLevel = function() {
+    HamlCoffee.prototype.updateBlockLevel = function() {
       this.currentBlockLevel = this.currentIndent / this.tabSize;
       if (this.currentBlockLevel - Math.floor(this.currentBlockLevel) > 0) {
         throw "Indentation error in line " + this.lineNumber;
@@ -385,7 +390,7 @@ require.define("/compiler.js", function (require, module, exports, __dirname, __
       return this.delta = this.previousBlockLevel - this.currentBlockLevel;
     };
 
-    Compiler.prototype.updateCodeBlockLevel = function(node) {
+    HamlCoffee.prototype.updateCodeBlockLevel = function(node) {
       if (node instanceof Code) {
         return this.currentCodeBlockLevel = node.codeBlockLevel + 1;
       } else {
@@ -393,7 +398,7 @@ require.define("/compiler.js", function (require, module, exports, __dirname, __
       }
     };
 
-    Compiler.prototype.updateParent = function() {
+    HamlCoffee.prototype.updateParent = function() {
       if (this.isIndent()) {
         return this.pushParent();
       } else {
@@ -401,12 +406,12 @@ require.define("/compiler.js", function (require, module, exports, __dirname, __
       }
     };
 
-    Compiler.prototype.pushParent = function() {
+    HamlCoffee.prototype.pushParent = function() {
       this.stack.push(this.parentNode);
       return this.parentNode = this.node;
     };
 
-    Compiler.prototype.popParent = function() {
+    HamlCoffee.prototype.popParent = function() {
       var i, _ref, _results;
       _results = [];
       for (i = 0, _ref = this.delta - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
@@ -415,7 +420,7 @@ require.define("/compiler.js", function (require, module, exports, __dirname, __
       return _results;
     };
 
-    Compiler.prototype.getNodeOptions = function(override) {
+    HamlCoffee.prototype.getNodeOptions = function(override) {
       if (override == null) override = {};
       return {
         parentNode: override.parentNode || this.parentNode,
@@ -423,6 +428,7 @@ require.define("/compiler.js", function (require, module, exports, __dirname, __
         codeBlockLevel: override.codeBlockLevel || this.currentCodeBlockLevel,
         escapeHtml: override.escapeHtml || this.options.escapeHtml,
         escapeAttributes: override.escapeAttributes || this.options.escapeAttributes,
+        cleanValue: override.cleanValue || this.options.cleanValue,
         format: override.format || this.options.format,
         preserveTags: override.preserveTags || this.options.preserveTags,
         selfCloseTags: override.selfCloseTags || this.options.selfCloseTags,
@@ -430,7 +436,7 @@ require.define("/compiler.js", function (require, module, exports, __dirname, __
       };
     };
 
-    Compiler.prototype.nodeFactory = function(expression) {
+    HamlCoffee.prototype.nodeFactory = function(expression) {
       var node, options, _ref;
       if (expression == null) expression = '';
       options = this.getNodeOptions();
@@ -449,7 +455,7 @@ require.define("/compiler.js", function (require, module, exports, __dirname, __
       return node;
     };
 
-    Compiler.prototype.parse = function(source) {
+    HamlCoffee.prototype.parse = function(source) {
       var attributes, expression, line, lines, result, text, whitespace, _ref;
       this.line_number = this.previousIndent = this.tabSize = this.currentBlockLevel = this.previousBlockLevel = 0;
       this.currentCodeBlockLevel = this.previousCodeBlockLevel = 0;
@@ -513,7 +519,7 @@ require.define("/compiler.js", function (require, module, exports, __dirname, __
       return this.evaluate(this.root);
     };
 
-    Compiler.prototype.evaluate = function(node) {
+    HamlCoffee.prototype.evaluate = function(node) {
       var child, _i, _len, _ref;
       _ref = node.children;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -523,7 +529,7 @@ require.define("/compiler.js", function (require, module, exports, __dirname, __
       return node.evaluate();
     };
 
-    Compiler.prototype.render = function(templateName, namespace) {
+    HamlCoffee.prototype.render = function(templateName, namespace) {
       var segment, segments, template, _i, _len;
       if (namespace == null) namespace = 'window.HAML';
       template = '';
@@ -540,42 +546,50 @@ require.define("/compiler.js", function (require, module, exports, __dirname, __
         template += "" + namespace + " ?= {}\n";
       }
       template += "" + namespace + "['" + templateName + "'] = (context) ->\n";
-      template += this.indent(this.precompile(), 2);
+      template += indent(this.precompile(), 1);
       template += "fn.call(context)";
       return template;
     };
 
-    Compiler.prototype.precompile = function() {
+    HamlCoffee.prototype.precompile = function() {
       var code, fn;
       fn = '';
-      if (this.options.customHtmlEscape) {
-        fn += "$e = " + this.options.customHtmlEscape + "\n";
-      } else {
-        fn += "$e ?= (text, escape) ->\n  \"\#{ text }\"\n  .replace(/&/g, '&amp;')\n  .replace(/</g, '&lt;')\n  .replace(/>/g, '&gt;')\n  .replace(/\'/g, '&apos;')\n  .replace(/\"/g, '&quot;')\n";
+      code = this.createCode();
+      if (code.indexOf('$e') !== -1) {
+        if (this.options.customHtmlEscape) {
+          fn += "$e = " + this.options.customHtmlEscape + "\n";
+        } else {
+          fn += "$e ?= (text, escape) ->\n  \"\#{ text }\"\n  .replace(/&/g, '&amp;')\n  .replace(/</g, '&lt;')\n  .replace(/>/g, '&gt;')\n  .replace(/\'/g, '&apos;')\n  .replace(/\"/g, '&quot;')\n";
+        }
       }
-      if (this.options.customCleanValue) {
-        fn += "$c = " + this.options.customCleanValue + "\n";
-      } else {
-        fn += "$c ?= (text) -> if text is null or text is undefined then '' else text\n";
+      if (code.indexOf('$c') !== -1) {
+        if (this.options.customCleanValue) {
+          fn += "$c = " + this.options.customCleanValue + "\n";
+        } else {
+          fn += "$c ?= (text) -> if text is null or text is undefined then '' else text\n";
+        }
       }
-      if (this.options.customPreserve) {
-        fn += "$p = " + this.options.customPreserve + "\n";
-      } else {
-        fn += "$p ?= (text) -> text.replace /\\n/g, '&#x000A;'\n";
+      if (code.indexOf('$p') !== -1 || code.indexOf('$fp') !== -1) {
+        if (this.options.customPreserve) {
+          fn += "$p = " + this.options.customPreserve + "\n";
+        } else {
+          fn += "$p ?= (text) -> text.replace /\\n/g, '&#x000A;'\n";
+        }
       }
-      if (this.options.customFindAndPreserve) {
-        fn += "$fp = " + this.options.customFindAndPreserve + "\n";
-      } else {
-        fn += "$fp ?= (text) ->\n  text.replace /<(" + (this.options.preserveTags.split(',').join('|')) + ")>([^]*?)<\\/\\1>/g, (str, tag, content) ->\n    \"<\#{ tag }>\#{ $p content }</\#{ tag }>\"\n";
+      if (code.indexOf('$fp') !== -1) {
+        if (this.options.customFindAndPreserve) {
+          fn += "$fp = " + this.options.customFindAndPreserve + "\n";
+        } else {
+          fn += "$fp ?= (text) ->\n  text.replace /<(" + (this.options.preserveTags.split(',').join('|')) + ")>([^]*?)<\\/\\1>/g, (str, tag, content) ->\n    \"<\#{ tag }>\#{ $p content }</\#{ tag }>\"\n";
+        }
       }
       fn += "$o = []\n";
-      code = this.createCode();
       fn += "" + code + "\n";
       fn += "$o.join(\"\\n\")" + (this.cleanupWhitespace(code));
-      return "fn = ->\n" + (this.indent(fn, 2)) + "\n";
+      return "fn = ->\n" + (indent(fn, 1)) + "\n";
     };
 
-    Compiler.prototype.createCode = function() {
+    HamlCoffee.prototype.createCode = function() {
       var child, code, line, processors, _i, _j, _len, _len2, _ref, _ref2;
       code = [];
       this.lines = [];
@@ -601,7 +615,7 @@ require.define("/compiler.js", function (require, module, exports, __dirname, __
               if (line.findAndPreserve) processors += '$fp ';
               if (line.preserve) processors += '$p ';
               if (line.escape) processors += '$e ';
-              processors += '$c ';
+              if (this.options.cleanValue) processors += '$c ';
               code.push("" + (w(line.cw)) + "$o.push \"" + (w(line.hw)) + "\" + " + processors + line.code);
           }
         }
@@ -609,7 +623,7 @@ require.define("/compiler.js", function (require, module, exports, __dirname, __
       return code.join('\n');
     };
 
-    Compiler.prototype.combineText = function(lines) {
+    HamlCoffee.prototype.combineText = function(lines) {
       var combined, line, nextLine;
       combined = [];
       while ((line = lines.shift()) !== void 0) {
@@ -624,7 +638,7 @@ require.define("/compiler.js", function (require, module, exports, __dirname, __
       return combined;
     };
 
-    Compiler.prototype.cleanupWhitespace = function(code) {
+    HamlCoffee.prototype.cleanupWhitespace = function(code) {
       if (/\u0091|\u0092/.test(code)) {
         return ".replace(/[\\s\\n]*\\u0091/mg, '').replace(/\\u0092[\\s\\n]*/mg, '')";
       } else {
@@ -632,11 +646,7 @@ require.define("/compiler.js", function (require, module, exports, __dirname, __
       }
     };
 
-    Compiler.prototype.indent = function(text, spaces) {
-      return text.replace(/^(.*)$/mg, w(spaces) + '$1');
-    };
-
-    return Compiler;
+    return HamlCoffee;
 
   })();
 
@@ -648,9 +658,9 @@ require.define("/nodes/node.js", function (require, module, exports, __dirname, 
     (function() {
   var Node, e, w;
 
-  e = require('../helper').escapeHTML;
+  e = require('../util/text').escapeHTML;
 
-  w = require('../helper').whitespace;
+  w = require('../util/text').whitespace;
 
   module.exports = Node = (function() {
 
@@ -673,6 +683,7 @@ require.define("/nodes/node.js", function (require, module, exports, __dirname, 
       };
       this.escapeHtml = options.escapeHtml;
       this.escapeAttributes = options.escapeAttributes;
+      this.cleanValue = options.cleanValue;
       this.format = options.format;
       this.selfCloseTags = options.selfCloseTags.split(',');
       this.uglify = options.uglify;
@@ -816,7 +827,7 @@ require.define("/nodes/node.js", function (require, module, exports, __dirname, 
 
 });
 
-require.define("/helper.js", function (require, module, exports, __dirname, __filename) {
+require.define("/util/text.js", function (require, module, exports, __dirname, __filename) {
     
   module.exports = {
     whitespace: function(n) {
@@ -842,6 +853,9 @@ require.define("/helper.js", function (require, module, exports, __dirname, __fi
           return text.replace('\\n', '\&\#x000A;');
         });
       }
+    },
+    indent: function(text, spaces) {
+      return text.replace(/^(.*)$/mg, module.exports.whitespace(spaces) + '$1');
     }
   };
 
@@ -854,7 +868,7 @@ require.define("/nodes/text.js", function (require, module, exports, __dirname, 
 
   Node = require('./node');
 
-  eq = require('../helper').escapeQuotes;
+  eq = require('../util/text').escapeQuotes;
 
   module.exports = Text = (function() {
 
@@ -883,9 +897,9 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
 
   Node = require('./node');
 
-  eq = require('../helper').escapeQuotes;
+  eq = require('../util/text').escapeQuotes;
 
-  p = require('../helper').preserve;
+  p = require('../util/text').preserve;
 
   module.exports = Haml = (function() {
 
@@ -911,15 +925,31 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
               code = "\#{$fp " + assignment + " }";
             } else if (identifier === '&=' || (identifier === '=' && this.escapeHtml)) {
               if (this.preserve) {
-                code = "\#{$p($e($c(" + assignment + ")))}";
+                if (this.cleanValue) {
+                  code = "\#{ $p($e($c(" + assignment + "))) }";
+                } else {
+                  code = "\#{ $p($e(" + assignment + ")) }";
+                }
               } else {
-                code = "\#{$e($c(" + assignment + "))}";
+                if (this.cleanValue) {
+                  code = "\#{ $e($c(" + assignment + ")) }";
+                } else {
+                  code = "\#{ $e(" + assignment + ") }";
+                }
               }
             } else if (identifier === '!=' || (identifier === '=' && !this.escapeHtml)) {
               if (this.preserve) {
-                code = "\#{$p($c(" + assignment + "))}";
+                if (this.cleanValue) {
+                  code = "\#{ $p($c(" + assignment + ")) }";
+                } else {
+                  code = "\#{ $p(" + assignment + ") }";
+                }
               } else {
-                code = "\#{$c(" + assignment + ")}";
+                if (this.cleanValue) {
+                  code = "\#{ $c(" + assignment + ") }";
+                } else {
+                  code = "\#{ " + assignment + " }";
+                }
               }
             }
             this.opener = this.markText("" + prefix + ">" + code);
@@ -1048,9 +1078,17 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
             bool = true;
           } else if (!value.match(/^("|').*\1$/)) {
             if (this.escapeAttributes) {
-              value = '\'#{ $e($c(' + value + ')) }\'';
+              if (this.cleanValue) {
+                value = '\'#{ $e($c(' + value + ')) }\'';
+              } else {
+                value = '\'#{ $e(' + value + ') }\'';
+              }
             } else {
-              value = '\'#{ $c(' + value + ') }\'';
+              if (this.cleanValue) {
+                value = '\'#{ $c(' + value + ') }\'';
+              } else {
+                value = '\'#{ (' + value + ') }\'';
+              }
             }
           }
           if (quoted = value.match(/^("|')(.*)\1$/)) value = quoted[2];
@@ -1171,7 +1209,7 @@ require.define("/nodes/code.js", function (require, module, exports, __dirname, 
 
   Node = require('./node');
 
-  p = require('../helper').preserve;
+  p = require('../util/text').preserve;
 
   module.exports = Code = (function() {
 
@@ -1263,7 +1301,7 @@ require.define("/nodes/filter.js", function (require, module, exports, __dirname
 
   Node = require('./node');
 
-  w = require('../helper').whitespace;
+  w = require('../util/text').whitespace;
 
   module.exports = Filter = (function() {
 
