@@ -16,7 +16,7 @@ module.exports =
   # @param [Object] options the compiler options
   # @return [Function] the template
   #
-  compile: (source, options = {}) ->
+  compile: (source, options) ->
     compiler = new Compiler(options)
     compiler.parse source
 
@@ -33,7 +33,7 @@ module.exports =
   # @param [Object] options the compiler options
   # @return [String] the template source code
   #
-  template: (source, name, namespace, options = {}) ->
+  template: (source, name, namespace, options) ->
     compiler = new Compiler(options)
     compiler.parse source
 

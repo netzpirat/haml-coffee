@@ -175,7 +175,7 @@ module.exports = class HamlCoffee
   #
   # @param source [String] the HAML source code
   #
-  parse: (source) ->
+  parse: (source = '') ->
     # Initialize line and indent markers
     @line_number = @previousIndent = @tabSize = @currentBlockLevel = @previousBlockLevel = 0
     @currentCodeBlockLevel = @previousCodeBlockLevel = 0
