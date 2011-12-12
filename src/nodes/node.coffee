@@ -1,5 +1,4 @@
-e = require('../util/text').escapeHTML
-w = require('../util/text').whitespace
+{escapeHTML} = require('../util/text')
 
 # Base class for the syntax tree.
 #
@@ -123,7 +122,7 @@ module.exports = class Node
       type    : 'text'
       cw      : @codeBlockLevel
       hw      : if @uglify then 0 else @blockLevel - @codeBlockLevel
-      text    : if escape then e(text) else text
+      text    : if escape then escapeHTML(text) else text
     }
 
   # Creates a marker for running CoffeeScript

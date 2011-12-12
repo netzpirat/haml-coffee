@@ -1,5 +1,6 @@
 Node  = require('./node')
-eq    = require('../util/text').escapeQuotes
+
+{escapeQuotes} = require('../util/text')
 
 # Text node that contains everything that cannot be detected as
 # other node. This is normally plain text to be inserted into the
@@ -9,4 +10,4 @@ module.exports = class Text extends Node
 
   # Evaluate the text node
   #
-  evaluate: -> @opener = @markText(eq(@expression))
+  evaluate: -> @opener = @markText(escapeQuotes(@expression))

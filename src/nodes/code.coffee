@@ -1,5 +1,4 @@
 Node  = require('./node')
-p     = require('../util/text').preserve
 
 # Code node that represent lines of CoffeeScript code
 # in the Haml template.

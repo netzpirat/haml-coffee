@@ -1,6 +1,6 @@
 Node  = require('./node')
-eq    = require('../util/text').escapeQuotes
-p     = require('../util/text').preserve
+
+{escapeQuotes} = require('../util/text')
 
 # HAML node that contains Haml a haml tag that can have attributes
 # and a text or code assignment. There are shortcuts for id and class
@@ -43,14 +43,14 @@ module.exports = class Haml extends Node
 
     # Evaluate Haml doctype
     if tokens.doctype
-      @opener = @markText "#{ eq(@buildDocType(tokens.doctype)) }"
+      @opener = @markText "#{ escapeQuotes(@buildDocType(tokens.doctype)) }"
 
     # Evaluate Haml tag
     else
       # Create a Haml node that can contain child nodes
       if @isNotSelfClosing(tokens.tag)
 
-        prefix = eq(@buildHtmlTagPrefix(tokens))
+        prefix = escapeQuotes(@buildHtmlTagPrefix(tokens))
 
         # Add Haml tag that contains a code assignment will be closed immediately
         if tokens.assignment
@@ -105,7 +105,7 @@ module.exports = class Haml extends Node
       # Create a self closing tag that depends on the format `<br>` or `<br/>`
       else
         tokens.tag = tokens.tag.replace /\/$/, ''
-        prefix     = eq(@buildHtmlTagPrefix(tokens))
+        prefix     = escapeQuotes(@buildHtmlTagPrefix(tokens))
         @opener    = @markText "#{ prefix }#{ if @format is 'xhtml' then ' /' else '' }>"
 
   # Parses the expression and detect the tag, attributes

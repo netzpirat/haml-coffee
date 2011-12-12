@@ -4,8 +4,9 @@ Haml    = require('./nodes/haml')
 Code    = require('./nodes/code')
 Comment = require('./nodes/comment')
 Filter  = require('./nodes/filter')
-w       = require('./util/text').whitespace
-indent  = require('./util/text').indent
+
+{whitespace} = require('./util/text')
+{indent}     = require('./util/text')
 
 # The HamlCoffee class is the compiler that parses the source code and creates an syntax tree.
 # In a second step the created tree can be rendered into either a JavaScript function or a
@@ -200,11 +201,11 @@ module.exports = class HamlCoffee
         # Detect if filter ends or if there is more text
         else
           result = line.match /^(\s*)(.*)/
-          whitespace = result[1]
+          ws         = result[1]
           expression = result[2]
 
           # When on the same or less indent as the filter, exit and continue normal parsing
-          if @node.blockLevel >= (whitespace.length / 2)
+          if @node.blockLevel >= (ws.length / 2)
             @exitFilter = true
             lines.unshift line
             continue
@@ -221,7 +222,7 @@ module.exports = class HamlCoffee
 
         # Get whitespace and Haml expressions
         result = line.match /^(\s*)(.*)/
-        whitespace = result[1]
+        ws         = result[1]
         expression = result[2]
 
         # Skip empty lines
@@ -242,7 +243,7 @@ module.exports = class HamlCoffee
             expression += lines.shift().match(/^(\s*)(.*)/)[2].replace(/(\s)+\|$/, '')
             @line_number++
 
-        @currentIndent = whitespace.length
+        @currentIndent = ws.length
 
         # Update indention levels and set the current parent
         if @indentChanged()
@@ -375,11 +376,11 @@ module.exports = class HamlCoffee
 
           # Insert static HTML tag
           when 'text'
-            code.push "#{ w(line.cw) }$o.push \"#{ w(line.hw) }#{ line.text }\""
+            code.push "#{ whitespace(line.cw) }$o.push \"#{ whitespace(line.hw) }#{ line.text }\""
 
           # Insert code that is only evaluated and doesn't generate any output
           when 'run'
-            code.push "#{ w(line.cw) }#{ line.code }"
+            code.push "#{ whitespace(line.cw) }#{ line.code }"
 
           # Insert code that is evaluated and generates an output
           when 'insert'
@@ -389,7 +390,7 @@ module.exports = class HamlCoffee
             processors += '$e '  if line.escape
             processors += '$c '  if @options.cleanValue
 
-            code.push "#{ w(line.cw) }$o.push \"#{ w(line.hw) }\" + #{ processors }#{ line.code }"
+            code.push "#{ whitespace(line.cw) }$o.push \"#{ whitespace(line.hw) }\" + #{ processors }#{ line.code }"
 
     code.join '\n'
 
@@ -406,7 +407,7 @@ module.exports = class HamlCoffee
       if line.type is 'text'
         while lines[0] and lines[0].type is 'text' and line.cw is lines[0].cw
           nextLine = lines.shift()
-          line.text += "\\n#{ w(nextLine.hw) }#{ nextLine.text }"
+          line.text += "\\n#{ whitespace(nextLine.hw) }#{ nextLine.text }"
 
       combined.push line
 

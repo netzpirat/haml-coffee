@@ -1,5 +1,6 @@
 Node = require('./node')
-w    = require('../util/text').whitespace
+
+{whitespace} = require('../util/text')
 
 # Filter node for built-in Haml filters:
 #
@@ -95,7 +96,7 @@ module.exports = class Filter extends Node
         switch type
           when 'text'
             output.push @markText("") for e in [0...empty]
-            output.push @markText("#{ w(indent) }#{ line }")
+            output.push @markText("#{ whitespace(indent) }#{ line }")
           when 'run'
             output.push @markRunningCode("#{ line }")
 
