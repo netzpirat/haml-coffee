@@ -1,3 +1,8 @@
+# Version 0.5.2
+
+  * Fix leaking global variables when generating the Express view
+  * Fix Ruby 1.9 style attributes with double quotes
+
 # Version 0.5.1
 
   * Improve template compilation for Express
