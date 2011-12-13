@@ -2,7 +2,7 @@
   "name" : "haml-coffee",
   "description" : "HAML Parser where you can write inline CoffeeScript.",
   "keywords" : ["haml", "coffeescript", "templating", "html", "javascript", "language", "compiler"],
-  "author" : "Sebastian Deutsch",
+  "author" : "Michael Kessler <michi@netzpiraten.ch>",
   "maintainers" : [
     {
       "name" : "Sebastian Deutsch"
@@ -14,7 +14,7 @@
       "name" : "Jan Varwig"
     }
   ],
-  "version" : "0.5.1",
+  "version" : "0.5.2",
   "licenses" : [
     {
       "type" : "MIT",
