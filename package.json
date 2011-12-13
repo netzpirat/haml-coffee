@@ -1,6 +1,6 @@
 {
   "name" : "haml-coffee",
-  "description" : "HAML Parser where you can write inline CoffeeScript.",
+  "description" : "Haml templates where you can write inline CoffeeScript.",
   "keywords" : ["haml", "coffeescript", "templating", "html", "javascript", "language", "compiler"],
   "author" : "Michael Kessler <michi@netzpiraten.ch>",
   "maintainers" : [
