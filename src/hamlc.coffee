@@ -20,7 +20,7 @@ module.exports =
     compiler = new Compiler(options)
     compiler.parse source
 
-    template = CoffeeScript.eval(compiler.precompile())
+    template = new Function CoffeeScript.compile(compiler.precompile(), bare: true)
 
     (params) -> template.call params
 
