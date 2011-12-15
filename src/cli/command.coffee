@@ -22,6 +22,12 @@ argv = require('optimist')
     alias     : 'template'
     describe  : 'Set a custom template name'
   )
+  .options('b',
+    alias     : 'basename',
+    boolean   : true
+    default   : false
+    describe  : 'Ignore file path when generate the template name'
+  )
   .options('f',
     alias     : 'format',
     default   : 'html5'
@@ -94,6 +100,7 @@ exports.run = ->
     customCleanValue      : argv['custom-clean-value']
     customFindAndPreserve : argv['custom-find-and-preserve']
     customPreserve        : argv['custom-preserve']
+    basename              : argv['basename']
 
   fs.stat inputFilename, (err, stat) ->
     unless err

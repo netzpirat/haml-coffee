@@ -146,6 +146,7 @@ Options:
   -o, --output                       Set the output filename
   -n, --namespace                    Set a custom template namespace
   -t, --template                     Set a custom template name
+  -b, --basename                     Ignore file path when generate the template name
 ```
 
 _The following section describes only the options that are unique to the command line tool._
@@ -207,6 +208,12 @@ $ haml-coffee -i template.haml -n exports.JST -t other
 ```
 
 This will result in a template that can be accessed by `exports.JST['other']`.
+
+### The `-b`/`--basename` argument
+
+Ignores the path to the template deduce the template name from the template file path. For example, a template named
+`user/show-admin.html.haml` will result in a template that can be accessed by `window.HAML['show_admin']` instead of
+`window.HAML['user/show_admin']`.
 
 <a name="haml-support" />
 ## Haml support

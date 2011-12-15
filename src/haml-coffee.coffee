@@ -282,7 +282,7 @@ module.exports = class HamlCoffee
     # Create parameter name from the filename, e.g. a file `users/new.hamlc`
     # will create `window.HAML.user.new`
     segments     = "#{ namespace }.#{ templateName }".replace(/(\s|-)+/g, '_').split(/\./)
-    templateName = segments.pop()
+    templateName = if @options.basename then segments.pop() else segments.pop().split(/\/|\\/).pop();
     namespace    = segments.shift()
 
     # Create code for file and namespace creation
