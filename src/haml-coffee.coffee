@@ -229,7 +229,7 @@ module.exports = class HamlCoffee
         continue if /^(\s)*$/.test(line)
 
         # Look ahead for more attributes and add them to the current line
-        while /^%.*[{(]/.test(expression) and not /^(\s*)[.%#<]/.test(lines[0]) and /(?:(\w+[\w:-]*\w?|'\w+[\w:-]*\w?'|"\w+[\w:-]*\w?")\s*=\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[\w@.]+)|(:\w+[\w:-]*\w?|'\w+[\w:-]*\w?'|"\w+[\w:-]*\w?")\s*=>\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[-\w@.()\[\]'"]+)|(\w+[\w:-]*\w?|'\w+[\w:-]*\w?'|'\w+[\w:-]*\w?'):\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[-\w@.()\[\]'"]+))/.test(lines[0])
+        while /^%.*[{(]/.test(expression) and not /^(\s*)[-=~.%#<]/.test(lines[0]) and /(?:(\w+[\w:-]*\w?|'\w+[\w:-]*\w?'|"\w+[\w:-]*\w?")\s*=\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[\w@.]+)|(:\w+[\w:-]*\w?|'\w+[\w:-]*\w?'|"\w+[\w:-]*\w?")\s*=>\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[-\w@.()\[\]'"]+)|(\w+[\w:-]*\w?|'\w+[\w:-]*\w?'|'\w+[\w:-]*\w?'):\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[-\w@.()\[\]'"]+))/.test(lines[0])
 
           attributes = lines.shift()
           expression += ' ' + attributes.match(/^(\s*)(.*)/)[2]
