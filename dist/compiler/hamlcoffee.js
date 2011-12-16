@@ -342,7 +342,7 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
   module.exports = HamlCoffee = (function() {
 
     function HamlCoffee(options) {
-      var _base, _base2, _base3, _base4, _base5, _base6, _base7, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
+      var _base, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
       this.options = options != null ? options : {};
       if ((_ref = (_base = this.options).escapeHtml) == null) {
         _base.escapeHtml = true;
@@ -354,14 +354,17 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
         _base3.cleanValue = true;
       }
       if ((_ref4 = (_base4 = this.options).uglify) == null) _base4.uglify = false;
-      if ((_ref5 = (_base5 = this.options).format) == null) {
-        _base5.format = 'html5';
+      if ((_ref5 = (_base5 = this.options).basename) == null) {
+        _base5.basename = false;
       }
-      if ((_ref6 = (_base6 = this.options).preserveTags) == null) {
-        _base6.preserveTags = 'pre,textarea';
+      if ((_ref6 = (_base6 = this.options).format) == null) {
+        _base6.format = 'html5';
       }
-      if ((_ref7 = (_base7 = this.options).selfCloseTags) == null) {
-        _base7.selfCloseTags = 'meta,img,link,br,hr,input,area,param,col,base';
+      if ((_ref7 = (_base7 = this.options).preserveTags) == null) {
+        _base7.preserveTags = 'pre,textarea';
+      }
+      if ((_ref8 = (_base8 = this.options).selfCloseTags) == null) {
+        _base8.selfCloseTags = 'meta,img,link,br,hr,input,area,param,col,base';
       }
     }
 
@@ -535,7 +538,7 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
       if (namespace == null) namespace = 'window.HAML';
       template = '';
       segments = ("" + namespace + "." + templateName).replace(/(\s|-)+/g, '_').split(/\./);
-      templateName = this.options.basename ? segments.pop() : segments.pop().split(/\/|\\/).pop();
+      templateName = this.options.basename ? segments.pop().split(/\/|\\/).pop() : segments.pop();
       namespace = segments.shift();
       if (segments.length !== 0) {
         for (_i = 0, _len = segments.length; _i < _len; _i++) {
