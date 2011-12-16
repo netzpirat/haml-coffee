@@ -492,7 +492,7 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
           ws = result[1];
           expression = result[2];
           if (/^(\s)*$/.test(line)) continue;
-          while (/^%.*[{(]/.test(expression) && !/^(\s*)[-=~.%#<]/.test(lines[0]) && /(?:(\w+[\w:-]*\w?|'\w+[\w:-]*\w?'|"\w+[\w:-]*\w?")\s*=\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[\w@.]+)|(:\w+[\w:-]*\w?|'\w+[\w:-]*\w?'|"\w+[\w:-]*\w?")\s*=>\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[-\w@.()\[\]'"]+)|(\w+[\w:-]*\w?|'\w+[\w:-]*\w?'|'\w+[\w:-]*\w?'):\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[-\w@.()\[\]'"]+))/.test(lines[0])) {
+          while (/^%.*[{(]/.test(expression) && !/^(\s*)[-=&!~.%#<]/.test(lines[0]) && /(?:(\w+[\w:-]*\w?|'\w+[\w:-]*\w?'|"\w+[\w:-]*\w?")\s*=\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[\w@.]+)|(:\w+[\w:-]*\w?|'\w+[\w:-]*\w?'|"\w+[\w:-]*\w?")\s*=>\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[-\w@.()\[\]'"]+)|(\w+[\w:-]*\w?|'\w+[\w:-]*\w?'|'\w+[\w:-]*\w?'):\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[-\w@.()\[\]'"]+))/.test(lines[0])) {
             attributes = lines.shift();
             expression += ' ' + attributes.match(/^(\s*)(.*)/)[2];
             this.line_number++;
@@ -535,7 +535,7 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
       if (namespace == null) namespace = 'window.HAML';
       template = '';
       segments = ("" + namespace + "." + templateName).replace(/(\s|-)+/g, '_').split(/\./);
-      templateName = segments.pop();
+      templateName = this.options.basename ? segments.pop() : segments.pop().split(/\/|\\/).pop();
       namespace = segments.shift();
       if (segments.length !== 0) {
         for (_i = 0, _len = segments.length; _i < _len; _i++) {
@@ -1123,7 +1123,7 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             klass = _ref[_i];
             if (interpolation = klass.match(/#{(.*)}/)) {
-              classes += interpolation[1] + ',';
+              classes += "(" + interpolation[1] + "),";
             } else {
               classes += "'" + klass + "',";
             }
