@@ -34,6 +34,7 @@ module.exports = class HamlCoffee
     @options.escapeAttributes ?= true
     @options.cleanValue       ?= true
     @options.uglify           ?= false
+    @options.basename         ?= false
     @options.format           ?= 'html5'
     @options.preserveTags     ?= 'pre,textarea'
     @options.selfCloseTags    ?= 'meta,img,link,br,hr,input,area,param,col,base'
@@ -282,7 +283,7 @@ module.exports = class HamlCoffee
     # Create parameter name from the filename, e.g. a file `users/new.hamlc`
     # will create `window.HAML.user.new`
     segments     = "#{ namespace }.#{ templateName }".replace(/(\s|-)+/g, '_').split(/\./)
-    templateName = if @options.basename then segments.pop() else segments.pop().split(/\/|\\/).pop();
+    templateName = if @options.basename then segments.pop().split(/\/|\\/).pop() else segments.pop()
     namespace    = segments.shift()
 
     # Create code for file and namespace creation
