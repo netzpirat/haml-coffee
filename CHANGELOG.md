@@ -1,3 +1,16 @@
+# Version 0.5.5
+
+  * Fix wrong evaluation of the `--basename` option.
+
+# Version 0.5.4
+
+  * Add `--basename` option to omit the path in the JST name.
+  * Better attribute look-ahead support.
+
+# Version 0.5.3
+
+  * Better attribute look-ahead support.
+
 # Version 0.5.2
 
   * Fix leaking global variables when generating the Express view
