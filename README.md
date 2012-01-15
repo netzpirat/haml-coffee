@@ -253,8 +253,8 @@ can also be written in Ruby 1.9 style:
 %a{ href: 'http://haml-lang.com/' } Haml
 ```
 
-Haml Coffee does currently not support CoffeeScript helpers similar to the Ruby Haml
-[helpers](http://haml-lang.com/docs/yardoc/Haml/Helpers.html#find_and_preserve-instance_method).
+Haml Coffee does not support CoffeeScript helpers similar to the Ruby Haml
+[helpers](http://haml-lang.com/docs/yardoc/Haml/Helpers.html).
 
 <a name="coffee-script-support" />
 ## CoffeeScript support
