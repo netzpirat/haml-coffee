@@ -237,7 +237,6 @@ other Haml implementations and the following sections are fully compatible to Ru
 * Escaping HTML: `&=`, unescaping HTML: `!=`
 * Filters: `:plain`, `:javascript`, `:css`, `:cdata`, `:escaped`, `:preserve`
 * Boolean attributes conversion
-* findAndPreserve helper
 
 Please consult the official [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more
 details.
@@ -253,6 +252,9 @@ can also be written in Ruby 1.9 style:
 ```haml
 %a{ href: 'http://haml-lang.com/' } Haml
 ```
+
+Haml Coffee does currently not support CoffeeScript helpers similar to the Ruby Haml
+[helpers](http://haml-lang.com/docs/yardoc/Haml/Helpers.html#find_and_preserve-instance_method).
 
 <a name="coffee-script-support" />
 ## CoffeeScript support
