@@ -85,7 +85,7 @@ Express uses a layout file `layout.hamlc` by default and you have to insert the 
 this:
 
 ```haml
-!!! 5
+!!!
 %head
   %title Express App
 %body
