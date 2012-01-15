@@ -237,18 +237,10 @@ other Haml implementations and the following sections are fully compatible to Ru
 * Escaping HTML: `&=`, unescaping HTML: `!=`
 * Filters: `:plain`, `:javascript`, `:css`, `:cdata`, `:escaped`, `:preserve`
 * Boolean attributes conversion
+* findAndPreserve helper
 
 Please consult the official [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more
 details.
-
-### Helpers
-
-Ruby Haml provides a few [helpers](http://haml-lang.com/docs/yardoc/Haml/Helpers.html), but Haml Coffee only implements
-one at the moment:
-
-* findAndPreserve
-
-### Ruby hash styles
 
 Haml Coffee supports both Ruby 1.8 and Ruby 1.9 style attributes. So the following Ruby 1.8 style attribute
 
