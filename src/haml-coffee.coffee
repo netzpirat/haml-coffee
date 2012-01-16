@@ -353,7 +353,7 @@ module.exports = class HamlCoffee
 
     fn  += "$o = []\n"
     fn  += "#{ code }\n"
-    fn  += "return $o.join(\"\\n\")#{ @cleanupWhitespace(code) }\n"
+    fn  += "return $o.join(\"\\n\")#{ @convertBooleans(code) }#{ @cleanupWhitespace(code) }\n"
 
   # Create the CoffeeScript code for the template.
   #
@@ -412,6 +412,25 @@ module.exports = class HamlCoffee
 
     combined
 
+  # Adds a boolean convert logic that changes boolean attribute
+  # values depending on the output format.
+  #
+  # With the XHTML format, an attribute `checked='true'` will be
+  # converted to `checked='checked'` and `checked='false'` will
+  # be completely removed.
+  #
+  # With the HTML4 and HTML5 format, an attribute `checked='true'`
+  # will be converted to `checked` and `checked='false'` will
+  # be completely removed.
+  #
+  # @return [String] the clean up whitespace code if necessary
+  #
+  convertBooleans: (code) ->
+    if @options.format is 'xhtml'
+      '.replace(/\\s(\\w+)=\'true\'/mg, " $1=\'$1\'").replace(/\\s(\\w+)=\'false\'/mg, \'\')'
+    else
+      '.replace(/\\s(\\w+)=\'true\'/mg, \' $1\').replace(/\\s(\\w+)=\'false\'/mg, \'\')'
+
   # Adds whitespace cleanup function when needed by the
   # template. The cleanup must be done AFTER the template
   # has been rendered.
@@ -421,6 +440,9 @@ module.exports = class HamlCoffee
   #
   # * \u0091 Cleanup surrounding whitespace to the left
   # * \u0092 Cleanup surrounding whitespace to the right
+  #
+  # @param [String] code the template code
+  # @return [String] the clean up whitespace code if necessary
   #
   cleanupWhitespace: (code) ->
     if /\u0091|\u0092/.test code
