@@ -1,3 +1,7 @@
+# Version 0.5.6
+
+  * Add boolean attribute logic at render time.
+
 # Version 0.5.5
 
   * Fix wrong evaluation of the `--basename` option.
