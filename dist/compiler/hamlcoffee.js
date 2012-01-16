@@ -589,7 +589,7 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
       }
       fn += "$o = []\n";
       fn += "" + code + "\n";
-      return fn += "return $o.join(\"\\n\")" + (this.cleanupWhitespace(code)) + "\n";
+      return fn += "return $o.join(\"\\n\")" + (this.convertBooleans(code)) + (this.cleanupWhitespace(code)) + "\n";
     };
 
     HamlCoffee.prototype.createCode = function() {
@@ -639,6 +639,14 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
         combined.push(line);
       }
       return combined;
+    };
+
+    HamlCoffee.prototype.convertBooleans = function(code) {
+      if (this.options.format === 'xhtml') {
+        return '.replace(/\\s(\\w+)=\'true\'/mg, " $1=\'$1\'").replace(/\\s(\\w+)=\'false\'/mg, \'\')';
+      } else {
+        return '.replace(/\\s(\\w+)=\'true\'/mg, \' $1\').replace(/\\s(\\w+)=\'false\'/mg, \'\')';
+      }
     };
 
     HamlCoffee.prototype.cleanupWhitespace = function(code) {
