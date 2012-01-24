@@ -1,7 +1,6 @@
 source :rubygems
 
-gem 'rb-fsevent'
-gem 'growl_notify'
+gem 'ruby_gntp'
 
 gem 'guard'
 gem 'guard-coffeescript'
