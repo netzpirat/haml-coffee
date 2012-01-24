@@ -8,3 +8,6 @@
     %div#product.article.entry{:id => product.id, :class => product.color }
 
 %div.x{'class': "#{if true then 'y' else ''}"}
+
+- for title in ['Mr', 'Mrs', 'Ms', 'Miss']
+  %option{value: title, selected: @title == title}= title
