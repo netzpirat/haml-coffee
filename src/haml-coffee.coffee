@@ -351,6 +351,27 @@ module.exports = class HamlCoffee
               "<\#{ tag }>\#{ $p content }</\#{ tag }>"\n
           """
 
+    # Surround helper
+    if code.indexOf('surround') isnt -1
+      if @options.customSurround
+        fn += "surround = #{ @options.customSurround }\n"
+      else
+        fn += "surround = (start, end, fn) -> start + fn() + end\n"
+
+    # Succeed helper
+    if code.indexOf('succeed') isnt -1
+      if @options.customSucceed
+        fn += "succeed = #{ @options.customSucceed }\n"
+      else
+        fn += "succeed = (end, fn) -> fn() + end\n"
+
+    # Precede helper
+    if code.indexOf('precede') isnt -1
+      if @options.customPrecede
+        fn += "precede = #{ @options.customPrecede }\n"
+      else
+        fn += "precede = (start, fn) -> start + fn()\n"
+
     fn  += "$o = []\n"
     fn  += "#{ code }\n"
     fn  += "return $o.join(\"\\n\")#{ @convertBooleans(code) }#{ @cleanupWhitespace(code) }\n"
@@ -368,6 +389,8 @@ module.exports = class HamlCoffee
     @lines = []
     @lines = @lines.concat(child.render()) for child in @root.children
     @lines = @combineText(@lines)
+    
+    @block = false
 
     for line in @lines
       unless line is null
@@ -375,12 +398,18 @@ module.exports = class HamlCoffee
 
           # Insert static HTML tag
           when 'text'
-            code.push "#{ whitespace(line.cw) }$o.push \"#{ whitespace(line.hw) }#{ line.text }\""
-
+            if @block
+              code.push "#{ whitespace(line.cw) }$b.push \"#{ whitespace(line.hw) }#{ line.text }\""
+            else
+              code.push "#{ whitespace(line.cw) }$o.push \"#{ whitespace(line.hw) }#{ line.text }\""
+              
           # Insert code that is only evaluated and doesn't generate any output
           when 'run'
             code.push "#{ whitespace(line.cw) }#{ line.code }"
 
+            # End a block output
+            @block = false if line.block is 'end'
+            
           # Insert code that is evaluated and generates an output
           when 'insert'
             processors  = ''
@@ -391,6 +420,11 @@ module.exports = class HamlCoffee
 
             code.push "#{ whitespace(line.cw) }$o.push \"#{ whitespace(line.hw) }\" + #{ processors }#{ line.code }"
 
+            # Initialize block output
+            if line.block is 'start'
+              @block = true
+              code.push "#{ whitespace(line.cw + 1) }$b = []"
+  
     code.join '\n'
 
   # Optimize the lines to be rendered by combining subsequent text

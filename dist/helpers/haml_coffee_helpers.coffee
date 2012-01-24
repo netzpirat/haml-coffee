@@ -48,3 +48,35 @@ class HamlCoffeeHelpers
   #
   cleanValue: (value) ->
     if value is null or value is undefined then '' else value
+
+  # The surround helper surrounds the function output
+  # with the start and end string without whitespace in between.
+  #
+  # @param [String] start the text to prepend to the text
+  # @param [String] end the text to append to the text
+  # @param [Function] fn the text generating function
+  # @return [String] the surrounded text
+  #
+  surround: (start, end, fn) -> 
+    start + fn() + end
+
+  # The succeed helper appends text to the function output
+  # without whitespace in between.
+  #
+  # @param [String] end the text to append to the text
+  # @param [Function] fn the text generating function
+  # @return [String] the succeeded text
+  #
+  succeed: (end, fn) -> 
+    fn() + end
+
+  # The precede helper prepends text to the function output
+  # without whitespace in between.
+  #
+  # @param [String] start the text to prepend to the text
+  # @param [Function] fn the text generating function
+  # @return [String] the preeceded text
+  #
+  precede: (start, fn) -> 
+    start + fn()
+      

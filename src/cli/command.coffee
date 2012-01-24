@@ -75,6 +75,18 @@ argv = require('optimist')
     default   : ''
     describe  : 'Set the custom code value clean function name'
   )
+  .options('custom-surround',
+    default   : ''
+    describe  : 'Set the custom surround function name'
+  )
+  .options('custom-succeed',
+    default   : ''
+    describe  : 'Set the custom succeed function name'
+  )
+  .options('custom-precede',
+    default   : ''
+    describe  : 'Set the custom precede function name'
+  )
   .argv
 
 # Main function to run from console. This can either compile a single Haml Coffee template,
@@ -100,6 +112,9 @@ exports.run = ->
     customCleanValue      : argv['custom-clean-value']
     customFindAndPreserve : argv['custom-find-and-preserve']
     customPreserve        : argv['custom-preserve']
+    customSurround        : argv['custom-surround']
+    customSucceed         : argv['custom-succeed']
+    customPrecede         : argv['custom-precede']
     basename              : argv['basename']
 
   fs.stat inputFilename, (err, stat) ->

@@ -27,6 +27,18 @@
       }
     };
 
+    HamlCoffeeHelpers.prototype.surround = function(start, end, fn) {
+      return start + fn() + end;
+    };
+
+    HamlCoffeeHelpers.prototype.succeed = function(end, fn) {
+      return fn() + end;
+    };
+
+    HamlCoffeeHelpers.prototype.precede = function(start, fn) {
+      return start + fn();
+    };
+
     return HamlCoffeeHelpers;
 
   })();

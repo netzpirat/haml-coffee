@@ -253,8 +253,56 @@ can also be written in Ruby 1.9 style:
 %a{ href: 'http://haml-lang.com/' } Haml
 ```
 
-Haml Coffee does not support CoffeeScript helpers similar to the Ruby Haml
-[helpers](http://haml-lang.com/docs/yardoc/Haml/Helpers.html).
+### Helpers
+
+Haml Coffee supports a small subset of the Ruby Haml [helpers](http://haml-lang.com/docs/yardoc/Haml/Helpers.html):
+
+#### Surround
+
+Surrounds a block of Haml code with strings, with no whitespace in between.
+
+```haml
+= surround '(', ')', ->
+  %a{:href => "food"} chicken
+```
+
+produces the HTML output
+
+```html
+(<a href='food'>chicken</a>)
+```
+
+#### Succeed
+
+Appends a string to the end of a Haml block, with no whitespace between.
+
+```haml
+click
+= succeed '.', ->
+  %a{:href=>"thing"} here
+```
+
+produces the HTML output
+
+```html
+click
+<a href='thing'>here</a>.
+```
+
+#### Precede
+
+Prepends a string to the beginning of a Haml block, with no whitespace between.
+
+```haml
+= precede '*', ->
+  %span.small Not really
+```
+
+produces the HTML output
+
+```html
+*<span class='small'>Not really</span>
+```
 
 <a name="coffee-script-support" />
 ## CoffeeScript support
@@ -345,16 +393,25 @@ chosen in the compile option:
 Again, please consult the official [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more
 details. Haml Coffee implements the same functionality like Ruby Haml, only for CoffeeScript.
 
+#### Functions
+
 You can also create functions that generate Haml:
 
 ```haml
 - sum(a, b) ->
-  #div
-    #span= a
-    #span= b
-    #span= a+b
+  %div
+    %span= a
+    %span= b
+    %span= a+b
 = sum(1,2)
 = sum(3,4)
+```
+
+or pass generated HTML output through a function for post-processing.
+
+```haml
+= postProcess ->
+  %a{ href: '/' }
 ```
 
 <a name="coffee-script-filter" />
@@ -486,6 +543,9 @@ To change these functions, simply assign the new function name to one of the fol
   * `customPreserve`: Converting newlines into their HTML entity.
   * `customFindAndPreserve`: Find whitespace sensitive tags and preserve their content.
   * `customCleanValue`: Clean the value that is returned after evaluating some inline CoffeeScript.
+  * `customSurround`: Surrounds a block of Haml code with strings, with no whitespace in between.
+  * `customSucceed`: Appends a string to the end of a Haml block, with no whitespace between.
+  * `customPrecede`: Prepends a string to the beginning of a Haml block, with no whitespace between.
 
 You can find a default implementation for all these helper functions in the `dist/helpers` directory:
 [CoffeeScript](https://raw.github.com/9elements/haml-coffee/master/dist/helpers/haml_coffee_helpers.coffee)

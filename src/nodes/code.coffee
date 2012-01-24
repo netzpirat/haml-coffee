@@ -20,7 +20,7 @@ module.exports = class Code extends Node
     codeBlock  = @expression.match(/(-|!=|\&=|=|~)\s?(.*)?/)
     identifier = codeBlock[1]
     code       = codeBlock[2]
-
+   
     # Code block without output
     if identifier is '-'
       @opener = @markRunningCode(code)
@@ -35,11 +35,16 @@ module.exports = class Code extends Node
       else
         @opener = @markInsertingCode(code, false, false, true)
 
-    # Code block with escaped code block, either `=` in escaped mode or `&=`
-    else if identifier is '&=' or (identifier is '=' and @escapeHtml)
-      @opener = @markInsertingCode(code, true)
+    # Code block with output
+    else
+      escape = identifier is '&=' or (identifier is '=' and @escapeHtml)
 
-    # Code block with unescaped output, either with `!=` or escaped mode to false
-    else if identifier is '!=' or (identifier is '=' and not @escapeHtml)
-      @opener = @markInsertingCode(code)
+      if @children.length isnt 0 and code.match(/(->|=>)$/)
+        @opener = @markInsertingCode(code, escape, false, false)
+        @opener.block = 'start'
 
+        @closer = @markRunningCode("  $b.join \"\\n\"")
+        @closer.block = 'end'
+
+      else
+        @opener = @markInsertingCode(code, escape)

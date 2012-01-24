@@ -215,6 +215,13 @@
 
   },
 
+  "Helpers" : {
+    "Haml helpers" : {
+      "haml_template" : "coffee/helpers",
+      "html_template" : "coffee/helpers"
+    }
+  },
+
   "CoffeeScript" : {
 
     "attribute assignment" : {
