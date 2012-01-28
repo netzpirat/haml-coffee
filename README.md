@@ -596,6 +596,8 @@ Haml Coffee in the  Rails asset pipeline:
 * [Sebastion Deutsch](https://github.com/sebastiandeutsch) ([@sippndipp](http://twitter.com/#!/sippndipp))
 * [Jan Varwig](https://github.com/janv) ([@agento](http://twitter.com/#!/agento))
 
+Development is sponsored by [9elements](http://9elements.com) and [mksoft.ch](https://mksoft.ch).
+
 ## Contributors
 
 See all contributors on [the contributor page](https://github.com/9elements/haml-coffee/contributors).
