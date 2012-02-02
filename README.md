@@ -606,7 +606,7 @@ See all contributors on [the contributor page](https://github.com/9elements/haml
 
 (The MIT License)
 
-Copyright (c) 2011 9elements, Michael Kessler
+Copyright (c) 2011-2012 9elements, Michael Kessler
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
