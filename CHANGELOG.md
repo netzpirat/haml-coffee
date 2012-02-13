@@ -1,3 +1,12 @@
+# Version 0.6.1
+
+  * Fix inserting code within inserting function.
+
+# Version 0.6.0
+
+  * Allow inserting code blocks to post process child output.
+  * More robust attribute detection.
+
 # Version 0.5.6
 
   * Add boolean attribute logic at render time.
