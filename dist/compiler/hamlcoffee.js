@@ -615,22 +615,22 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
         this.lines = this.lines.concat(child.render());
       }
       this.lines = this.combineText(this.lines);
-      this.block = false;
+      this.blockLevel = 0;
       _ref2 = this.lines;
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         line = _ref2[_j];
         if (line !== null) {
           switch (line.type) {
             case 'text':
-              if (this.block) {
-                code.push("" + (whitespace(line.cw)) + "$b.push \"" + (whitespace(line.hw)) + line.text + "\"");
-              } else {
-                code.push("" + (whitespace(line.cw)) + "$o.push \"" + (whitespace(line.hw)) + line.text + "\"");
-              }
+              code.push("" + (whitespace(line.cw)) + (this.getBuffer(this.blockLevel)) + ".push \"" + (whitespace(line.hw)) + line.text + "\"");
               break;
             case 'run':
-              code.push("" + (whitespace(line.cw)) + line.code);
-              if (line.block === 'end') this.block = false;
+              if (line.block !== 'end') {
+                code.push("" + (whitespace(line.cw)) + line.code);
+              } else {
+                code.push("" + (whitespace(line.cw)) + (line.code.replace('$buffer', this.getBuffer(this.blockLevel))));
+                this.blockLevel -= 1;
+              }
               break;
             case 'insert':
               processors = '';
@@ -638,15 +638,23 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
               if (line.preserve) processors += '$p ';
               if (line.escape) processors += '$e ';
               if (this.options.cleanValue) processors += '$c ';
-              code.push("" + (whitespace(line.cw)) + "$o.push \"" + (whitespace(line.hw)) + "\" + " + processors + line.code);
+              code.push("" + (whitespace(line.cw)) + (this.getBuffer(this.blockLevel)) + ".push \"" + (whitespace(line.hw)) + "\" + " + processors + line.code);
               if (line.block === 'start') {
-                this.block = true;
-                code.push("" + (whitespace(line.cw + 1)) + "$b = []");
+                this.blockLevel += 1;
+                code.push("" + (whitespace(line.cw + 1)) + (this.getBuffer(this.blockLevel)) + " = []");
               }
           }
         }
       }
       return code.join('\n');
+    };
+
+    HamlCoffee.prototype.getBuffer = function(level) {
+      if (level > 0) {
+        return "$o" + level;
+      } else {
+        return '$o';
+      }
     };
 
     HamlCoffee.prototype.combineText = function(lines) {
@@ -1274,7 +1282,7 @@ require.define("/nodes/code.js", function (require, module, exports, __dirname, 
         if (this.children.length !== 0 && code.match(/(->|=>)$/)) {
           this.opener = this.markInsertingCode(code, escape, false, false);
           this.opener.block = 'start';
-          this.closer = this.markRunningCode("  $b.join \"\\n\"");
+          this.closer = this.markRunningCode("  $buffer.join \"\\n\"");
           return this.closer.block = 'end';
         } else {
           return this.opener = this.markInsertingCode(code, escape);
