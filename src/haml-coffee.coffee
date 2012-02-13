@@ -390,7 +390,7 @@ module.exports = class HamlCoffee
     @lines = @lines.concat(child.render()) for child in @root.children
     @lines = @combineText(@lines)
     
-    @block = false
+    @blockLevel = 0
 
     for line in @lines
       unless line is null
@@ -398,17 +398,16 @@ module.exports = class HamlCoffee
 
           # Insert static HTML tag
           when 'text'
-            if @block
-              code.push "#{ whitespace(line.cw) }$b.push \"#{ whitespace(line.hw) }#{ line.text }\""
-            else
-              code.push "#{ whitespace(line.cw) }$o.push \"#{ whitespace(line.hw) }#{ line.text }\""
+            code.push "#{ whitespace(line.cw) }#{ @getBuffer(@blockLevel) }.push \"#{ whitespace(line.hw) }#{ line.text }\""
               
           # Insert code that is only evaluated and doesn't generate any output
           when 'run'
-            code.push "#{ whitespace(line.cw) }#{ line.code }"
-
-            # End a block output
-            @block = false if line.block is 'end'
+            if line.block isnt 'end'
+              code.push "#{ whitespace(line.cw) }#{ line.code }"
+            # End a block
+            else
+              code.push "#{ whitespace(line.cw) }#{ line.code.replace '$buffer', @getBuffer(@blockLevel) }"
+              @blockLevel -= 1 
             
           # Insert code that is evaluated and generates an output
           when 'insert'
@@ -418,15 +417,22 @@ module.exports = class HamlCoffee
             processors += '$e '  if line.escape
             processors += '$c '  if @options.cleanValue
 
-            code.push "#{ whitespace(line.cw) }$o.push \"#{ whitespace(line.hw) }\" + #{ processors }#{ line.code }"
+            code.push "#{ whitespace(line.cw) }#{ @getBuffer(@blockLevel) }.push \"#{ whitespace(line.hw) }\" + #{ processors }#{ line.code }"
 
             # Initialize block output
             if line.block is 'start'
-              @block = true
-              code.push "#{ whitespace(line.cw + 1) }$b = []"
+              @blockLevel += 1
+              code.push "#{ whitespace(line.cw + 1) }#{ @getBuffer(@blockLevel) } = []"
   
     code.join '\n'
 
+  # Get the code buffer identifer
+  #
+  # @param [Number] level the block indention level
+  #
+  getBuffer: (level) ->
+    if level > 0 then "$o#{ level }" else '$o'
+      
   # Optimize the lines to be rendered by combining subsequent text
   # nodes that are on the same code line indention into a single line.
   #

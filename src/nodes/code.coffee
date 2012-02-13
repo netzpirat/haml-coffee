@@ -43,7 +43,7 @@ module.exports = class Code extends Node
         @opener = @markInsertingCode(code, escape, false, false)
         @opener.block = 'start'
 
-        @closer = @markRunningCode("  $b.join \"\\n\"")
+        @closer = @markRunningCode("  $buffer.join \"\\n\"")
         @closer.block = 'end'
 
       else

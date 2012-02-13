@@ -328,6 +328,11 @@
       "locals" : {
         "title" : "This is a\nmulti line example"
       }
+    },
+    
+    "evaluation in inserting functions" : {
+      "haml_template" : "coffee/evaluation_in_function",
+      "html_template" : "coffee/evaluation_in_function"
     }
   },
 
