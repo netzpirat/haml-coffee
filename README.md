@@ -5,7 +5,7 @@ Haml Coffee is a JavaScript templating solution that uses [Haml](http://haml-lan
 can be used in client-side JavaScript applications that are using
 [Backbone.js](http://documentcloud.github.com/backbone/), [Spine.js](http://spinejs.com/),
 [JavaScriptMVC](http://javascriptmvc.com/), [KnockoutJS](http://knockoutjs.com/) and others, or on the server-side in
-framworks like [Express](http://expressjs.com/).
+frameworks like [Express](http://expressjs.com/).
 
 ## Contents
 
