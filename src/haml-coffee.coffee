@@ -174,7 +174,7 @@ module.exports = class HamlCoffee
   # Parsing does not create an output, it creates the syntax tree in the
   # compiler. To get the template, use `#render`.
   #
-  # @param source [String] the HAML source code
+  # @param [String] source the HAML source code
   #
   parse: (source = '') ->
     # Initialize line and indent markers
@@ -389,7 +389,7 @@ module.exports = class HamlCoffee
     @lines = []
     @lines = @lines.concat(child.render()) for child in @root.children
     @lines = @combineText(@lines)
-    
+
     @blockLevel = 0
 
     for line in @lines
@@ -399,7 +399,7 @@ module.exports = class HamlCoffee
           # Insert static HTML tag
           when 'text'
             code.push "#{ whitespace(line.cw) }#{ @getBuffer(@blockLevel) }.push \"#{ whitespace(line.hw) }#{ line.text }\""
-              
+
           # Insert code that is only evaluated and doesn't generate any output
           when 'run'
             if line.block isnt 'end'
@@ -407,8 +407,8 @@ module.exports = class HamlCoffee
             # End a block
             else
               code.push "#{ whitespace(line.cw) }#{ line.code.replace '$buffer', @getBuffer(@blockLevel) }"
-              @blockLevel -= 1 
-            
+              @blockLevel -= 1
+
           # Insert code that is evaluated and generates an output
           when 'insert'
             processors  = ''
@@ -423,7 +423,7 @@ module.exports = class HamlCoffee
             if line.block is 'start'
               @blockLevel += 1
               code.push "#{ whitespace(line.cw + 1) }#{ @getBuffer(@blockLevel) } = []"
-  
+
     code.join '\n'
 
   # Get the code buffer identifer
@@ -432,7 +432,7 @@ module.exports = class HamlCoffee
   #
   getBuffer: (level) ->
     if level > 0 then "$o#{ level }" else '$o'
-      
+
   # Optimize the lines to be rendered by combining subsequent text
   # nodes that are on the same code line indention into a single line.
   #
@@ -478,8 +478,8 @@ module.exports = class HamlCoffee
   # The detection is based on hidden unicode characters that
   # are placed as marker into the template:
   #
-  # * \u0091 Cleanup surrounding whitespace to the left
-  # * \u0092 Cleanup surrounding whitespace to the right
+  # * `\u0091` Cleanup surrounding whitespace to the left
+  # * `\u0092` Cleanup surrounding whitespace to the right
   #
   # @param [String] code the template code
   # @return [String] the clean up whitespace code if necessary

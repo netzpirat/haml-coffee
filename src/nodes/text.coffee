@@ -8,6 +8,6 @@ Node  = require('./node')
 #
 module.exports = class Text extends Node
 
-  # Evaluate the text node
+  # Evaluate the text node.
   #
   evaluate: -> @opener = @markText(escapeQuotes(@expression))

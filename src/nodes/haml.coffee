@@ -283,8 +283,7 @@ module.exports = class Haml extends Node
   # Extracts the data attributes.
   #
   # @example data attribute
-  #
-  # `:data => { :test => '123' }`
+  #   `:data => { :test => '123' }`
   #
   # @param [String] exp the expression to check
   # @return [Array<String, Array>] the expressions and data attributes

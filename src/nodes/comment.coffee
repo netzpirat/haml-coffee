@@ -5,10 +5,10 @@ Node  = require('./node')
 #
 # @example silent code block
 #   -# silent
-#      code comment
+#     code comment
 #
 # @example Haml comment
-#   / comment
+#   / This is a comment
 #
 # @example Haml conditional comment
 #   /[if IE]

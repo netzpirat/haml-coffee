@@ -4,13 +4,13 @@ fs            = require('fs')
 
 module.exports = class CoffeeMaker
 
-  # Compiles a Haml coffee file to a JavaScript template
+  # Compiles a Haml-Coffee file to a JavaScript template.
   # When the output template is omitted, it will be derived from the file name.
   #
   # @param [String] filename the Haml coffee file to compile
   # @param [Object] compilerOptions the compiler options
-  # @param [String] namespace the template namespace.
-  # @param [String] templateName the name of the output template.
+  # @param [String] namespace the template namespace
+  # @param [String] templateName the name of the output template
   #
   @compileFile = (filename, compilerOptions = {}, namespace = null, templateName = null) ->
     output = ''

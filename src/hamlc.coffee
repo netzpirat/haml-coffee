@@ -10,7 +10,7 @@ module.exports =
   # a JavaScript function.
   #
   # @see {Compiler} for a complete list of the supported
-  #      compiler options.
+  #   compiler options.
   #
   # @param [String] source the Haml Coffee source
   # @param [Object] options the compiler options
@@ -27,7 +27,7 @@ module.exports =
   # Render a JavaScript Template.
   #
   # @see {Compiler} for a complete list of the supported
-  #      compiler options.
+  #   compiler options.
   #
   # @param [String] source the Haml Coffee source
   # @param [Object] options the compiler options

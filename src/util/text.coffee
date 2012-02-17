@@ -2,7 +2,8 @@
 #
 module.exports =
 
-  # whitespace helper function
+  # Whitespace helper function.
+  #
   # @param [Number] n the number if indents
   # @return [String] the indention string
   #
@@ -37,7 +38,7 @@ module.exports =
       .replace(/>/g, '&gt;')
       .replace(/\"/g, '&quot;')
 
-  # Preserve newlines within the preserve tags
+  # Preserve newlines within the preserve tags,
   #
   # @param [String] code the code to preserve
   # @return [String] the preserved code

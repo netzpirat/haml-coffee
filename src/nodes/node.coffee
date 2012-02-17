@@ -5,22 +5,24 @@
 # This will provide some methods that subclasses must use in order to generate
 # some output:
 #
-# * markText
-# * markRunningCode
-# * markInsertingCode
+# * {#markText}
+# * {#markRunningCode}
+# * {#markInsertingCode}
 #
 # Each node must mark the `@opener` attribute and can optionally mark the `@closer`
 # attribute.
 #
+# @abstract
+#
 module.exports = class Node
 
-  # Hidden unicode marker to remove left whitespace after template rendering
+  # Hidden unicode marker to remove left whitespace after template rendering.
   @CLEAR_WHITESPACE_LEFT  = '\u0091'
 
-  # Hidden unicode marker to remove right whitespace after template rendering
+  # Hidden unicode marker to remove right whitespace after template rendering.
   @CLEAR_WHITESPACE_RIGHT = '\u0092'
 
-  # Constructs a syntax node
+  # Constructs a syntax node.
   #
   # @param [String] expression the Haml expression to evaluate
   # @param [Object] options the node options
@@ -71,8 +73,8 @@ module.exports = class Node
   # This may add a hidden unicode control character for
   # later whitespace processing:
   #
-  # * \u0091 Cleanup surrounding whitespace to the left
-  # * \u0092 Cleanup surrounding whitespace to the right
+  # * `\u0091` Cleanup surrounding whitespace to the left
+  # * `\u0092` Cleanup surrounding whitespace to the right
   #
   # @return [String] the opening tag
   #
@@ -87,8 +89,8 @@ module.exports = class Node
   # This may add a hidden unicode control character for
   # later whitespace processing:
   #
-  # * \u0091 Cleanup surrounding whitespace to the left
-  # * \u0092 Cleanup surrounding whitespace to the right
+  # * `\u0091` Cleanup surrounding whitespace to the left
+  # * `\u0092` Cleanup surrounding whitespace to the right
   #
   # @return [String] the closing tag
   #

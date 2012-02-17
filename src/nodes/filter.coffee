@@ -4,12 +4,12 @@ Node = require('./node')
 
 # Filter node for built-in Haml filters:
 #
-# * :escaped
-# * :preserve
-# * :plain
-# * :css
-# * :javascript
-# * :cdata
+# * `:escaped`
+# * `:preserve`
+# * `:plain`
+# * `:css`
+# * `:javascript`
+# * `:cdata`
 #
 # Only the top level filter marker is a filter node, containing
 # child nodes are text nodes.
