@@ -66,7 +66,9 @@ hamlc.compile '%h1= @title'
   escapeHtml: false
 ```
 
-See the [compiler options](#compiler-options) for detailed information about all the available options.
+See the [compiler options](#compiler-options) for detailed information about all the available options and browse
+the [codo](https://github.com/netzpirat/codo) generated
+[Haml-Coffee API documentation](http://9elements.github.com/haml-coffee/).
 
 <a name="using-with-express" />
 ### Using with Express
