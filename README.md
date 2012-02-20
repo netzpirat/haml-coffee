@@ -400,7 +400,7 @@ details. Haml Coffee implements the same functionality like Ruby Haml, only for 
 You can also create functions that generate Haml:
 
 ```haml
-- sum(a, b) ->
+- sum = (a, b) ->
   %div
     %span= a
     %span= b
