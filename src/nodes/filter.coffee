@@ -1,6 +1,7 @@
 Node = require('./node')
 
-{whitespace} = require('../util/text')
+{whitespace}    = require('../util/text')
+{unescapeQuotes} = require('../util/text')
 
 # Filter node for built-in Haml filters:
 #
@@ -98,6 +99,6 @@ module.exports = class Filter extends Node
             output.push @markText("") for e in [0...empty]
             output.push @markText("#{ whitespace(indent) }#{ line }")
           when 'run'
-            output.push @markRunningCode("#{ line }")
+            output.push @markRunningCode("#{ unescapeQuotes(line) }")
 
         empty = 0

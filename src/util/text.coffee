@@ -24,6 +24,16 @@ module.exports =
 
     text.replace(/"/g, '\\"')
 
+  # Unescape quotation in a text.
+  #
+  # @param [String] text the text containing escaped quotes
+  # @return [String] the text without escaped quotes
+  #
+  unescapeQuotes: (text) ->
+    return '' unless text
+
+    text.replace(/\\"/g, '"')
+
   # HTML Escape a text.
   #
   # @param [String] text the text
