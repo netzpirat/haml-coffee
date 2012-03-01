@@ -26,7 +26,8 @@ require.resolve = (function () {
         
         if (require._core[x]) return x;
         var path = require.modules.path();
-        var y = cwd || '.';
+        cwd = path.resolve('/', cwd);
+        var y = cwd || '/';
         
         if (x.match(/^(?:\.\.?\/|\/)/)) {
             var m = loadAsFileSync(path.resolve(y, x))
@@ -115,7 +116,11 @@ require.alias = function (from, to) {
     }
     var basedir = path.dirname(res);
     
-    var keys = Object_keys(require.modules);
+    var keys = (Object.keys || function (obj) {
+        var res = [];
+        for (var key in obj) res.push(key)
+        return res;
+    })(require.modules);
     
     for (var i = 0; i < keys.length; i++) {
         var key = keys[i];
@@ -160,17 +165,34 @@ require.define = function (filename, fn) {
     };
 };
 
-var Object_keys = Object.keys || function (obj) {
-    var res = [];
-    for (var key in obj) res.push(key)
-    return res;
-};
-
 if (typeof process === 'undefined') process = {};
 
-if (!process.nextTick) process.nextTick = function (fn) {
-    setTimeout(fn, 0);
-};
+if (!process.nextTick) process.nextTick = (function () {
+    var queue = [];
+    var canPost = typeof window !== 'undefined'
+        && window.postMessage && window.addEventListener
+    ;
+    
+    if (canPost) {
+        window.addEventListener('message', function (ev) {
+            if (ev.source === window && ev.data === 'browserify-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+    }
+    
+    return function (fn) {
+        if (canPost) {
+            queue.push(fn);
+            window.postMessage('browserify-tick', '*');
+        }
+        else setTimeout(fn, 0);
+    };
+})();
 
 if (!process.title) process.title = 'browser';
 
@@ -182,7 +204,7 @@ if (!process.binding) process.binding = function (name) {
 if (!process.cwd) process.cwd = function () { return '.' };
 
 require.define("path", function (require, module, exports, __dirname, __filename) {
-    function filter (xs, fn) {
+function filter (xs, fn) {
     var res = [];
     for (var i = 0; i < xs.length; i++) {
         if (fn(xs[i], i, xs)) res.push(xs[i]);
@@ -320,7 +342,7 @@ exports.extname = function(path) {
 });
 
 require.define("/haml-coffee.js", function (require, module, exports, __dirname, __filename) {
-    (function() {
+(function() {
   var Code, Comment, Filter, Haml, HamlCoffee, Node, Text, indent, whitespace;
 
   Node = require('./nodes/node');
@@ -697,7 +719,7 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
 });
 
 require.define("/nodes/node.js", function (require, module, exports, __dirname, __filename) {
-    (function() {
+(function() {
   var Node, escapeHTML;
 
   escapeHTML = require('../util/text').escapeHTML;
@@ -868,7 +890,7 @@ require.define("/nodes/node.js", function (require, module, exports, __dirname, 
 });
 
 require.define("/util/text.js", function (require, module, exports, __dirname, __filename) {
-    (function() {
+(function() {
 
   module.exports = {
     whitespace: function(n) {
@@ -883,6 +905,10 @@ require.define("/util/text.js", function (require, module, exports, __dirname, _
     escapeQuotes: function(text) {
       if (!text) return '';
       return text.replace(/"/g, '\\"');
+    },
+    unescapeQuotes: function(text) {
+      if (!text) return '';
+      return text.replace(/\\"/g, '"');
     },
     escapeHTML: function(text) {
       if (!text) return '';
@@ -905,7 +931,7 @@ require.define("/util/text.js", function (require, module, exports, __dirname, _
 });
 
 require.define("/nodes/text.js", function (require, module, exports, __dirname, __filename) {
-    (function() {
+(function() {
   var Node, Text, escapeQuotes,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
@@ -935,7 +961,7 @@ require.define("/nodes/text.js", function (require, module, exports, __dirname, 
 });
 
 require.define("/nodes/haml.js", function (require, module, exports, __dirname, __filename) {
-    (function() {
+(function() {
   var Haml, Node, escapeQuotes,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
@@ -1246,7 +1272,7 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
 });
 
 require.define("/nodes/code.js", function (require, module, exports, __dirname, __filename) {
-    (function() {
+(function() {
   var Code, Node,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
@@ -1299,7 +1325,7 @@ require.define("/nodes/code.js", function (require, module, exports, __dirname, 
 });
 
 require.define("/nodes/comment.js", function (require, module, exports, __dirname, __filename) {
-    (function() {
+(function() {
   var Comment, Node,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
@@ -1344,14 +1370,16 @@ require.define("/nodes/comment.js", function (require, module, exports, __dirnam
 });
 
 require.define("/nodes/filter.js", function (require, module, exports, __dirname, __filename) {
-    (function() {
-  var Filter, Node, whitespace,
+(function() {
+  var Filter, Node, unescapeQuotes, whitespace,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   Node = require('./node');
 
   whitespace = require('../util/text').whitespace;
+
+  unescapeQuotes = require('../util/text').unescapeQuotes;
 
   module.exports = Filter = (function(_super) {
 
@@ -1451,7 +1479,7 @@ require.define("/nodes/filter.js", function (require, module, exports, __dirname
               output.push(this.markText("" + (whitespace(indent)) + line));
               break;
             case 'run':
-              output.push(this.markRunningCode("" + line));
+              output.push(this.markRunningCode("" + (unescapeQuotes(line))));
           }
           _results.push(empty = 0);
         }
