@@ -10,6 +10,7 @@ frameworks like [Express](http://expressjs.com/).
 ## Contents
 
 * [Installation](#installation)
+  * [Integration](#installation-integration)
 * [Compile Haml Coffee](#compile-haml-coffee)
   * [Using the API](#using-the-api)
   * [Using with Express](#using-with-express)
@@ -33,7 +34,17 @@ Haml Coffee is available in NPM and can be installed with:
 $ npm install haml-coffee
 ```
 
-If you like to integrate Haml Coffee into the Rails 3.1 asset pipeline, check out
+Please have a look at the [CHANGELOG](https://github.com/9elements/haml-coffee/blob/master/CHANGELOG.md) when upgrading to a
+newer Codo version with `npm update`.
+
+<a name="installation-integration" />
+## Integration
+
+If you're using [Hem](https://github.com/maccman/hem) to manage your CommonJS modules,
+use [hem-haml-coffee](https://github.com/vojto/hem-haml-coffee). This excellent for
+developing your [Spine](http://spinejs.com/) application.
+
+If you like to integrate Haml Coffee seamless into the Rails asset pipeline, check out
 [haml_coffee_assets](https://github.com/netzpirat/haml_coffee_assets).
 
 For using the Haml Coffee compiler in the browser, a [browserified](https://github.com/substack/node-browserify) version
