@@ -41,7 +41,7 @@ newer Codo version with `npm update`.
 ## Integration
 
 If you're using [Hem](https://github.com/maccman/hem) to manage your CommonJS modules,
-use [hem-haml-coffee](https://github.com/vojto/hem-haml-coffee). This excellent for
+use [hem-haml-coffee](https://github.com/vojto/hem-haml-coffee). This is excellent for
 developing your [Spine](http://spinejs.com/) application.
 
 If you like to integrate Haml Coffee seamless into the Rails asset pipeline, check out
