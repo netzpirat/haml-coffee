@@ -1,3 +1,11 @@
+# Version 0.6.3, April 30, 2012
+
+  * [haml_coffee_assets issue #2](https://github.com/netzpirat/haml_coffee_assets/issues/40): Fix class interpolation
+
+# Version 0.6.2
+
+  * [Issue #23](https://github.com/9elements/haml-coffee/issues/23): Fix double quotes escaping in Coffee filter.
+
 # Version 0.6.1
 
   * Fix inserting code within inserting function.

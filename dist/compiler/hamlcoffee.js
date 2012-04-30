@@ -904,7 +904,7 @@ require.define("/util/text.js", function (require, module, exports, __dirname, _
     },
     escapeQuotes: function(text) {
       if (!text) return '';
-      return text.replace(/"/g, '\\"');
+      return text.replace(/"/g, '\\"').replace(/\\\\\"/g, '"');
     },
     unescapeQuotes: function(text) {
       if (!text) return '';
@@ -1195,8 +1195,10 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
           _ref = tokens.classes;
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             klass = _ref[_i];
-            if (interpolation = klass.match(/#{(.*)}/)) {
+            if (interpolation = klass.match(/^#{(.*)}$/)) {
               classes += "(" + interpolation[1] + "),";
+            } else if (interpolation = klass.match(/#{(.*)}/)) {
+              classes += "\\\"" + klass + "\\\"";
             } else {
               classes += "'" + klass + "',";
             }
