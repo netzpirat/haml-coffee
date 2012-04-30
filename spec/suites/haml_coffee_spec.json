@@ -170,6 +170,11 @@
       }
     },
 
+    "class concatenation" : {
+      "haml_template" : "coffee/class",
+      "html_template" : "coffee/class"
+    },
+
     "boolean attribute with HTML" : {
       "haml_template" : "text/boolean_attributes",
       "html_template" : "text/boolean_attributes_html5",

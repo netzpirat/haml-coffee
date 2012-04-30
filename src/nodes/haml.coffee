@@ -328,8 +328,10 @@ module.exports = class Haml extends Node
       if tokens.classes.length > 1 && classes.match /#\{/
         classes = '#{ ['
         for klass in tokens.classes
-          if interpolation = klass.match /#{(.*)}/
+          if interpolation = klass.match /^#{(.*)}$/
             classes += "(#{ interpolation[1] }),"
+          else if interpolation = klass.match /#{(.*)}/
+            classes += "\\\"#{ klass }\\\""
           else
             classes += "'#{ klass }',"
         classes += '].sort().join(\' \') }'
