@@ -1,3 +1,7 @@
+# Master
+
+  * [Issue #26](https://github.com/9elements/haml-coffee/issues/26): Improve attribute parsing.
+
 # Version 0.6.3, April 30, 2012
 
   * [haml_coffee_assets issue #2](https://github.com/netzpirat/haml_coffee_assets/issues/40): Fix class interpolation

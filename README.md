@@ -355,11 +355,6 @@ Attribute definitions are also supported in the Ruby 1.9 style:
   %user{ class: App.currentUser.get('status') }= App.currentUser.getDisplayName()
 ```
 
-There is currently a limitation for CoffeeScript attributes: You cannot use a comma in your attribute code,
-so `%a{ href: [1,2].join() }` would fail to compile. If you are a RegExp expert, feel free to improve the
-[attribute parsing](https://github.com/9elements/haml-coffee/blob/master/src/nodes/haml.coffee#L233-240) and send a pull request.
-You can work around this issue by using string interpolation in the attribute: `%a{ href: "#{ [1,2].join() }" }`.
-
 More fancy stuff can be done when use interpolation within a double quoted attribute value:
 
 ```haml
