@@ -5,3 +5,6 @@
 %a{ test: if available then 'yep' else 'nope', another: 'test' }
 
 #test{ :text => ['hello', 'all', 'done'].join(' -- '), :another => 'test' }
+
+- domain = { get: -> 'test' }
+%a{ href: "http://#{ domain.get('fqdn') }" }= domain.get('fqdn')

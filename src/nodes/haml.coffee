@@ -284,16 +284,23 @@ module.exports = class Haml extends Node
         # HTML attribute keys
         keys = /([-\w]+[\w:-]*\w?|'\w+[\w:-]*\w?'|"\w+[\w:-]*\w?")\s*=/g
 
-        # Mark equal signs within quotes
-        unwrapped = unwrapped.replace(/\="([^"]*?)=([^"]*?)"/g, '="$1\u0090=$2"').replace(/\='([^']*?)=([^']*?)'/g, '=\'$1\u0090=$2\'')
+        # Mark key within quotes
+        unwrapped = unwrapped.replace(/\=\s*"([^"]*?)=([^"]*?)"/g, '="$1\u0090=$2"').replace(/\=\s*'([^']*?)=([^']*?)'/g, '=\'$1\u0090=$2\'')
 
       when '{'
         if exp.indexOf('=>') is -1
           # Ruby 1.9 attribute keys
           keys = /(\w+[\w:-]*\w?|'[-\w]+[\w:-]*\w?'|"[-\w]+[\w:-]*\w?"):/g
+
+          # Mark key within quotes
+          unwrapped = unwrapped.replace(/\:\s*"([^"]*?):([^"]*?)"/g, ':"$1\u0090:$2"').replace(/\:\s*'([^']*?):([^']*?)'/g, ':\'$1\u0090=$2\'')
+
         else
           # Ruby 1.8 attribute keys
           keys = /:?(\w+[\w:-]*\w?|'[-\w]+[\w:-]*\w?'|"[-\w]+[\w:-]*\w?")\s*=>/g
+
+          # Mark key within quotes
+          unwrapped = unwrapped.replace(/\=>\s*"([^"]*?)=>([^"]*?)"/g, '=>"$1\u0090:$2"').replace(/\=>\s*'([^']*?)=>([^']*?)'/g, '=>\'$1\u0090=>$2\'')
 
     # Split into key value pairs
     pairs = unwrapped.split(keys).filter(Boolean)
@@ -307,7 +314,7 @@ module.exports = class Haml extends Node
       # Trim key and remove preceding colon
       key = keyValue[0]?.replace(/^\s+|\s+$/g, '').replace(/^:/, '')
 
-      # Trim value, remove succeeding comma and restore marked inline equal signs
+      # Trim value, remove succeeding comma and restore marked keys in quotes
       value = keyValue[1]?.replace(/^\s+|\s+$/g, '').replace(/,$/, '').replace(/\u0090/, '')
 
       if key is 'data'
@@ -322,6 +329,8 @@ module.exports = class Haml extends Node
             dataAttribute = false
 
         attributes[key] = value
+
+
 
     attributes
 
