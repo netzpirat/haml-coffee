@@ -323,9 +323,6 @@ module.exports = class Haml extends Node
 
         attributes[key] = value
 
-      else
-        console.error "Error parsing the attribute expression: #{ exp }"
-
     attributes
 
   # Build the HTML tag prefix by concatenating all the
