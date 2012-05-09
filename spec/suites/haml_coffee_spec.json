@@ -42,6 +42,11 @@
     "Ruby 1.9 style over multiple lines" : {
         "haml" : "%a{ href: '/link', data: {\n  test: '123',\n  another: 'test' } }",
         "html" : "<a href='/link' data-test='123' data-another='test'></a>"
+    },
+
+    "Complex data attributes" : {
+        "haml_template" : "coffee/data_attributes",
+        "html_template" : "coffee/data_attributes"
     }
   },
 
@@ -334,7 +339,7 @@
         "title" : "This is a\nmulti line example"
       }
     },
-    
+
     "evaluation in inserting functions" : {
       "haml_template" : "coffee/evaluation_in_function",
       "html_template" : "coffee/evaluation_in_function"
