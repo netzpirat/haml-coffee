@@ -285,7 +285,7 @@ module.exports = class Haml extends Node
         keys = /([-\w]+[\w:-]*\w?|'\w+[\w:-]*\w?'|"\w+[\w:-]*\w?")\s*=/g
 
         # Mark equal signs within quotes
-        unwrapped = unwrapped.replace(/\="([^"]*?)=([^"]*?)"/g, '="$1\u0090=$2"')
+        unwrapped = unwrapped.replace(/\="([^"]*?)=([^"]*?)"/g, '="$1\u0090=$2"').replace(/\='([^']*?)=([^']*?)'/g, '=\'$1\u0090=$2\'')
 
       when '{'
         if exp.indexOf('=>') is -1
