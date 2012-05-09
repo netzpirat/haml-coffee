@@ -963,7 +963,7 @@ require.define("/nodes/text.js", function (require, module, exports, __dirname, 
 require.define("/nodes/haml.js", function (require, module, exports, __dirname, __filename) {
 (function() {
   var Haml, Node, escapeQuotes,
-    __hasProp = Object.prototype.hasOwnProperty,
+    __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   Node = require('./node');
@@ -974,8 +974,10 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
 
     __extends(Haml, _super);
 
+    Haml.name = 'Haml';
+
     function Haml() {
-      Haml.__super__.constructor.apply(this, arguments);
+      return Haml.__super__.constructor.apply(this, arguments);
     }
 
     Haml.prototype.evaluate = function() {
@@ -1039,16 +1041,18 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
     };
 
     Haml.prototype.parseExpression = function(exp) {
-      var attribute, attributes, classes, id, tag, _i, _len, _ref, _ref2;
+      var attribute, attributes, classes, id, tag, _i, _len, _ref, _ref1;
       tag = this.parseTag(exp);
-      if (this.preserveTags.indexOf(tag.tag) !== -1) this.preserve = true;
+      if (this.preserveTags.indexOf(tag.tag) !== -1) {
+        this.preserve = true;
+      }
       id = (_ref = tag.ids) != null ? _ref.pop() : void 0;
       classes = tag.classes;
       attributes = [];
       if (tag.attributes) {
-        _ref2 = tag.attributes;
-        for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-          attribute = _ref2[_i];
+        _ref1 = tag.attributes;
+        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+          attribute = _ref1[_i];
           if (attribute.key === 'id') {
             if (id) {
               id += '_' + attribute.value;
@@ -1093,7 +1097,9 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
           assignment = void 0;
         }
         if (whitespace) {
-          if (whitespace.indexOf('>') !== -1) this.wsRemoval.around = true;
+          if (whitespace.indexOf('>') !== -1) {
+            this.wsRemoval.around = true;
+          }
           if (whitespace.indexOf('<') !== -1) {
             this.wsRemoval.inside = true;
             this.preserve = true;
@@ -1132,14 +1138,14 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
     };
 
     Haml.prototype.parseAttributes = function(exp) {
-      var attributes, bool, datas, findAttributes, key, match, quoted, value, _ref;
+      var attributes, bool, key, quoted, value, _ref;
       attributes = [];
-      if (exp === void 0) return attributes;
-      _ref = this.getDataAttributes(exp), exp = _ref[0], datas = _ref[1];
-      findAttributes = /(?:([-\w]+[\w:-]*\w?|'\w+[\w:-]*\w?'|"\w+[\w:-]*\w?")\s*=\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[\w@.]+)|(:\w+[\w:-]*\w?|'[-\w]+[\w:-]*\w?'|"[-\w]+[\w:-]*\w?")\s*=>\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[^},]+)|(\w+[\w:-]*\w?|'[-\w]+[\w:-]*\w?'|"[-\w]+[\w:-]*\w?"):\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[^},]+))/g;
-      while (match = findAttributes.exec(exp)) {
-        key = (match[1] || match[3] || match[5]).replace(/^:/, '');
-        value = match[2] || match[4] || match[6];
+      if (exp === void 0) {
+        return attributes;
+      }
+      _ref = this.extractAttributes(exp);
+      for (key in _ref) {
+        value = _ref[key];
         bool = false;
         if (['false', ''].indexOf(value) === -1) {
           if (['true'].indexOf(value) !== -1) {
@@ -1160,8 +1166,12 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
               }
             }
           }
-          if (quoted = value.match(/^("|')(.*)\1$/)) value = quoted[2];
-          if (quoted = key.match(/^("|')(.*)\1$/)) key = quoted[2];
+          if (quoted = value.match(/^("|')(.*)\1$/)) {
+            value = quoted[2];
+          }
+          if (quoted = key.match(/^("|')(.*)\1$/)) {
+            key = quoted[2];
+          }
           attributes.push({
             key: key,
             value: value,
@@ -1169,24 +1179,51 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
           });
         }
       }
-      return attributes.concat(datas);
+      return attributes;
     };
 
-    Haml.prototype.getDataAttributes = function(exp) {
-      var attribute, attributes, data, _i, _len;
-      data = /:?data:?\s*(?:=>\s*)?\{([^}]*)\},?/gi.exec(exp);
-      if (!(data != null ? data[1] : void 0)) return [exp, []];
-      exp = exp.replace(data[0], '');
-      attributes = this.parseAttributes(data[1]);
-      for (_i = 0, _len = attributes.length; _i < _len; _i++) {
-        attribute = attributes[_i];
-        attribute.key = "data-" + attribute.key;
+    Haml.prototype.extractAttributes = function(exp) {
+      var attributes, dataAttribute, key, keyValue, keys, pairs, unwrapped, value, _ref, _ref1;
+      attributes = {};
+      unwrapped = exp.substring(1, exp.length - 1).replace(/^\s+|\s+$/g, '');
+      switch (exp.substring(0, 1)) {
+        case '(':
+          keys = /([-\w]+[\w:-]*\w?|'\w+[\w:-]*\w?'|"\w+[\w:-]*\w?")\s*=/g;
+          unwrapped = unwrapped.replace(/\=\s*"([^"]*?)=([^"]*?)"/g, '="$1\u0090=$2"').replace(/\=\s*'([^']*?)=([^']*?)'/g, '=\'$1\u0090=$2\'');
+          break;
+        case '{':
+          if (exp.indexOf('=>') === -1) {
+            keys = /(\w+[\w:-]*\w?|'[-\w]+[\w:-]*\w?'|"[-\w]+[\w:-]*\w?"):/g;
+            unwrapped = unwrapped.replace(/\:\s*"([^"]*?):([^"]*?)"/g, ':"$1\u0090:$2"').replace(/\:\s*'([^']*?):([^']*?)'/g, ':\'$1\u0090=$2\'');
+          } else {
+            keys = /:?(\w+[\w:-]*\w?|'[-\w]+[\w:-]*\w?'|"[-\w]+[\w:-]*\w?")\s*=>/g;
+            unwrapped = unwrapped.replace(/\=>\s*"([^"]*?)=>([^"]*?)"/g, '=>"$1\u0090:$2"').replace(/\=>\s*'([^']*?)=>([^']*?)'/g, '=>\'$1\u0090=>$2\'');
+          }
       }
-      return [exp, attributes];
+      pairs = unwrapped.split(keys).filter(Boolean);
+      dataAttribute = false;
+      while (pairs.length) {
+        keyValue = pairs.splice(0, 2);
+        key = (_ref = keyValue[0]) != null ? _ref.replace(/^\s+|\s+$/g, '').replace(/^:/, '') : void 0;
+        value = (_ref1 = keyValue[1]) != null ? _ref1.replace(/^\s+|\s+$/g, '').replace(/,$/, '').replace(/\u0090/, '') : void 0;
+        if (key === 'data') {
+          dataAttribute = true;
+        } else if (key && value) {
+          if (dataAttribute) {
+            key = "data-" + key;
+            if (/}$/.test(value)) {
+              value = value.substring(0, value.length - 1).replace(/^\s+|\s+$/g, '');
+              dataAttribute = false;
+            }
+          }
+          attributes[key] = value;
+        }
+      }
+      return attributes;
     };
 
     Haml.prototype.buildHtmlTagPrefix = function(tokens) {
-      var attribute, classes, interpolation, klass, tagParts, _i, _j, _len, _len2, _ref, _ref2;
+      var attribute, classes, interpolation, klass, tagParts, _i, _j, _len, _len1, _ref, _ref1;
       tagParts = ["<" + tokens.tag];
       if (tokens.classes) {
         classes = tokens.classes.sort().join(' ');
@@ -1207,11 +1244,13 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
         }
         tagParts.push("class='" + classes + "'");
       }
-      if (tokens.id) tagParts.push("id='" + tokens.id + "'");
+      if (tokens.id) {
+        tagParts.push("id='" + tokens.id + "'");
+      }
       if (tokens.attributes) {
-        _ref2 = tokens.attributes;
-        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-          attribute = _ref2[_j];
+        _ref1 = tokens.attributes;
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          attribute = _ref1[_j];
           if (attribute.bool && this.format === 'html5') {
             tagParts.push("" + attribute.key);
           } else {
