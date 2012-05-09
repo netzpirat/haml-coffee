@@ -1,4 +1,4 @@
-# Master
+# Version 0.7.0, Mai 9, 2012
 
   * [Issue #26](https://github.com/9elements/haml-coffee/issues/26): Improve attribute parsing.
 
