@@ -156,6 +156,11 @@
       }
     },
 
+    "Inlince code attributes" : {
+        "haml_template" : "coffee/code_attributes",
+        "html_template" : "coffee/code_attributes"
+    },
+
     "HTML attributes with HTML5" : {
       "haml_template" : "text/attributes",
       "html_template" : "text/attributes_html5",
