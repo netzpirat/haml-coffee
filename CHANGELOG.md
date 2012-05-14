@@ -8,7 +8,7 @@
 
 # Version 0.6.3, April 30, 2012
 
-  * [haml_coffee_assets issue #2](https://github.com/netzpirat/haml_coffee_assets/issues/40): Fix class interpolation
+  * [haml_coffee_assets issue #40](https://github.com/netzpirat/haml_coffee_assets/issues/40): Fix class interpolation
 
 # Version 0.6.2
 
