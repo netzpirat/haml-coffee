@@ -1,3 +1,7 @@
+# Master
+
+  * [haml_coffee_assets issue #42](https://github.com/netzpirat/haml_coffee_assets/issues/42): Fix tag parsing with parenthesis is the text
+
 # Version 0.7.0, Mai 9, 2012
 
   * [Issue #26](https://github.com/9elements/haml-coffee/issues/26): Improve attribute parsing.
