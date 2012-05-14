@@ -1087,7 +1087,7 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
             doctype: doctype
           };
         }
-        tokens = exp.match(/^((?:[#%\.][a-z0-9_:\-]*[\/]?)+)(?:([\(\{].*[\)\}])?([\<\>]{0,2})(?=[=&!~])(.*)?|([\(\{].*[\)\}])?([\<\>]{0,2}))(.*)?/i);
+        tokens = exp.match(/^((?:[#%\.][a-z0-9_:\-]*[\/]?)+)(?:([\(].*[\)]|[\{].*[\}])?([\<\>]{0,2})(?=[=&!~])(.*)?|([\(].*[\)]|[\{].*[\}])?([\<\>]{0,2}))(.*)?/i);
         haml = tokens[1];
         attributes = tokens[2] || tokens[5];
         whitespace = tokens[3] || tokens[6];
