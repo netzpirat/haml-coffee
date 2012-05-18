@@ -313,7 +313,8 @@ module.exports = class Haml extends Node
 
       # Trim key and remove preceding colon
       key = keyValue[0]?.replace(/^\s+|\s+$/g, '').replace(/^:/, '')
-
+      key = quoted[2] if quoted = key.match /^("|')(.*)\1$/
+      
       # Trim value, remove succeeding comma and restore marked keys in quotes
       value = keyValue[1]?.replace(/^\s+|\s+$/g, '').replace(/,$/, '').replace(/\u0090/, '')
 

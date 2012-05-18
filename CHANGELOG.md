@@ -1,3 +1,7 @@
+# Master
+
+  * [haml_coffee_assets issue #43](https://github.com/netzpirat/haml_coffee_assets/issues/43): Doesn't support quoted symbols
+
 # Version 0.7.1, Mai 14, 2012
 
   * [haml_coffee_assets issue #42](https://github.com/netzpirat/haml_coffee_assets/issues/42): Fix tag parsing with parenthesis is the text
