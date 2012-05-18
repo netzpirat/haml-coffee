@@ -7,25 +7,6 @@ can be used in client-side JavaScript applications that are using
 [JavaScriptMVC](http://javascriptmvc.com/), [KnockoutJS](http://knockoutjs.com/) and others, or on the server-side in
 frameworks like [Express](http://expressjs.com/).
 
-## Contents
-
-* [Installation](#installation)
-  * [Integration](#installation-integration)
-* [Compile Haml Coffee](#compile-haml-coffee)
-  * [Using the API](#using-the-api)
-  * [Using with Express](#using-with-express)
-  * [Using the CLI tool](#using-the-cli-tool)
-* [Haml support](#haml-support)
-* [CoffeeScript support](#coffee-script-support)
-  * [Attributes](#coffee-script-attributes)
-  * [Running code](#coffee-script-running-code)
-  * [Filter](#coffee-script-filter)
-* [Compiler options](#compiler-options)
-  * [HTML generation options](#html-generation-compiler-options)
-  * [Custom helper function options](#custom-helper-function-compiler-options)
-* [Development information](#development-information)
-
-<a name="installation" />
 ## Installation
 
 Haml Coffee is available in NPM and can be installed with:
@@ -37,7 +18,6 @@ $ npm install haml-coffee
 Please have a look at the [CHANGELOG](https://github.com/9elements/haml-coffee/blob/master/CHANGELOG.md) when upgrading to a
 newer Codo version with `npm update`.
 
-<a name="installation-integration" />
 ## Integration
 
 If you're using [Hem](https://github.com/maccman/hem) to manage your CommonJS modules,
@@ -52,10 +32,8 @@ is provided in the `dist/compiler` directory:
 [Haml Coffee compiler](https://raw.github.com/9elements/haml-coffee/master/dist/compiler/hamlcoffee.js)
 ([minified](https://raw.github.com/9elements/haml-coffee/master/dist/compiler/hamlcoffee.min.js))
 
-<a name="compile-haml-coffee" />
 ## Compile Haml Coffee
 
-<a name="using-the-api" />
 ### Using the API
 
 You can compile a Haml Coffee template to a JavaScript function and execute the function with the locals to render the
@@ -81,7 +59,6 @@ See the [compiler options](#compiler-options) for detailed information about all
 the [codo](https://github.com/netzpirat/codo) generated
 [Haml-Coffee API documentation](http://9elements.github.com/haml-coffee/).
 
-<a name="using-with-express" />
 ### Using with Express
 
 You can configure [Express](http://expressjs.com/) to use Haml Coffee as template engine:
@@ -144,7 +121,6 @@ app.get '/', (req, res) ->
 You can read more about the view rendering in the
 [Express documentation](http://expressjs.com/guide.html#view-rendering).
 
-<a name="using-the-cli-tool" />
 ### Using the CLI tool
 
 After the installation you will have a `haml-coffee` binary that can be used to compile single templates and even
@@ -228,7 +204,6 @@ $ haml-coffee -i template.haml -n exports.JST -t other
 
 This will result in a template that can be accessed by `exports.JST['other']`.
 
-<a name="haml-support" />
 ## Haml support
 
 Haml Coffee implements the [Haml Spec](https://github.com/norman/haml-spec) to ensure some degree of compatibility to
@@ -317,7 +292,6 @@ produces the HTML output
 *<span class='small'>Not really</span>
 ```
 
-<a name="coffee-script-support" />
 ## CoffeeScript support
 
 Haml and CoffeeScript are a winning team, both use indention for blocks and are a perfect match for this reason. You can
@@ -325,7 +299,6 @@ use CoffeeScript instead of Ruby in your Haml tags and the attributes.
 
 **It's not recommended to put too much logic into the template.**
 
-<a name="coffee-script-attributes" />
 ### Attributes
 
 When you define an attribute value without putting it into quotes (single or double quotes), it's considered to be
@@ -375,7 +348,6 @@ them properly:
 
 In the above example you also see the usage for generating HTML5 data attributes.
 
-<a name="coffee-script-running-code" />
 ### Running Code
 
 You can run any CoffeeScript code in your template:
@@ -427,12 +399,6 @@ or pass generated HTML output through a function for post-processing.
   %a{ href: '/' }
 ```
 
-<a name="coffee-script-filter" />
-### CoffeeScript filter
-
-In addition to the `:plain`, `:javascript`, `:css`, `:cdata`, `:escaped` and `:preserve` filters, which are also
-provided by Ruby Haml, Haml Coffee has a `:coffeescript` filter.
-
 The content of the `:coffeescript` filter is run when the template is rendered and doesn't output anything into the
 resulting document. This comes in handy when you have code to run over multiple lines and don't want to prefix each line
 with `-`:
@@ -448,7 +414,6 @@ with `-`:
       %li= tag
 ```
 
-<a name="compiler-options" />
 ## Compiler options
 
 The following section describes all the available compiler options that you can use through the JavaScript API,
@@ -458,7 +423,6 @@ The command line arguments may be slightly different. For example instead of pas
 use the `--disable-html-escaping` argument. You can see a list of all the command line arguments by executing
 `haml-coffee --help`.
 
-<a name="html-generation-compiler-options" />
 ### HTML generation options
 
 The HTML options change the way how the generated HTML will look like.
@@ -537,7 +501,6 @@ the newline characters to their equivalent HTML entity.
 
 The autoclose option defines a list of tag names that should be automatically closed if they have no content.
 
-<a name="custom-helper-function-compiler-options" />
 ### Custom helper function options
 
 Haml Coffee provides helper functions for HTML escaping, value cleaning and whitespace preservation, which must be
@@ -564,7 +527,6 @@ You can find a default implementation for all these helper functions in the `dis
 [CoffeeScript](https://raw.github.com/9elements/haml-coffee/master/dist/helpers/haml_coffee_helpers.coffee)
 [JavaScript](https://raw.github.com/9elements/haml-coffee/master/dist/helpers/haml_coffee_helpers.js)
 
-<a name="development-information" />
 ## Development information
 
 You'll need the latest version of `node.js`, `npm`, `coffee-script` and `jasmine-node` to run everything. Start
@@ -605,11 +567,9 @@ Haml Coffee in the  Rails asset pipeline:
 
 ## Authors
 
-* [Michael Kessler](https://github.com/netzpirat) ([@netzpirat](http://twitter.com/#!/netzpirat))
-* [Sebastion Deutsch](https://github.com/sebastiandeutsch) ([@sippndipp](http://twitter.com/#!/sippndipp))
-* [Jan Varwig](https://github.com/janv) ([@agento](http://twitter.com/#!/agento))
-
-Development is sponsored by [9elements](http://9elements.com) and [mksoft.ch](https://mksoft.ch).
+* [Michael Kessler](https://github.com/netzpirat) ([@netzpirat](http://twitter.com/#!/netzpirat), [mksoft.ch](https://mksoft.ch))
+* [Sebastion Deutsch](https://github.com/sebastiandeutsch) ([@sippndipp](http://twitter.com/#!/sippndipp), [9elements](http://9elements.com))
+* [Jan Varwig](https://github.com/janv) ([@agento](http://twitter.com/#!/agento), [9elements](http://9elements.com))
 
 ## Contributors
 
