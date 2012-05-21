@@ -123,7 +123,7 @@ exports.run = ->
       # Compile a single Haml CoffeeScript template
       unless stat.isDirectory()
         outputFilename  = argv.o || "#{ argv.i.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] }.jst"
-        console.log '  \033[90m[Haml Coffee] Compiling file\033[0m %s to %s', inputFilename, outputFilename
+        console.log '  \x33[90m[Haml Coffee] Compiling file\x33[0m %s to %s', inputFilename, outputFilename
         fs.writeFileSync outputFilename, CoffeeMaker.compileFile(inputFilename, compilerOptions, namespace, templateName)
 
         process.exit 0
@@ -131,10 +131,10 @@ exports.run = ->
       # Compile a directory of Haml CoffeeScript files
       else
         if templateName
-          console.log '  \033[91m[Haml Coffee] You can\'t compile all Haml templates in a directory and give a single template name!\033[0m'
+          console.log '  \x33[91m[Haml Coffee] You can\'t compile all Haml templates in a directory and give a single template name!\x33[0m'
           process.exit 1
 
-        console.log '  \033[92m[Haml Coffee] Compiling directory\033[0m %s', inputFilename
+        console.log '  \x33[92m[Haml Coffee] Compiling directory\x33[0m %s', inputFilename
 
         # Removing a trailing slash
         baseDir  = inputFilename.replace(/\/$/, '')
@@ -148,22 +148,22 @@ exports.run = ->
 
             # Combine all files into a single output
             if argv.o
-              console.log '    \033[90m[Haml Coffee] Compiling file\033[0m %s', filename
+              console.log '    \x33[90m[Haml Coffee] Compiling file\x33[0m %s', filename
               compound += CoffeeMaker.compileFile(filename, compilerOptions, namespace)
 
             # Compile and write each file on its own
             else
               outputFilename  = "#{ filename.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] }.jst"
-              console.log '  \033[90m[Haml Coffee] Compiling file\033[0m %s to %s', inputFilename, outputFilename
+              console.log '  \x33[90m[Haml Coffee] Compiling file\x33[0m %s to %s', inputFilename, outputFilename
               fs.writeFileSync outputFilename,  CoffeeMaker.compileFile(filename, compilerOptions)
 
         # Write concatenated output
         if argv.o
-          console.log '    \033[90m[Haml Coffee] Writing all templates to\033[0m %s', argv.o
+          console.log '    \x33[90m[Haml Coffee] Writing all templates to\x33[0m %s', argv.o
           fs.writeFileSync argv.o, compound
 
         process.exit 0
 
     else
-      console.log '  \033[91m[Haml Coffee] Error compiling file\033[0m %s: %s', argv.i, err
+      console.log '  \x33[91m[Haml Coffee] Error compiling file\x33[0m %s: %s', argv.i, err
       process.exit 1

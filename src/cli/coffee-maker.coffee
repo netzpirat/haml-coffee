@@ -18,7 +18,7 @@ module.exports = class CoffeeMaker
     try
       source = fs.readFileSync(filename).toString()
     catch error
-      console.log '  \033[91mError opening file:\033[0m %s', error
+      console.log '  \x33[91mError opening file:\x33[0m %s', error
       console.log error
 
     try
@@ -31,11 +31,11 @@ module.exports = class CoffeeMaker
         haml = compiler.render templateName, namespace
 
       else
-        console.log '  \033[91m[haml coffee] no valid Haml extension.\033[0m'
+        console.log '  \x33[91m[haml coffee] no valid Haml extension.\x33[0m'
         process.exit 1
 
     catch error
-      console.log '  \033[91m[haml coffee] error compiling Haml file:\033[0m %s', error
+      console.log '  \x33[91m[haml coffee] error compiling Haml file:\x33[0m %s', error
       console.log error.stack
       process.exit 1
 
@@ -43,7 +43,7 @@ module.exports = class CoffeeMaker
       output = CoffeeScript.compile haml
 
     catch error
-      console.log '  \033[91m[haml coffee] CoffeeScript compilation error:\033[0m %s', error
+      console.log '  \x33[91m[haml coffee] CoffeeScript compilation error:\x33[0m %s', error
       console.log error.stack
       process.exit 1
 
