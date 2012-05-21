@@ -1,5 +1,6 @@
 # Master
 
+  * Allow Ruby 1.8 and 1.9 style attributes to be mixed on the same tag.
   * [haml_coffee_assets issue #43](https://github.com/netzpirat/haml_coffee_assets/issues/43): Doesn't support quoted symbols
 
 # Version 0.7.1, Mai 14, 2012
