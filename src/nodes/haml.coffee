@@ -274,37 +274,48 @@ module.exports = class Haml extends Node
   #
   extractAttributes: (exp) ->
     attributes = {}
-
-    # Unwrap attribute from parenthesis and curly brace, trim spaces
-    unwrapped = exp.substring(1, exp.length - 1).replace(/^\s+|\s+$/g, '')
-
+    type = exp.substring(0, 1)
+    
     # Detect the used key type
-    switch exp.substring(0, 1)
+    switch type
       when '('
         # HTML attribute keys
-        keys = /([-\w]+[\w:-]*\w?|'\w+[\w:-]*\w?'|"\w+[\w:-]*\w?")\s*=/g
+        keys = ///
+               \(\s*([-\w]+[\w:-]*\w?)\s*=
+               |
+               \s+([-\w]+[\w:-]*\w?)\s*=
+               |
+               \(\s*('\w+[\w:-]*\w?')\s*=
+               |
+               \s+('\w+[\w:-]*\w?')\s*=
+               |
+               \(\s*("\w+[\w:-]*\w?")\s*=
+               |
+               \s+("\w+[\w:-]*\w?")\s*=
+               ///g
 
         # Mark key within quotes
-        unwrapped = unwrapped.replace(/\=\s*"([^"]*?)=([^"]*?)"/g, '="$1\u0090=$2"').replace(/\=\s*'([^']*?)=([^']*?)'/g, '=\'$1\u0090=$2\'')
-
+        exp = exp.replace(/\=\s*"([^"]*?)=([^"]*?)"/g, '="$1\u0090=$2"').replace(/\=\s*'([^']*?)=([^']*?)'/g, '=\'$1\u0090=$2\'')
+        
       when '{'
-        if exp.indexOf('=>') is -1
-          # Ruby 1.9 attribute keys
-          keys = /(\w+[\w:-]*\w?|'[-\w]+[\w:-]*\w?'|"[-\w]+[\w:-]*\w?"):/g
-
-          # Mark key within quotes
-          unwrapped = unwrapped.replace(/\:\s*"([^"]*?):([^"]*?)"/g, ':"$1\u0090:$2"').replace(/\:\s*'([^']*?):([^']*?)'/g, ':\'$1\u0090=$2\'')
-
-        else
-          # Ruby 1.8 attribute keys
-          keys = /:?(\w+[\w:-]*\w?|'[-\w]+[\w:-]*\w?'|"[-\w]+[\w:-]*\w?")\s*=>/g
-
-          # Mark key within quotes
-          unwrapped = unwrapped.replace(/\=>\s*"([^"]*?)=>([^"]*?)"/g, '=>"$1\u0090:$2"').replace(/\=>\s*'([^']*?)=>([^']*?)'/g, '=>\'$1\u0090=>$2\'')
+        # Ruby attribute keys
+        keys = ///
+               [{,]\s*(\w+[\w:-]*\w?):
+               |
+               [{,]\s*('[-\w]+[\w:-]*\w?'):
+               |
+               [{,]\s*("[-\w]+[\w:-]*\w?"):
+               |
+               [{,]\s*:(\w+[\w:-]*\w?)\s*=>
+               |
+               [{,]\s*:?'([-\w]+[\w:-]*\w?)'\s*=>
+               |
+               [{,]\s*:?"([-\w]+[\w:-]*\w?)"\s*=>
+               ///g
 
     # Split into key value pairs
-    pairs = unwrapped.split(keys).filter(Boolean)
-
+    pairs = exp.split(keys).filter(Boolean)
+    
     dataAttribute = false
 
     # Process the pairs in a group of two
@@ -316,7 +327,7 @@ module.exports = class Haml extends Node
       key = quoted[2] if quoted = key.match /^("|')(.*)\1$/
       
       # Trim value, remove succeeding comma and restore marked keys in quotes
-      value = keyValue[1]?.replace(/^\s+|\s+$/g, '').replace(/,$/, '').replace(/\u0090/, '')
+      value = keyValue[1]?.replace(/^\s+|[\s,]+$/g, '').replace(/\u0090/, '')
 
       if key is 'data'
         dataAttribute = true
@@ -324,14 +335,13 @@ module.exports = class Haml extends Node
       else if key and value
         if dataAttribute
           key = "data-#{ key }"
+          dataAttribute = false if /}\s*$/.test value
 
-          if /}$/.test value
-            value = value.substring(0, value.length - 1).replace(/^\s+|\s+$/g, '')
-            dataAttribute = false
-
-        attributes[key] = value
-
-
+      switch type
+        when '('
+          attributes[key] = value.replace(/^\s+|[\s)]+$/g, '')
+        when '{'
+          attributes[key] = value.replace(/^\s+|[\s}]+$/g, '')
 
     attributes
 
