@@ -237,11 +237,11 @@ module.exports = class HamlCoffee
           @line_number++
 
         # Look ahead for multi line |
-        if expression.match(/(\s)+\|$/)
-          expression = expression.replace(/(\s)+\|$/, ' ')
+        if expression.match(/(\s)+\|\s*$/)
+          expression = expression.replace(/(\s)+\|\s*$/, ' ')
 
           while lines[0]?.match(/(\s)+\|$/)
-            expression += lines.shift().match(/^(\s*)(.*)/)[2].replace(/(\s)+\|$/, '')
+            expression += lines.shift().match(/^(\s*)(.*)/)[2].replace(/(\s)+\|\s*$/, '')
             @line_number++
 
         @currentIndent = ws.length
