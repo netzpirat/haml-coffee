@@ -1,4 +1,4 @@
-# Master
+# Version 8.0.0, Mai 21, 2012
 
   * Fix attribute lookahead with no multilines for elements that have only an id or class declared.
   * [haml_coffee_assets issue #44](https://github.com/netzpirat/haml_coffee_assets/issues/43): Multiline and attributes doesn't work
