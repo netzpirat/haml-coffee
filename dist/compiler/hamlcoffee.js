@@ -1243,10 +1243,12 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
       var attributes, dataAttribute, key, keyValue, keys, pairs, quoted, type, value, _ref, _ref1;
       attributes = {};
       type = exp.substring(0, 1);
+      exp = exp.replace(/(=|:|=>)\s*('([^\\']|\\\\|\\')*'|"([^\\"]|\\\\|\\")*")/g, function(match, type, value) {
+        return type + (value != null ? value.replace(/(:|=|=>)/, '\u0090$1') : void 0);
+      });
       switch (type) {
         case '(':
           keys = /\(\s*([-\w]+[\w:-]*\w?)\s*=|\s+([-\w]+[\w:-]*\w?)\s*=|\(\s*('\w+[\w:-]*\w?')\s*=|\s+('\w+[\w:-]*\w?')\s*=|\(\s*("\w+[\w:-]*\w?")\s*=|\s+("\w+[\w:-]*\w?")\s*=/g;
-          exp = exp.replace(/\=\s*"([^"]*?)=([^"]*?)"/g, '="$1\u0090=$2"').replace(/\=\s*'([^']*?)=([^']*?)'/g, '=\'$1\u0090=$2\'');
           break;
         case '{':
           keys = /[{,]\s*(\w+[\w:-]*\w?):|[{,]\s*('[-\w]+[\w:-]*\w?'):|[{,]\s*("[-\w]+[\w:-]*\w?"):|[{,]\s*:(\w+[\w:-]*\w?)\s*=>|[{,]\s*:?'([-\w]+[\w:-]*\w?)'\s*=>|[{,]\s*:?"([-\w]+[\w:-]*\w?)"\s*=>/g;

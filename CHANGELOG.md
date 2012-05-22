@@ -1,4 +1,4 @@
-# Master
+# Version 0.8.1, Mai 22, 2012
 
 * [haml_coffee_assets issue #46](https://github.com/netzpirat/haml_coffee_assets/issues/46): Attribute parsing broken
 
