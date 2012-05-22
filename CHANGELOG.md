@@ -1,3 +1,7 @@
+# Master
+
+* [haml_coffee_assets issue #46](https://github.com/netzpirat/haml_coffee_assets/issues/46): Attribute parsing broken
+
 # Version 8.0.0, Mai 21, 2012
 
   * Fix attribute lookahead with no multilines for elements that have only an id or class declared.

@@ -275,7 +275,11 @@ module.exports = class Haml extends Node
   extractAttributes: (exp) ->
     attributes = {}
     type = exp.substring(0, 1)
-    
+
+    # Mark key separator characters within quoted values, so they aren't recognized as keys.
+    exp = exp.replace /(=|:|=>)\s*('([^\\']|\\\\|\\')*'|"([^\\"]|\\\\|\\")*")/g, (match, type, value) -> 
+      type + value?.replace /(:|=|=>)/, '\u0090$1'
+
     # Detect the used key type
     switch type
       when '('
@@ -294,9 +298,6 @@ module.exports = class Haml extends Node
                \s+("\w+[\w:-]*\w?")\s*=
                ///g
 
-        # Mark key within quotes
-        exp = exp.replace(/\=\s*"([^"]*?)=([^"]*?)"/g, '="$1\u0090=$2"').replace(/\=\s*'([^']*?)=([^']*?)'/g, '=\'$1\u0090=$2\'')
-        
       when '{'
         # Ruby attribute keys
         keys = ///
@@ -315,18 +316,18 @@ module.exports = class Haml extends Node
 
     # Split into key value pairs
     pairs = exp.split(keys).filter(Boolean)
-    
+
     dataAttribute = false
 
     # Process the pairs in a group of two
     while pairs.length
       keyValue = pairs.splice 0, 2
 
-      # Trim key and remove preceding colon
+      # Trim key and remove preceding colon and remove markers
       key = keyValue[0]?.replace(/^\s+|\s+$/g, '').replace(/^:/, '')
       key = quoted[2] if quoted = key.match /^("|')(.*)\1$/
-      
-      # Trim value, remove succeeding comma and restore marked keys in quotes
+
+      # Trim value, remove succeeding comma and remove markers
       value = keyValue[1]?.replace(/^\s+|[\s,]+$/g, '').replace(/\u0090/, '')
 
       if key is 'data'
