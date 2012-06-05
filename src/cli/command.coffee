@@ -123,7 +123,7 @@ exports.run = ->
       # Compile a single Haml CoffeeScript template
       unless stat.isDirectory()
         outputFilename  = argv.o || "#{ argv.i.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] }.jst"
-        console.log '  \x33[90m[Haml Coffee] Compiling file\x33[0m %s to %s', inputFilename, outputFilename
+        console.error '  \x33[90m[Haml Coffee] Compiling file\x33[0m %s to %s', inputFilename, outputFilename
         fs.writeFileSync outputFilename, CoffeeMaker.compileFile(inputFilename, compilerOptions, namespace, templateName)
 
         process.exit 0
@@ -131,7 +131,7 @@ exports.run = ->
       # Compile a directory of Haml CoffeeScript files
       else
         if templateName
-          console.log '  \x33[91m[Haml Coffee] You can\'t compile all Haml templates in a directory and give a single template name!\x33[0m'
+          console.error '  \x33[91m[Haml Coffee] You can\'t compile all Haml templates in a directory and give a single template name!\x33[0m'
           process.exit 1
 
         console.log '  \x33[92m[Haml Coffee] Compiling directory\x33[0m %s', inputFilename
@@ -165,5 +165,5 @@ exports.run = ->
         process.exit 0
 
     else
-      console.log '  \x33[91m[Haml Coffee] Error compiling file\x33[0m %s: %s', argv.i, err
+      console.error '  \x33[91m[Haml Coffee] Error compiling file\x33[0m %s: %s', argv.i, err
       process.exit 1
