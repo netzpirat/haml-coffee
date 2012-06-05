@@ -1,3 +1,7 @@
+# Version 0.8.2, June 5, 2012
+
+* [Issue #28](https://github.com/9elements/haml-coffee/issues/28): Print errors to stderr.
+
 # Version 0.8.1, Mai 22, 2012
 
 * [haml_coffee_assets issue #46](https://github.com/netzpirat/haml_coffee_assets/issues/46): Attribute parsing broken
