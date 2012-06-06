@@ -1,27 +1,120 @@
 browserify = require 'browserify'
 fs         = require 'fs'
-jsp        = require('uglify-js').parser
+sp         = require('uglify-js').parser
 pro        = require('uglify-js').uglify
-sys        = require 'sys'
-{spawn}    = require 'child_process'
+{series}   = require 'async'
+{exec}     = require 'child_process'
 
-task 'watch', 'Watch src directory and build to lib', ->
-  coffee = spawn 'coffee', ['--lint', '--output', 'lib', '--watch', 'src']
+process.env['PATH'] = "node_modules/.bin:#{ process.env['PATH'] }"
 
-  coffee.stdout.on 'data', (data) -> sys.print data.toString()
-  coffee.stderr.on 'data', (data) -> sys.print data.toString()
+bold  = '\033[0;1m'
+red   = '\033[0;31m'
+green = '\033[0;32m'
+reset = '\033[0m'
 
-task 'bundle', 'Compile the Haml Coffee compiler client JavaScript bundle', ->
+log = (message, color = green) -> console.log "#{ color }#{ message }#{ reset }"
 
-  b = browserify()
-  b.require "#{ __dirname }/lib/haml-coffee"
+onerror = (err) ->
+  if err
+    process.stdout.write "#{ red }#{ err.stack }#{ reset }\n"
+    process.exit -1
 
-  code = b.bundle()
-  fs.writeFileSync 'dist/compiler/hamlcoffee.js', code
+test = (cb) ->
+  exec 'jasmine-node --coffee spec', (err, stdout, stderr) ->
+    msg = /(\d+) tests?, (\d+) assertions?, (\d+) failures?/
+    matches = stdout.match msg || stderr.match msg
+    cb new Error('Tests failed') if matches[3] != '0'
+    log matches[0]
+    cb err
 
-  ast = jsp.parse code
-  ast = pro.ast_mangle ast
-  ast = pro.ast_squeeze ast
+task 'test', 'Run all tests', -> test onerror
 
-  min = pro.gen_code ast
-  fs.writeFileSync 'dist/compiler/hamlcoffee.min.js', min
+generateGHPages = (cb) ->
+  cloneGHPages = (cb) ->
+    log "Clone gh-pages"
+    exec 'git clone git@github.com:9elements/haml-coffee.git -b gh-pages /tmp/hamlcdoc', (err, stdout, stderr) ->
+      onerror err
+      log stdout
+      cb err
+
+  generateDocs = (cb) ->
+    log "Generacte Haml-Coffee documentation"
+    exec './bin/codo -o /tmp/hamlcdoc', (err, stdout, stderr) ->
+      onerror err
+      log stdout
+      cb err
+
+  pushDocs = (cb) ->
+    log "Push site"
+    exec 'cd /tmp/hamlcdoc && git add * . && git commit -am "Update to docs to latest version." && git push origin gh-pages', (err, stdout, stderr) ->
+      onerror err
+      log stdout
+      cb err
+
+  cleanUp = (cb) ->
+    exec 'rm -rf /tmp/hamlcdoc', (err, stdout, stderr) ->
+      onerror err
+      log "Done."
+      cb err
+
+  series [
+    cloneGHPages
+    generateDocs
+    pushDocs
+    cleanUp
+  ]
+
+task 'pages', 'Generate the Haml-Coffee docs and push it to GitHub pages', -> generateGHPages onerror
+
+publish = (cb) ->
+
+  browserPackage = (cb) ->
+    log "Create brower package"
+    b = browserify()
+    b.require "#{ __dirname }/lib/haml-coffee"
+
+    code = b.bundle()
+    fs.writeFileSync 'dist/compiler/hamlcoffee.js', code
+
+    ast = jsp.parse code
+    ast = pro.ast_mangle ast
+    ast = pro.ast_squeeze ast
+
+    min = pro.gen_code ast
+    fs.writeFileSync 'dist/compiler/hamlcoffee.min.js', min
+
+    exec 'git commit -am "Generate latest browser package"', (err, stdout, stderr) ->
+      log stdout
+      cb err
+
+  npmPublish = (cb) ->
+    log 'Publishing to NPM'
+    exec 'npm publish', (err, stdout, stderr) ->
+      log stdout
+      cb err
+
+  tagVersion = (cb) ->
+    fs.readFile 'package.json', 'utf8', (err, package) ->
+      onerror err
+      package = JSON.parse package
+      throw new Exception 'Invalid package.json' if !package.version
+      log "Tagging v#{ package.version }"
+      exec "git tag v#{ package.version }", (err, stdout, stderr) ->
+        log stdout
+        cb err
+
+  pushGithub = (cb) ->
+    exec 'git push --tag origin master', (err, stdout, stderr) ->
+      log stdout
+      cb err
+
+  series [
+    test
+    browserPackage
+    tagVersion
+    pushGithub
+    npmPublish
+    generateGHPages
+  ], cb
+
+task 'publish', 'Prepare build and push new version to NPM', -> publish onerror
