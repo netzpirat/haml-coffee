@@ -41,7 +41,8 @@
     "jasmine-node" : ">= 1.0.13",
     "browserify" : ">= 1.8.1",
     "uglify-js" : ">= 1.2.0",
-    "async": ">= 0.0.0"
+    "async": ">= 0.0.0",
+    "codo": ">= 0.0.0"
   },
   "homepage" : "https://github.com/9elements/haml-coffee",
   "repository" : {

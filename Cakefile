@@ -39,7 +39,7 @@ generateGHPages = (cb) ->
 
   generateDocs = (cb) ->
     log "Generacte Haml-Coffee documentation"
-    exec './bin/codo -o /tmp/hamlcdoc', (err, stdout, stderr) ->
+    exec './node_modules/.bin/codo -o /tmp/hamlcdoc', (err, stdout, stderr) ->
       onerror err
       log stdout
       cb err
