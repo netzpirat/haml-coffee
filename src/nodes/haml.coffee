@@ -177,13 +177,47 @@ module.exports = class Haml extends Node
       doctype = exp.match(/^(\!{3}.*)/)?[1]
       return { doctype: doctype } if doctype
 
-      # Separate Haml tags and inline text
-      tokens     = exp.match /^((?:[#%\.][a-z0-9_:\-]*[\/]?)+)(?:([\(].*[\)]|[\{].*[\}])?([\<\>]{0,2})(?=[=&!~])(.*)?|([\(].*[\)]|[\{].*[\}])?([\<\>]{0,2}))(.*)?/i
-      haml       = tokens[1]
-      attributes = tokens[2] || tokens[5]
-      whitespace = tokens[3] || tokens[6]
-      assignment = tokens[4] || tokens[7]
+      # Match the haml tag %a, .name, etc.
+      haml = exp.match(/^((?:[#%\.][a-z0-9_:\-]*[\/]?)+)/i)[0]
+      rest = exp.substring(haml.length)
 
+      # The haml tag has attributes
+      if rest.match /^[{(]/
+
+        # Get used attribute surround start and end character
+        start = rest[0]
+        end   = switch start
+                  when '{' then '}'
+                  when '(' then ')'
+                 
+        # Extract attributes by keeping track of brace/parenthesis level
+        level = 0
+        for pos in [0..rest.length]
+          ch = rest[pos]
+          
+          # Increase level when a nested brace/parenthesis is started
+          level += 1 if ch is start
+          
+          # Decrease level when a nested brace/parenthesis is end or exit when on the last level
+          if ch is end
+            if level is 1 then break else level -= 1
+
+        # Extract assignment or tag text
+        attributes = rest.substring(0, pos + 1)
+        assignment = rest.substring(pos + 1)
+
+      # No attributes defined
+      else
+        attributes = ''
+        assignment = rest
+        
+      # Extract whitespace removal
+      if whitespace = assignment.match(/^[<>]{0,2}/)?[0]
+        assignment = assignment.substring(whitespace.length)    
+
+      # Remove the delimiter space from the assignment
+      assignment = assignment.substring(1) if assignment[0] is ' '
+      
       # Process inline text or assignment
       if assignment and not assignment.match(/^(=|!=|&=|~)/)
         text       = assignment.replace(/^ /, '')

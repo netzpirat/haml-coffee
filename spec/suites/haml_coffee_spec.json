@@ -243,6 +243,7 @@
       "haml_template" : "coffee/attributes",
       "html_template" : "coffee/attributes",
       "locals" : {
+        "name" : "michi",
         "two" : "We are two",
         "three" : "We are three",
         "products" : [
