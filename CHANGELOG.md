@@ -1,4 +1,4 @@
-# Master
+# Version 0.8.3, June 8, 2012
 
 * [haml_coffee_assets issue #47](https://github.com/netzpirat/haml_coffee_assets/issues/47): Attribute parsing fails with interpolation under some circumstances.
 
