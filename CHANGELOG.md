@@ -1,3 +1,7 @@
+# Master
+
+* [haml_coffee_assets issue #47](https://github.com/netzpirat/haml_coffee_assets/issues/47): Attribute parsing fails with interpolation under some circumstances.
+
 # Version 0.8.2, June 5, 2012
 
 * [Issue #28](https://github.com/9elements/haml-coffee/issues/28): Print errors to stderr.
