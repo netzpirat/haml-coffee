@@ -1021,7 +1021,7 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
 (function() {
   var Haml, Node, escapeQuotes,
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   Node = require('./node');
 
@@ -1030,8 +1030,6 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
   module.exports = Haml = (function(_super) {
 
     __extends(Haml, _super);
-
-    Haml.name = 'Haml';
 
     function Haml() {
       return Haml.__super__.constructor.apply(this, arguments);
@@ -1136,7 +1134,7 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
     };
 
     Haml.prototype.parseTag = function(exp) {
-      var assignment, attributes, classes, doctype, haml, id, ids, klass, tag, text, tokens, whitespace, _ref;
+      var assignment, attributes, ch, classes, doctype, end, haml, id, ids, klass, level, pos, rest, start, tag, text, whitespace, _i, _ref, _ref1, _ref2;
       try {
         doctype = (_ref = exp.match(/^(\!{3}.*)/)) != null ? _ref[1] : void 0;
         if (doctype) {
@@ -1144,11 +1142,44 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
             doctype: doctype
           };
         }
-        tokens = exp.match(/^((?:[#%\.][a-z0-9_:\-]*[\/]?)+)(?:([\(].*[\)]|[\{].*[\}])?([\<\>]{0,2})(?=[=&!~])(.*)?|([\(].*[\)]|[\{].*[\}])?([\<\>]{0,2}))(.*)?/i);
-        haml = tokens[1];
-        attributes = tokens[2] || tokens[5];
-        whitespace = tokens[3] || tokens[6];
-        assignment = tokens[4] || tokens[7];
+        haml = exp.match(/^((?:[#%\.][a-z0-9_:\-]*[\/]?)+)/i)[0];
+        rest = exp.substring(haml.length);
+        if (rest.match(/^[{(]/)) {
+          start = rest[0];
+          end = (function() {
+            switch (start) {
+              case '{':
+                return '}';
+              case '(':
+                return ')';
+            }
+          })();
+          level = 0;
+          for (pos = _i = 0, _ref1 = rest.length; 0 <= _ref1 ? _i <= _ref1 : _i >= _ref1; pos = 0 <= _ref1 ? ++_i : --_i) {
+            ch = rest[pos];
+            if (ch === start) {
+              level += 1;
+            }
+            if (ch === end) {
+              if (level === 1) {
+                break;
+              } else {
+                level -= 1;
+              }
+            }
+          }
+          attributes = rest.substring(0, pos + 1);
+          assignment = rest.substring(pos + 1);
+        } else {
+          attributes = '';
+          assignment = rest;
+        }
+        if (whitespace = (_ref2 = assignment.match(/^[<>]{0,2}/)) != null ? _ref2[0] : void 0) {
+          assignment = assignment.substring(whitespace.length);
+        }
+        if (assignment[0] === ' ') {
+          assignment = assignment.substring(1);
+        }
         if (assignment && !assignment.match(/^(=|!=|&=|~)/)) {
           text = assignment.replace(/^ /, '');
           assignment = void 0;
@@ -1168,19 +1199,19 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
         return {
           tag: tag ? tag[1] : 'div',
           ids: ids ? (function() {
-            var _i, _len, _results;
+            var _j, _len, _results;
             _results = [];
-            for (_i = 0, _len = ids.length; _i < _len; _i++) {
-              id = ids[_i];
+            for (_j = 0, _len = ids.length; _j < _len; _j++) {
+              id = ids[_j];
               _results.push(id.substr(1));
             }
             return _results;
           })() : void 0,
           classes: classes ? (function() {
-            var _i, _len, _results;
+            var _j, _len, _results;
             _results = [];
-            for (_i = 0, _len = classes.length; _i < _len; _i++) {
-              klass = classes[_i];
+            for (_j = 0, _len = classes.length; _j < _len; _j++) {
+              klass = classes[_j];
               _results.push(klass.substr(1));
             }
             return _results;

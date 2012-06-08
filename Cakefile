@@ -76,7 +76,7 @@ publish = (cb) ->
     code = b.bundle()
     fs.writeFileSync 'dist/compiler/hamlcoffee.js', code
 
-    ast = jsp.parse code
+    ast = sp.parse code
     ast = pro.ast_mangle ast
     ast = pro.ast_squeeze ast
 
