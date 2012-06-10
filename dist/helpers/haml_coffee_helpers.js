@@ -3,8 +3,6 @@
 
   HamlCoffeeHelpers = (function() {
 
-    HamlCoffeeHelpers.name = 'HamlCoffeeHelpers';
-
     function HamlCoffeeHelpers() {}
 
     HamlCoffeeHelpers.prototype.htmlEscape = function(text) {

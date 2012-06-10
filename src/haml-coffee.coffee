@@ -21,6 +21,8 @@ module.exports = class HamlCoffee
   # @option options [Boolean] escapeAttributes escape the tag attributes when true
   # @option options [Boolean] cleanValue clean CoffeeScript values before inserting
   # @option options [Boolean] uglify don't indent generated HTML when true
+  # @option options [Boolean] basename ignore file path when generate the template name
+  # @option options [Boolean] extendScope extend the template scope with the context 
   # @option options [String] format the template format, either `xhtml`, `html4` or `html5`
   # @option options [String] preserveTags a comma separated list of tags to preserve content whitespace
   # @option options [String] selfCloseTags a comma separated list of self closing HTML tags
@@ -35,6 +37,7 @@ module.exports = class HamlCoffee
     @options.cleanValue       ?= true
     @options.uglify           ?= false
     @options.basename         ?= false
+    @options.extendScope      ?= false
     @options.format           ?= 'html5'
     @options.preserveTags     ?= 'pre,textarea'
     @options.selfCloseTags    ?= 'meta,img,link,br,hr,input,area,param,col,base'
@@ -295,10 +298,19 @@ module.exports = class HamlCoffee
     else
       template += "#{ namespace } ?= {}\n"
 
-    # Render the template
-    template += "#{ namespace }['#{ templateName }'] = (context) -> ( ->\n"
-    template += "#{ indent(@precompile(), 1) }"
-    template += ").call(context)"
+    # Render the template and extend the scope with the context
+    if @options.extendScope
+      template += "#{ namespace }['#{ templateName }'] = (context) -> ( ->\n"
+      template += "  `with (context || {}) {`\n"
+      template += "#{ indent(@precompile(), 1) }"
+      template += "`}`\n"
+      template += ").call(context)"
+
+    # Render the template without extending the scope
+    else
+      template += "#{ namespace }['#{ templateName }'] = (context) -> ( ->\n"
+      template += "#{ indent(@precompile(), 1) }"
+      template += ").call(context)"
 
     template
 

@@ -349,6 +349,17 @@
     "evaluation in inserting functions" : {
       "haml_template" : "coffee/evaluation_in_function",
       "html_template" : "coffee/evaluation_in_function"
+    },
+
+    "evaluation in inserting functions" : {
+      "haml_template" : "coffee/extend_scope",
+      "html_template" : "coffee/extend_scope",
+      "config" : {
+        "extend_scope" : "true"
+      },        
+      "locals" : {
+        "name" : "Tester"
+      }
     }
   },
 

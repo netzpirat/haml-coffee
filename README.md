@@ -136,6 +136,7 @@ Options:
   -n, --namespace                    Set a custom template namespace
   -t, --template                     Set a custom template name
   -b, --basename                     Ignore file path when generate the template name
+  -e, --extend                       Extend the template scope with the context
 ```
 
 _The following section describes only the options that are unique to the command line tool._
@@ -204,6 +205,17 @@ $ haml-coffee -i template.haml -n exports.JST -t other
 
 This will result in a template that can be accessed by `exports.JST['other']`.
 
+#### Extend the template scope
+
+By extending the template scope with the context, you can access your context data without `@` or `this`:
+
+```Haml
+%h2= title
+```
+
+This effect is achieved by using the [with](https://developer.mozilla.org/en/JavaScript/Reference/Statements/with)
+statement. Using with is forbidden in ECMAScript 5 strict mode.
+ 
 ## Haml support
 
 Haml Coffee implements the [Haml Spec](https://github.com/norman/haml-spec) to ensure some degree of compatibility to

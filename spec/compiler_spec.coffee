@@ -26,6 +26,7 @@ for suite in suites
             config = {
               escapeHtml       : if spec.config?.escape_html is 'true' then true else false
               escapeAttributes : if spec.config?.escape_attributes is 'true' then true else false
+              extendScope      : if spec.config?.extend_scope is 'true' then true else false
               format           : spec.config?.format || 'xhtml'
             }
 
