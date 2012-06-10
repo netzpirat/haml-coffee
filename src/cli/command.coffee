@@ -110,6 +110,7 @@ exports.run = ->
   compilerOptions =
     format                : argv.f
     uglify                : argv.u
+    extendScope           : argv.e
     preserveTags          : argv.preserve
     escapeHtml            : not argv['disable-html-escaping']
     escapeAttributes      : not argv['disable-html-attribute-escaping']
