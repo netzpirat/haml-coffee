@@ -1,3 +1,7 @@
+# Version 1.0.1, June 10, 2012
+
+- Fix passing the extend CLI flag to the compiler.
+
 # Version 1.0.0, June 10, 2012
 
 * Add `extendScope` compiler option for using `with` in the JavaScript template for simple context access.
