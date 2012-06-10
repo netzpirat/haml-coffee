@@ -363,34 +363,35 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
 
   module.exports = HamlCoffee = (function() {
 
-    HamlCoffee.name = 'HamlCoffee';
-
     function HamlCoffee(options) {
-      var _base, _base1, _base2, _base3, _base4, _base5, _base6, _base7;
+      var _base, _base1, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
       this.options = options != null ? options : {};
-      if ((_base = this.options).escapeHtml == null) {
+      if ((_ref = (_base = this.options).escapeHtml) == null) {
         _base.escapeHtml = true;
       }
-      if ((_base1 = this.options).escapeAttributes == null) {
+      if ((_ref1 = (_base1 = this.options).escapeAttributes) == null) {
         _base1.escapeAttributes = true;
       }
-      if ((_base2 = this.options).cleanValue == null) {
+      if ((_ref2 = (_base2 = this.options).cleanValue) == null) {
         _base2.cleanValue = true;
       }
-      if ((_base3 = this.options).uglify == null) {
+      if ((_ref3 = (_base3 = this.options).uglify) == null) {
         _base3.uglify = false;
       }
-      if ((_base4 = this.options).basename == null) {
+      if ((_ref4 = (_base4 = this.options).basename) == null) {
         _base4.basename = false;
       }
-      if ((_base5 = this.options).format == null) {
-        _base5.format = 'html5';
+      if ((_ref5 = (_base5 = this.options).extendScope) == null) {
+        _base5.extendScope = false;
       }
-      if ((_base6 = this.options).preserveTags == null) {
-        _base6.preserveTags = 'pre,textarea';
+      if ((_ref6 = (_base6 = this.options).format) == null) {
+        _base6.format = 'html5';
       }
-      if ((_base7 = this.options).selfCloseTags == null) {
-        _base7.selfCloseTags = 'meta,img,link,br,hr,input,area,param,col,base';
+      if ((_ref7 = (_base7 = this.options).preserveTags) == null) {
+        _base7.preserveTags = 'pre,textarea';
+      }
+      if ((_ref8 = (_base8 = this.options).selfCloseTags) == null) {
+        _base8.selfCloseTags = 'meta,img,link,br,hr,input,area,param,col,base';
       }
     }
 
@@ -588,9 +589,17 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
       } else {
         template += "" + namespace + " ?= {}\n";
       }
-      template += "" + namespace + "['" + templateName + "'] = (context) -> ( ->\n";
-      template += "" + (indent(this.precompile(), 1));
-      template += ").call(context)";
+      if (this.options.extendScope) {
+        template += "" + namespace + "['" + templateName + "'] = (context) -> ( ->\n";
+        template += "  `with (context || {}) {`\n";
+        template += "" + (indent(this.precompile(), 1));
+        template += "`}`\n";
+        template += ").call(context)";
+      } else {
+        template += "" + namespace + "['" + templateName + "'] = (context) -> ( ->\n";
+        template += "" + (indent(this.precompile(), 1));
+        template += ").call(context)";
+      }
       return template;
     };
 
@@ -758,8 +767,6 @@ require.define("/nodes/node.js", function (require, module, exports, __dirname, 
   escapeHTML = require('../util/text').escapeHTML;
 
   module.exports = Node = (function() {
-
-    Node.name = 'Node';
 
     Node.CLEAR_WHITESPACE_LEFT = '\u0091';
 
@@ -989,7 +996,7 @@ require.define("/nodes/text.js", function (require, module, exports, __dirname, 
 (function() {
   var Node, Text, escapeQuotes,
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   Node = require('./node');
 
@@ -998,8 +1005,6 @@ require.define("/nodes/text.js", function (require, module, exports, __dirname, 
   module.exports = Text = (function(_super) {
 
     __extends(Text, _super);
-
-    Text.name = 'Text';
 
     function Text() {
       return Text.__super__.constructor.apply(this, arguments);
@@ -1408,15 +1413,13 @@ require.define("/nodes/code.js", function (require, module, exports, __dirname, 
 (function() {
   var Code, Node,
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   Node = require('./node');
 
   module.exports = Code = (function(_super) {
 
     __extends(Code, _super);
-
-    Code.name = 'Code';
 
     function Code() {
       return Code.__super__.constructor.apply(this, arguments);
@@ -1463,15 +1466,13 @@ require.define("/nodes/comment.js", function (require, module, exports, __dirnam
 (function() {
   var Comment, Node,
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   Node = require('./node');
 
   module.exports = Comment = (function(_super) {
 
     __extends(Comment, _super);
-
-    Comment.name = 'Comment';
 
     function Comment() {
       return Comment.__super__.constructor.apply(this, arguments);
@@ -1510,7 +1511,7 @@ require.define("/nodes/filter.js", function (require, module, exports, __dirname
 (function() {
   var Filter, Node, unescapeQuotes, whitespace,
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   Node = require('./node');
 
@@ -1521,8 +1522,6 @@ require.define("/nodes/filter.js", function (require, module, exports, __dirname
   module.exports = Filter = (function(_super) {
 
     __extends(Filter, _super);
-
-    Filter.name = 'Filter';
 
     function Filter() {
       return Filter.__super__.constructor.apply(this, arguments);
