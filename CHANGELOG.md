@@ -1,4 +1,4 @@
-# Master
+# Version 1.0.0, June 10, 2012
 
 * Add `extendScope` compiler option for using `with` in the JavaScript template for simple context access.
 
