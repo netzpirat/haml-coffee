@@ -1,22 +1,27 @@
+# Version 1.1.0, June 12, 2012
+
+  * [haml_coffee_assets issue #48](https://github.com/netzpirat/haml_coffee_assets/issues/48): Adding class on condition.
+  * [Issue #29](https://github.com/9elements/haml-coffee/issues/29): Wrong boolean attribute handling.
+
 # Version 1.0.1, June 10, 2012
 
-- Fix passing the extend CLI flag to the compiler.
+  * Fix passing the extend CLI flag to the compiler.
 
 # Version 1.0.0, June 10, 2012
 
-* Add `extendScope` compiler option for using `with` in the JavaScript template for simple context access.
+  * Add `extendScope` compiler option for using `with` in the JavaScript template for simple context access.
 
 # Version 0.8.3, June 8, 2012
 
-* [haml_coffee_assets issue #47](https://github.com/netzpirat/haml_coffee_assets/issues/47): Attribute parsing fails with interpolation under some circumstances.
+  * [haml_coffee_assets issue #47](https://github.com/netzpirat/haml_coffee_assets/issues/47): Attribute parsing fails with interpolation under some circumstances.
 
 # Version 0.8.2, June 5, 2012
 
-* [Issue #28](https://github.com/9elements/haml-coffee/issues/28): Print errors to stderr.
+  * [Issue #28](https://github.com/9elements/haml-coffee/issues/28): Print errors to stderr.
 
 # Version 0.8.1, Mai 22, 2012
 
-* [haml_coffee_assets issue #46](https://github.com/netzpirat/haml_coffee_assets/issues/46): Attribute parsing broken
+  * [haml_coffee_assets issue #46](https://github.com/netzpirat/haml_coffee_assets/issues/46): Attribute parsing broken
 
 # Version 8.0.0, Mai 21, 2012
 
