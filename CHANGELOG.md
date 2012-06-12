@@ -1,7 +1,7 @@
 # Version 1.1.0, June 12, 2012
 
   * [haml_coffee_assets issue #48](https://github.com/netzpirat/haml_coffee_assets/issues/48): Adding class on condition.
-  * [Issue #29](https://github.com/9elements/haml-coffee/issues/29): Wrong boolean attribute handling.
+  * [Issue #29](https://github.com/netzpirat/haml-coffee/issues/29): Wrong boolean attribute handling.
 
 # Version 1.0.1, June 10, 2012
 
@@ -17,7 +17,7 @@
 
 # Version 0.8.2, June 5, 2012
 
-  * [Issue #28](https://github.com/9elements/haml-coffee/issues/28): Print errors to stderr.
+  * [Issue #28](https://github.com/netzpirat/haml-coffee/issues/28): Print errors to stderr.
 
 # Version 0.8.1, Mai 22, 2012
 
@@ -36,7 +36,7 @@
 
 # Version 0.7.0, Mai 9, 2012
 
-  * [Issue #26](https://github.com/9elements/haml-coffee/issues/26): Improve attribute parsing.
+  * [Issue #26](https://github.com/netzpirat/haml-coffee/issues/26): Improve attribute parsing.
 
 # Version 0.6.3, April 30, 2012
 
@@ -44,7 +44,7 @@
 
 # Version 0.6.2
 
-  * [Issue #23](https://github.com/9elements/haml-coffee/issues/23): Fix double quotes escaping in Coffee filter.
+  * [Issue #23](https://github.com/netzpirat/haml-coffee/issues/23): Fix double quotes escaping in Coffee filter.
 
 # Version 0.6.1
 

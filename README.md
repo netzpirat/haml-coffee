@@ -1,4 +1,4 @@
-# Haml Coffee Templates [![Build Status](https://secure.travis-ci.org/9elements/haml-coffee.png)](http://travis-ci.org/9elements/haml-coffee)
+# Haml Coffee Templates [![Build Status](https://secure.travis-ci.org/netzpirat/haml-coffee.png)](http://travis-ci.org/netzpirat/haml-coffee)
 
 Haml Coffee is a JavaScript templating solution that uses [Haml](http://haml-lang.com/) as markup, understands inline
 [CoffeeScript](http://jashkenas.github.com/coffee-script/) and generates a JavaScript function that renders to HTML. It
@@ -15,7 +15,7 @@ Haml Coffee is available in NPM and can be installed with:
 $ npm install haml-coffee
 ```
 
-Please have a look at the [CHANGELOG](https://github.com/9elements/haml-coffee/blob/master/CHANGELOG.md) when upgrading to a
+Please have a look at the [CHANGELOG](https://github.com/netzpirat/haml-coffee/blob/master/CHANGELOG.md) when upgrading to a
 newer Codo version with `npm update`.
 
 ## Integration
@@ -29,8 +29,8 @@ If you like to integrate Haml Coffee seamless into the Rails asset pipeline, che
 
 For using the Haml Coffee compiler in the browser, a [browserified](https://github.com/substack/node-browserify) version
 is provided in the `dist/compiler` directory:
-[Haml Coffee compiler](https://raw.github.com/9elements/haml-coffee/master/dist/compiler/hamlcoffee.js)
-([minified](https://raw.github.com/9elements/haml-coffee/master/dist/compiler/hamlcoffee.min.js))
+[Haml Coffee compiler](https://raw.github.com/netzpirat/haml-coffee/master/dist/compiler/hamlcoffee.js)
+([minified](https://raw.github.com/netzpirat/haml-coffee/master/dist/compiler/hamlcoffee.min.js))
 
 ## Compile Haml Coffee
 
@@ -57,7 +57,7 @@ hamlc.compile '%h1= @title'
 
 See the [compiler options](#compiler-options) for detailed information about all the available options and browse
 the [codo](https://github.com/netzpirat/codo) generated
-[Haml-Coffee API documentation](http://9elements.github.com/haml-coffee/).
+[Haml-Coffee API documentation](http://netzpirat.github.com/haml-coffee/).
 
 ### Using with Express
 
@@ -570,7 +570,7 @@ $ bundle exec guard
 
 ## Changelog
 
-Feel free to take a look at the crispy [changelog](https://github.com/9elements/haml-coffee/blob/master/CHANGELOG.md)
+Feel free to take a look at the crispy [changelog](https://github.com/netzpirat/haml-coffee/blob/master/CHANGELOG.md)
 instead of crawling through the commit history.
 
 ## Related projects
@@ -587,7 +587,7 @@ Haml Coffee in the  Rails asset pipeline:
 
 ## Contributors
 
-See all contributors on [the contributor page](https://github.com/9elements/haml-coffee/contributors).
+See all contributors on [the contributor page](https://github.com/netzpirat/haml-coffee/contributors).
 
 ## License
 

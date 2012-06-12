@@ -18,7 +18,7 @@
   "licenses" : [
     {
       "type" : "MIT",
-      "url" : "http://github.com/9elements/haml-coffee/raw/master/LICENSE"
+      "url" : "http://github.com/netzpirat/haml-coffee/raw/master/LICENSE"
     }
   ],
   "browserify" : "./lib/haml-coffee",
@@ -44,13 +44,13 @@
     "async": ">= 0.0.0",
     "codo": ">= 0.0.0"
   },
-  "homepage" : "https://github.com/9elements/haml-coffee",
+  "homepage" : "https://github.com/netzpirat/haml-coffee",
   "repository" : {
     "type" : "git",
-    "url" : "git://github.com/9elements/haml-coffee.git"
+    "url" : "git://github.com/netzpirat/haml-coffee.git"
   },
   "bugs" : {
-    "url" : "https://github.com/9elements/haml-coffee/issues"
+    "url" : "https://github.com/netzpirat/haml-coffee/issues"
   },
   "scripts" : {
     "test" : "jasmine-node --coffee spec"
