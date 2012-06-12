@@ -50,7 +50,7 @@ module.exports = class Haml extends Node
       # Create a Haml node that can contain child nodes
       if @isNotSelfClosing(tokens.tag)
 
-        prefix = escapeQuotes(@buildHtmlTagPrefix(tokens))
+        prefix = @buildHtmlTagPrefix(tokens)
 
         # Add Haml tag that contains a code assignment will be closed immediately
         if tokens.assignment
@@ -105,7 +105,7 @@ module.exports = class Haml extends Node
       # Create a self closing tag that depends on the format `<br>` or `<br/>`
       else
         tokens.tag = tokens.tag.replace /\/$/, ''
-        prefix     = escapeQuotes(@buildHtmlTagPrefix(tokens))
+        prefix     = @buildHtmlTagPrefix(tokens)
         @opener    = @markText "#{ prefix }#{ if @format is 'xhtml' then ' /' else '' }>"
 
   # Parses the expression and detect the tag, attributes
@@ -129,29 +129,29 @@ module.exports = class Haml extends Node
 
     @preserve = true if @preserveTags.indexOf(tag.tag) isnt -1
 
-    id         = tag.ids?.pop()
+    id         = @wrapCode(tag.ids?.pop(), true)
     classes    = tag.classes
-    attributes = []
+    attributes = {}
 
     # Clean attributes
     if tag.attributes
-      for attribute in tag.attributes
-        if attribute.key is 'id'
+      for key, value of tag.attributes
+        if key is 'id'
           if id
             # Merge attribute id into existing id
-            id += '_' + attribute.value
+            id += '_' + @wrapCode(value, true)
           else
             # Push id from attribute
-            id = attribute.value
+            id = @wrapCode(value, true)
 
         # Merge classes
-        else if attribute.key is 'class'
+        else if key is 'class'
           classes or= []
-          classes.push attribute.value
+          classes.push value
 
         # Add to normal attributes
         else
-          attributes.push attribute
+          attributes[key] = value
 
     {
       doctype    : tag.doctype
@@ -238,8 +238,8 @@ module.exports = class Haml extends Node
 
       {
         tag        : if tag then tag[1] else 'div'
-        ids        : (id.substr(1)    for id    in ids)     if ids
-        classes    : (klass.substr(1) for klass in classes) if classes
+        ids        : ("'#{ id.substr(1) }'" for id    in ids)     if ids
+        classes    : ("'#{ klass.substr(1) }'" for klass in classes) if classes
         attributes : @parseAttributes(attributes)
         assignment : assignment
         text       : text
@@ -256,54 +256,12 @@ module.exports = class Haml extends Node
   # quoted keys and value, e.g. `'a' => 'hello'` becomes `a => hello`.
   #
   # @param [String] exp the HAML expression
-  # @return [Array] the parsed attribute tokens
+  # @return [Object] the parsed attributes
   #
   parseAttributes: (exp) ->
-    attributes = []
-    return attributes if exp is undefined
-
-    # Prepare all attributes
-    for key, value of @extractAttributes(exp)
-      bool = false
-      
-      # Handle boolean values
-      if value is 'true' or value is 'false'
-        bool = true
-
-      # Wrap plain attributes into an interpolation, expect boolean values
-      else if not value.match /^("|').*\1$/
-        if @escapeAttributes
-          if @cleanValue
-            value = '\'#{ $e($c(' + value + ')) }\''
-          else
-            value = '\'#{ $e(' + value + ') }\''
-        else
-          if @cleanValue
-            value = '\'#{ $c(' + value + ') }\''
-          else
-            value = '\'#{ (' + value + ') }\''
-
-      # Unwrap value from quotes
-      value = quoted[2] if quoted = value.match /^("|')(.*)\1$/
-
-      # Unwrap key from quotes
-      key = quoted[2] if quoted = key.match /^("|')(.*)\1$/
-
-      attributes.push {
-        key   : key
-        value : value
-        bool  : bool
-      }
-    
-    attributes
-
-  # Extracts the attributes from the expression.
-  #
-  # @param [String] exp the expression to check
-  # @return [Object] the attributes
-  #
-  extractAttributes: (exp) ->
     attributes = {}
+    return attributes if exp is undefined
+    
     type = exp.substring(0, 1)
 
     # Mark key separator characters within quoted values, so they aren't recognized as keys.
@@ -402,19 +360,24 @@ module.exports = class Haml extends Node
 
     # Set tag classes
     if tokens.classes
-      classes = tokens.classes.sort().join ' '
+      
+      hasDynamicClass = false
 
-      # Class sort when the JST template is rendered
-      if tokens.classes.length > 1 && classes.match /#\{/
+      # Prepare static and dynamic class names
+      classList = for name in tokens.classes
+        name = @wrapCode(name, true)
+        hasDynamicClass = true if name.indexOf('#{') isnt -1
+        name
+
+      # Render time classes
+      if hasDynamicClass && classList.length > 1
         classes = '#{ ['
-        for klass in tokens.classes
-          if interpolation = klass.match /^#{(.*)}$/
-            classes += "(#{ interpolation[1] }),"
-          else if interpolation = klass.match /#{(.*)}/
-            classes += "\\\"#{ klass }\\\""
-          else
-            classes += "'#{ klass }',"
-        classes += '].sort().join(\' \') }'
+        classes += "#{ @quoteAndEscapeAttributeValue(klass, true) }," for klass in classList
+        classes = classes.substring(0, classes.length - 1) + '].sort().join(\' \').trim() }'
+      
+      # Compile time classes
+      else      
+        classes = classList.sort().join ' '
 
       tagParts.push "class='#{ classes }'"
 
@@ -422,38 +385,79 @@ module.exports = class Haml extends Node
     tagParts.push "id='#{ tokens.id }'" if tokens.id
 
     # Construct tag attributes
-    if tokens.attributes
-      for attribute in tokens.attributes
+    if tokens.attributes    
+      for key, value of tokens.attributes
         
         # Boolean attribute logic
-        if attribute.bool
+        if value is 'true' or value is 'false'
           
           # Only show true values
-          if attribute.value is 'true'
+          if value is 'true'
             if @format is 'html5'
-              tagParts.push "#{ attribute.key }" 
+              tagParts.push "#{ key }" 
             else
-              tagParts.push "#{ attribute.key }=#{ @quoteAttributeValue(attribute.key) }"
+              tagParts.push "#{ key }=#{ @quoteAndEscapeAttributeValue(key) }"
               
         # Anything but booleans
         else
-          tagParts.push "#{ attribute.key }=#{ @quoteAttributeValue(attribute.value) }"
+          tagParts.push "#{ key }=#{ @quoteAndEscapeAttributeValue(@wrapCode(value)) }"
 
     tagParts.join(' ')
 
+  # Wrap plain attributes into an interpolation for execution.
+  # In addition wrap it into escaping and cleaning function,
+  # depending on the options.
+  #
+  # @param [String] text the possible code
+  # @param [Boolean] unwrap unwrap static text from quotes
+  # @return [String] the text of the wrapped code
+  #
+  wrapCode: (text, unwrap = false) ->
+    return unless text
+    
+    if not text.match /^("|').*\1$/
+      if @escapeAttributes
+        if @cleanValue
+          text = '#{ $e($c(' + text + ')) }'
+        else
+          text = '#{ $e(' + text + ') }'
+      else
+        if @cleanValue
+          text = '#{ $c(' + text + ') }'
+        else
+          text = '#{ (' + text + ') }'
+
+    if unwrap
+      text = quoted[2] if quoted = text.match /^("|')(.*)\1$/
+
+    text
+    
   # Quote the attribute value, depending on its
   # content.
   #
   # @param [String] value the without start and end quote
+  # @param [String] code if we are in a code block
   # @return [String] the quoted value
   #
-  quoteAttributeValue: (value) ->
-    if value.indexOf("'") is -1
-      quoted = "'#{ value }'"
-    else
-      quoted = "\"#{ value }\""
+  quoteAndEscapeAttributeValue: (value, code = false) ->
+    return unless value
+    
+    value = quoted[2] if quoted = value.match /^("|')(.*)\1$/
 
-    quoted
+    # Our value is in a code block
+    if code
+      if value.indexOf('#{') is -1
+        result = "'#{ value }'"
+      else
+        result = "\"#{ value }\""
+    else
+      if value.indexOf('#{') is -1
+        result = "'#{ value.replace(/'/g, '\\\"') }'"
+      else
+        result = "'#{ value }'"
+
+    result
+    
 
   # Build the DocType string depending on the `!!!` token
   # and the currently used HTML format.

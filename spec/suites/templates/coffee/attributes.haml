@@ -14,3 +14,9 @@
 
 %a{href: [1,2].join()} OMG
 %a{ href: "/people?name=#{@name}&page=4" }
+
+%ul.avatars{:class => ("all-shown" if true) }
+%ul.avatars{:class => ("all-shown" unless true) }
+
+%ul.avatars{:class => 'all-shown' if false }
+%ul.avatars{:class => 'all-shown' unless false }

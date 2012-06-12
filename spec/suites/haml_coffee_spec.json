@@ -156,7 +156,7 @@
       }
     },
 
-    "Inlince code attributes" : {
+    "Inline code attributes" : {
         "haml_template" : "coffee/code_attributes",
         "html_template" : "coffee/code_attributes"
     },
