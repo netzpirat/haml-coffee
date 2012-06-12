@@ -346,7 +346,7 @@ module.exports = class HamlCoffee
         fn += "$c = (text) ->\n"
         fn += "   switch text\n"
         fn += "     when null, undefined then ''\n"
-        fn += "     when true, false then '\u0093' + text"
+        fn += "     when true, false then '\u0093' + text\n"
         fn += "     else text\n"
 
     # Preserve whitespace
