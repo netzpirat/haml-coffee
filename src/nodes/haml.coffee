@@ -264,41 +264,37 @@ module.exports = class Haml extends Node
 
     # Prepare all attributes
     for key, value of @extractAttributes(exp)
-      bool  = false
+      bool = false
+      
+      # Handle boolean values
+      if value is 'true' or value is 'false'
+        bool = true
 
-      # Ignore attributes some attribute values
-      if ['false', ''].indexOf(value) is -1
-
-        # Set key to value if the value is boolean true
-        if ['true'].indexOf(value) isnt -1
-          value = "'#{ key }'"
-          bool  = true
-
-        # Wrap plain attributes into an interpolation, expect boolean values
-        else if not value.match /^("|').*\1$/
-          if @escapeAttributes
-            if @cleanValue
-              value = '\'#{ $e($c(' + value + ')) }\''
-            else
-              value = '\'#{ $e(' + value + ') }\''
+      # Wrap plain attributes into an interpolation, expect boolean values
+      else if not value.match /^("|').*\1$/
+        if @escapeAttributes
+          if @cleanValue
+            value = '\'#{ $e($c(' + value + ')) }\''
           else
-            if @cleanValue
-              value = '\'#{ $c(' + value + ') }\''
-            else
-              value = '\'#{ (' + value + ') }\''
+            value = '\'#{ $e(' + value + ') }\''
+        else
+          if @cleanValue
+            value = '\'#{ $c(' + value + ') }\''
+          else
+            value = '\'#{ (' + value + ') }\''
 
-        # Unwrap value from quotes
-        value = quoted[2] if quoted = value.match /^("|')(.*)\1$/
+      # Unwrap value from quotes
+      value = quoted[2] if quoted = value.match /^("|')(.*)\1$/
 
-        # Unwrap key from quotes
-        key = quoted[2] if quoted = key.match /^("|')(.*)\1$/
+      # Unwrap key from quotes
+      key = quoted[2] if quoted = key.match /^("|')(.*)\1$/
 
-        attributes.push {
-          key   : key
-          value : value
-          bool  : bool
-        }
-
+      attributes.push {
+        key   : key
+        value : value
+        bool  : bool
+      }
+    
     attributes
 
   # Extracts the attributes from the expression.
@@ -351,7 +347,8 @@ module.exports = class Haml extends Node
     # Split into key value pairs
     pairs = exp.split(keys).filter(Boolean)
 
-    dataAttribute = false
+    inDataAttribute = false
+    hasDataAttribute = false
 
     # Process the pairs in a group of two
     while pairs.length
@@ -365,12 +362,13 @@ module.exports = class Haml extends Node
       value = keyValue[1]?.replace(/^\s+|[\s,]+$/g, '').replace(/\u0090/, '')
 
       if key is 'data'
-        dataAttribute = true
+        inDataAttribute = true
+        hasDataAttribute = true
 
       else if key and value
-        if dataAttribute
+        if inDataAttribute
           key = "data-#{ key }"
-          dataAttribute = false if /}\s*$/.test value
+          inDataAttribute = false if /}\s*$/.test value
 
       switch type
         when '('
@@ -378,6 +376,8 @@ module.exports = class Haml extends Node
         when '{'
           attributes[key] = value.replace(/^\s+|[\s}]+$/g, '')
 
+    delete attributes['data'] if hasDataAttribute
+    
     attributes
 
   # Build the HTML tag prefix by concatenating all the
@@ -424,8 +424,18 @@ module.exports = class Haml extends Node
     # Construct tag attributes
     if tokens.attributes
       for attribute in tokens.attributes
-        if attribute.bool and @format is 'html5'
-          tagParts.push "#{ attribute.key }"
+        
+        # Boolean attribute logic
+        if attribute.bool
+          
+          # Only show true values
+          if attribute.value is 'true'
+            if @format is 'html5'
+              tagParts.push "#{ attribute.key }" 
+            else
+              tagParts.push "#{ attribute.key }=#{ @quoteAttributeValue(attribute.key) }"
+              
+        # Anything but booleans
         else
           tagParts.push "#{ attribute.key }=#{ @quoteAttributeValue(attribute.value) }"
 

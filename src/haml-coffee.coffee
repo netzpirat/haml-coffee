@@ -343,7 +343,11 @@ module.exports = class HamlCoffee
       if @options.customCleanValue
         fn += "$c = #{ @options.customCleanValue }\n"
       else
-        fn += "$c = (text) -> if text is null or text is undefined then '' else text\n"
+        fn += "$c = (text) ->\n"
+        fn += "   switch text\n"
+        fn += "     when null, undefined then ''\n"
+        fn += "     when true, false then '\u0093' + text"
+        fn += "     else text\n"
 
     # Preserve whitespace
     if code.indexOf('$p') isnt -1 || code.indexOf('$fp') isnt -1
@@ -466,7 +470,11 @@ module.exports = class HamlCoffee
     combined
 
   # Adds a boolean convert logic that changes boolean attribute
-  # values depending on the output format.
+  # values depending on the output format. This works only when
+  # the clean value function add a hint marker (\u0093) to each
+  # boolean value, so that the conversion logic can disinguish
+  # between dynamic, real boolean values and string values like
+  # 'false' and 'true' or  compile time attributes.
   #
   # With the XHTML format, an attribute `checked='true'` will be
   # converted to `checked='checked'` and `checked='false'` will
@@ -480,9 +488,9 @@ module.exports = class HamlCoffee
   #
   convertBooleans: (code) ->
     if @options.format is 'xhtml'
-      '.replace(/\\s(\\w+)=\'true\'/mg, " $1=\'$1\'").replace(/\\s(\\w+)=\'false\'/mg, \'\')'
+      '.replace(/\\s(\\w+)=\'\u0093true\'/mg, " $1=\'$1\'").replace(/\\s(\\w+)=\'\u0093false\'/mg, \'\')'
     else
-      '.replace(/\\s(\\w+)=\'true\'/mg, \' $1\').replace(/\\s(\\w+)=\'false\'/mg, \'\')'
+      '.replace(/\\s(\\w+)=\'\u0093true\'/mg, \' $1\').replace(/\\s(\\w+)=\'\u0093false\'/mg, \'\')'
 
   # Adds whitespace cleanup function when needed by the
   # template. The cleanup must be done AFTER the template

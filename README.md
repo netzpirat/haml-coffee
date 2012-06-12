@@ -493,7 +493,10 @@ since there is no Haml markup for this to instruct the compiler to change the es
 * Default: `true`
 
 Every output that is generated from evaluating CoffeeScript code is cleaned before inserting into the document. The
-default implementation converts `null` or `undefined` values into an empty string.
+default implementation converts `null` or `undefined` values into an empty string and marks real boolean values with a
+hidden marker character. The hidden marker character is necessary to distinguish between String values like `'true'`,
+`'false'` and real boolean values `true`, `false` in the markup, so that a boolean attribute conversion can quickly
+convert these values to the correct HTML5/XHTML/HTML4 representation.
 
 #### Preserve whitespace tags
 
