@@ -538,9 +538,8 @@ To change these functions, simply assign the new function name to one of the fol
   * `customSucceed`: Appends a string to the end of a Haml block, with no whitespace between.
   * `customPrecede`: Prepends a string to the beginning of a Haml block, with no whitespace between.
 
-You can find a default implementation for all these helper functions in the `dist/helpers` directory:
-[CoffeeScript](https://raw.github.com/9elements/haml-coffee/master/dist/helpers/haml_coffee_helpers.coffee)
-[JavaScript](https://raw.github.com/9elements/haml-coffee/master/dist/helpers/haml_coffee_helpers.js)
+You can find a default implementation for all these helper functions in
+[Haml Coffee Assets](https://github.com/netzpirat/haml_coffee_assets/blob/master/vendor/assets/javascripts/hamlcoffee.js.coffee.erb).
 
 ## Development information
 
