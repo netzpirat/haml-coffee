@@ -1235,7 +1235,7 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
     };
 
     Haml.prototype.parseAttributes = function(exp) {
-      var attributes, hasDataAttribute, inDataAttribute, key, keyValue, keys, pairs, quoted, type, value, _ref, _ref1;
+      var attributes, ch, hasDataAttribute, inDataAttribute, key, keyValue, keys, level, marker, markers, pairs, pos, quoted, start, type, value, _i, _j, _len, _ref, _ref1, _ref2, _ref3;
       attributes = {};
       if (exp === void 0) {
         return attributes;
@@ -1244,6 +1244,33 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
       exp = exp.replace(/(=|:|=>)\s*('([^\\']|\\\\|\\')*'|"([^\\"]|\\\\|\\")*")/g, function(match, type, value) {
         return type + (value != null ? value.replace(/(:|=|=>)/, '\u0090$1') : void 0);
       });
+      level = 0;
+      start = 0;
+      markers = [];
+      for (pos = _i = 0, _ref = exp.length; 0 <= _ref ? _i <= _ref : _i >= _ref; pos = 0 <= _ref ? ++_i : --_i) {
+        ch = exp[pos];
+        if (ch === '(') {
+          level += 1;
+          start = pos;
+        }
+        if (ch === ')') {
+          if (level === 1) {
+            if (start !== 0 && pos - start !== 1) {
+              markers.push({
+                start: start,
+                end: pos
+              });
+            }
+          } else {
+            level -= 1;
+          }
+        }
+      }
+      _ref1 = markers.reverse();
+      for (_j = 0, _len = _ref1.length; _j < _len; _j++) {
+        marker = _ref1[_j];
+        exp = exp.substring(0, marker.start) + exp.substring(marker.start, marker.end).replace(/(:|=|=>)/, '\u0090$1') + exp.substring(marker.end);
+      }
       switch (type) {
         case '(':
           keys = /\(\s*([-\w]+[\w:-]*\w?)\s*=|\s+([-\w]+[\w:-]*\w?)\s*=|\(\s*('\w+[\w:-]*\w?')\s*=|\s+('\w+[\w:-]*\w?')\s*=|\(\s*("\w+[\w:-]*\w?")\s*=|\s+("\w+[\w:-]*\w?")\s*=/g;
@@ -1256,11 +1283,11 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
       hasDataAttribute = false;
       while (pairs.length) {
         keyValue = pairs.splice(0, 2);
-        key = (_ref = keyValue[0]) != null ? _ref.replace(/^\s+|\s+$/g, '').replace(/^:/, '') : void 0;
+        key = (_ref2 = keyValue[0]) != null ? _ref2.replace(/^\s+|\s+$/g, '').replace(/^:/, '') : void 0;
         if (quoted = key.match(/^("|')(.*)\1$/)) {
           key = quoted[2];
         }
-        value = (_ref1 = keyValue[1]) != null ? _ref1.replace(/^\s+|[\s,]+$/g, '').replace(/\u0090/, '') : void 0;
+        value = (_ref3 = keyValue[1]) != null ? _ref3.replace(/^\s+|[\s,]+$/g, '').replace(/\u0090/, '') : void 0;
         if (key === 'data') {
           inDataAttribute = true;
           hasDataAttribute = true;
@@ -1390,7 +1417,7 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
         }
       } else {
         if (value.indexOf('#{') === -1) {
-          result = "'" + (value.replace(/'/g, '\\\"')) + "'";
+          result = "'" + (value.replace(/"/g, '\\\"').replace(/'/g, '\\\"')) + "'";
         } else {
           result = "'" + value + "'";
         }
