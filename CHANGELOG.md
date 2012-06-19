@@ -1,3 +1,8 @@
+# Version 1.1.1, June 19, 2012
+
+  * [haml_coffee_assets issue #51](https://github.com/netzpirat/haml_coffee_assets/issues/51): Parsing fails with double quotes inside single-quoted attribute value.
+  * [haml_coffee_assets issue #49](https://github.com/netzpirat/haml_coffee_assets/issues/49): Failing to quote object literal keys.
+
 # Version 1.1.0, June 12, 2012
 
   * [haml_coffee_assets issue #48](https://github.com/netzpirat/haml_coffee_assets/issues/48): Adding class on condition.
