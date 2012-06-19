@@ -158,7 +158,10 @@
 
     "Inline code attributes" : {
         "haml_template" : "coffee/code_attributes",
-        "html_template" : "coffee/code_attributes"
+        "html_template" : "coffee/code_attributes",
+        "locals": {
+          "number": 42
+        }
     },
 
     "HTML attributes with HTML5" : {
@@ -218,6 +221,11 @@
     "Preserve whitespace assignment" : {
       "haml" : "%p#important.text{ a: '1' }~ 'Foo\\n<pre>Bar\\nBaz</pre>'",
       "html" : "<p class='text' id='important' a='1'>Foo\n<pre>Bar&#x000A;Baz</pre></p>"
+    },
+
+    "Quotes within attributes" : {
+      "haml_template" : "coffee/quotes",
+      "html_template" : "coffee/quotes"
     }
   },
 
@@ -356,7 +364,7 @@
       "html_template" : "coffee/extend_scope",
       "config" : {
         "extend_scope" : "true"
-      },        
+      },
       "locals" : {
         "name" : "Tester"
       }

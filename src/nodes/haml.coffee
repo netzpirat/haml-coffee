@@ -189,15 +189,15 @@ module.exports = class Haml extends Node
         end   = switch start
                   when '{' then '}'
                   when '(' then ')'
-                 
+
         # Extract attributes by keeping track of brace/parenthesis level
         level = 0
         for pos in [0..rest.length]
           ch = rest[pos]
-          
+
           # Increase level when a nested brace/parenthesis is started
           level += 1 if ch is start
-          
+
           # Decrease level when a nested brace/parenthesis is end or exit when on the last level
           if ch is end
             if level is 1 then break else level -= 1
@@ -210,14 +210,14 @@ module.exports = class Haml extends Node
       else
         attributes = ''
         assignment = rest
-        
+
       # Extract whitespace removal
       if whitespace = assignment.match(/^[<>]{0,2}/)?[0]
-        assignment = assignment.substring(whitespace.length)    
+        assignment = assignment.substring(whitespace.length)
 
       # Remove the delimiter space from the assignment
       assignment = assignment.substring(1) if assignment[0] is ' '
-      
+
       # Process inline text or assignment
       if assignment and not assignment.match(/^(=|!=|&=|~)/)
         text       = assignment.replace(/^ /, '')
@@ -261,12 +261,35 @@ module.exports = class Haml extends Node
   parseAttributes: (exp) ->
     attributes = {}
     return attributes if exp is undefined
-    
+
     type = exp.substring(0, 1)
 
     # Mark key separator characters within quoted values, so they aren't recognized as keys.
-    exp = exp.replace /(=|:|=>)\s*('([^\\']|\\\\|\\')*'|"([^\\"]|\\\\|\\")*")/g, (match, type, value) -> 
+    exp = exp.replace /(=|:|=>)\s*('([^\\']|\\\\|\\')*'|"([^\\"]|\\\\|\\")*")/g, (match, type, value) ->
       type + value?.replace /(:|=|=>)/, '\u0090$1'
+
+    # Mark key separator characters within parenthesis, so they aren't recognized as keys.
+    level = 0
+    start = 0
+    markers = []
+
+    for pos in [0..exp.length]
+      ch = exp[pos]
+
+      # Increase level when a parenthesis is started
+      if ch is '('
+        level += 1
+        start = pos
+
+      # Decrease level when a parenthesis is end
+      if ch is ')'
+        if level is 1
+          markers.push({ start: start, end: pos }) if start isnt 0 and pos - start isnt 1
+        else
+          level -= 1
+
+    for marker in markers.reverse()
+      exp = exp.substring(0, marker.start) + exp.substring(marker.start, marker.end).replace(/(:|=|=>)/, '\u0090$1') + exp.substring(marker.end)
 
     # Detect the used key type
     switch type
@@ -335,7 +358,7 @@ module.exports = class Haml extends Node
           attributes[key] = value.replace(/^\s+|[\s}]+$/g, '')
 
     delete attributes['data'] if hasDataAttribute
-    
+
     attributes
 
   # Build the HTML tag prefix by concatenating all the
@@ -360,7 +383,7 @@ module.exports = class Haml extends Node
 
     # Set tag classes
     if tokens.classes
-      
+
       hasDynamicClass = false
 
       # Prepare static and dynamic class names
@@ -374,9 +397,9 @@ module.exports = class Haml extends Node
         classes = '#{ ['
         classes += "#{ @quoteAndEscapeAttributeValue(klass, true) }," for klass in classList
         classes = classes.substring(0, classes.length - 1) + '].sort().join(\' \').trim() }'
-      
+
       # Compile time classes
-      else      
+      else
         classes = classList.sort().join ' '
 
       tagParts.push "class='#{ classes }'"
@@ -385,19 +408,19 @@ module.exports = class Haml extends Node
     tagParts.push "id='#{ tokens.id }'" if tokens.id
 
     # Construct tag attributes
-    if tokens.attributes    
+    if tokens.attributes
       for key, value of tokens.attributes
-        
+
         # Boolean attribute logic
         if value is 'true' or value is 'false'
-          
+
           # Only show true values
           if value is 'true'
             if @format is 'html5'
-              tagParts.push "#{ key }" 
+              tagParts.push "#{ key }"
             else
               tagParts.push "#{ key }=#{ @quoteAndEscapeAttributeValue(key) }"
-              
+
         # Anything but booleans
         else
           tagParts.push "#{ key }=#{ @quoteAndEscapeAttributeValue(@wrapCode(value)) }"
@@ -414,7 +437,7 @@ module.exports = class Haml extends Node
   #
   wrapCode: (text, unwrap = false) ->
     return unless text
-    
+
     if not text.match /^("|').*\1$/
       if @escapeAttributes
         if @cleanValue
@@ -431,7 +454,7 @@ module.exports = class Haml extends Node
       text = quoted[2] if quoted = text.match /^("|')(.*)\1$/
 
     text
-    
+
   # Quote the attribute value, depending on its
   # content.
   #
@@ -441,7 +464,7 @@ module.exports = class Haml extends Node
   #
   quoteAndEscapeAttributeValue: (value, code = false) ->
     return unless value
-    
+
     value = quoted[2] if quoted = value.match /^("|')(.*)\1$/
 
     # Our value is in a code block
@@ -452,12 +475,12 @@ module.exports = class Haml extends Node
         result = "\"#{ value }\""
     else
       if value.indexOf('#{') is -1
-        result = "'#{ value.replace(/'/g, '\\\"') }'"
+        result = "'#{ value.replace(/"/g, '\\\"').replace(/'/g, '\\\"') }'"
       else
         result = "'#{ value }'"
 
     result
-    
+
 
   # Build the DocType string depending on the `!!!` token
   # and the currently used HTML format.

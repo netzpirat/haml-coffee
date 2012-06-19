@@ -14,3 +14,9 @@
 - domain = { get: -> 'test' }
 %a{ href: "http://#{ domain.get('fqdn') }" }= domain.get('fqdn')
 %a{ href: "http://#{ domain.get("fqdn") }" }= domain.get("fqdn")
+
+- myFunction = (num, options) -> num * options.length
+%input{ type: 'text', name: 'padded_number', value: myFunction(@number, length: 3) }
+%input{ type: 'text', name: 'padded_number', value: myFunction(@number, { length: 3 }) }
+%input{ type: 'text', name: 'padded_number', value: myFunction(@number, 'length': 3 ) }
+%input{ type: 'text', name: 'padded_number', value: myFunction(@number, { 'length': 3 } ) }
