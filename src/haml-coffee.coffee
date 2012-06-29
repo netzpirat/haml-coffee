@@ -181,7 +181,7 @@ module.exports = class HamlCoffee
   #
   parse: (source = '') ->
     # Initialize line and indent markers
-    @line_number = @previousIndent = @tabSize = @currentBlockLevel = @previousBlockLevel = 0
+    @lineNumber = @previousIndent = @tabSize = @currentBlockLevel = @previousBlockLevel = 0
     @currentCodeBlockLevel = @previousCodeBlockLevel = 0
 
     # Initialize nodes
@@ -238,7 +238,7 @@ module.exports = class HamlCoffee
           attributes = lines.shift()
           expression = expression.replace(/(\s)+\|\s*$/, '')
           expression += ' ' + attributes.match(/^\s*(.*?)(\s+\|\s*)?$/)[1]
-          @line_number++
+          @lineNumber++
 
         # Look ahead for multi line |
         if expression.match(/(\s)+\|\s*$/)
@@ -246,7 +246,7 @@ module.exports = class HamlCoffee
 
           while lines[0]?.match(/(\s)+\|$/)
             expression += lines.shift().match(/^(\s*)(.*)/)[2].replace(/(\s)+\|\s*$/, '')
-            @line_number++
+            @lineNumber++
 
         @currentIndent = ws.length
 
@@ -264,7 +264,7 @@ module.exports = class HamlCoffee
         @previousBlockLevel = @currentBlockLevel
         @previousIndent     = @currentIndent
 
-      @line_number++
+      @lineNumber++
 
     @evaluate(@root)
 
