@@ -113,6 +113,19 @@ module.exports = class Node
     else
       false
 
+  # Traverse up the tree to see if a parent node
+  # is a comment node.
+  #
+  # @return [Boolean] true when within a comment
+  #
+  isCommented: ->
+    return true if @constructor.name is 'Comment'
+
+    if @parentNode
+      @parentNode.isCommented()
+    else
+      false
+
   # Creates a marker for static outputted text.
   #
   # @param [String] html the html to output
