@@ -94,12 +94,12 @@ publish = (cb) ->
       cb err
 
   tagVersion = (cb) ->
-    fs.readFile 'package.json', 'utf8', (err, package) ->
+    fs.readFile 'package.json', 'utf8', (err, p) ->
       onerror err
-      package = JSON.parse package
-      throw new Exception 'Invalid package.json' if !package.version
-      log "Tagging v#{ package.version }"
-      exec "git tag v#{ package.version }", (err, stdout, stderr) ->
+      p = JSON.parse p
+      throw new Exception 'Invalid package.json' if !p.version
+      log "Tagging v#{ p.version }"
+      exec "git tag v#{ p.version }", (err, stdout, stderr) ->
         log stdout
         cb err
 
