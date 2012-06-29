@@ -7,10 +7,10 @@ pro        = require('uglify-js').uglify
 
 process.env['PATH'] = "node_modules/.bin:#{ process.env['PATH'] }"
 
-bold  = '\033[0;1m'
-red   = '\033[0;31m'
-green = '\033[0;32m'
-reset = '\033[0m'
+bold  = '\x33[0;1m'
+red   = '\x33[0;31m'
+green = '\x33[0;32m'
+reset = '\x33[0m'
 
 log = (message, color = green) -> console.log "#{ color }#{ message }#{ reset }"
 
