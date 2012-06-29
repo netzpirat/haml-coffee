@@ -1,3 +1,9 @@
+# Version 1.1.2, June 29, 2012
+
+  * Fix line number in the error message.
+  * Ignore block level within comments.
+  * Update to the latest Haml spec.
+
 # Version 1.1.1, June 19, 2012
 
   * [haml_coffee_assets issue #51](https://github.com/netzpirat/haml_coffee_assets/issues/51): Parsing fails with double quotes inside single-quoted attribute value.
