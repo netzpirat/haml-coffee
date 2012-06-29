@@ -415,7 +415,9 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
         throw "Indentation error in line " + this.lineNumber;
       }
       if ((this.currentIndent - this.previousIndent) / this.tabSize > 1) {
-        throw "Block level too deep in line " + this.lineNumber;
+        if (!this.node.isCommented()) {
+          throw "Block level too deep in line " + this.lineNumber;
+        }
       }
       return this.delta = this.previousBlockLevel - this.currentBlockLevel;
     };
@@ -496,7 +498,7 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
       if (source == null) {
         source = '';
       }
-      this.line_number = this.previousIndent = this.tabSize = this.currentBlockLevel = this.previousBlockLevel = 0;
+      this.lineNumber = this.previousIndent = this.tabSize = this.currentBlockLevel = this.previousBlockLevel = 0;
       this.currentCodeBlockLevel = this.previousCodeBlockLevel = 0;
       this.node = null;
       this.stack = [];
@@ -536,13 +538,13 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
             attributes = lines.shift();
             expression = expression.replace(/(\s)+\|\s*$/, '');
             expression += ' ' + attributes.match(/^\s*(.*?)(\s+\|\s*)?$/)[1];
-            this.line_number++;
+            this.lineNumber++;
           }
           if (expression.match(/(\s)+\|\s*$/)) {
             expression = expression.replace(/(\s)+\|\s*$/, ' ');
             while ((_ref = lines[0]) != null ? _ref.match(/(\s)+\|$/) : void 0) {
               expression += lines.shift().match(/^(\s*)(.*)/)[2].replace(/(\s)+\|\s*$/, '');
-              this.line_number++;
+              this.lineNumber++;
             }
           }
           this.currentIndent = ws.length;
@@ -556,7 +558,7 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
           this.previousBlockLevel = this.currentBlockLevel;
           this.previousIndent = this.currentIndent;
         }
-        this.line_number++;
+        this.lineNumber++;
       }
       return this.evaluate(this.root);
     };
@@ -832,6 +834,17 @@ require.define("/nodes/node.js", function (require, module, exports, __dirname, 
       }
       if (this.parentNode) {
         return this.parentNode.isPreserved();
+      } else {
+        return false;
+      }
+    };
+
+    Node.prototype.isCommented = function() {
+      if (this.constructor.name === 'Comment') {
+        return true;
+      }
+      if (this.parentNode) {
+        return this.parentNode.isCommented();
       } else {
         return false;
       }
