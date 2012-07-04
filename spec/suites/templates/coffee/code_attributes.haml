@@ -20,3 +20,6 @@
 %input{ type: 'text', name: 'padded_number', value: myFunction(@number, { length: 3 }) }
 %input{ type: 'text', name: 'padded_number', value: myFunction(@number, 'length': 3 ) }
 %input{ type: 'text', name: 'padded_number', value: myFunction(@number, { 'length': 3 } ) }
+
+- func = (p) -> "-#{p}-" 
+%div(foo="#{func('foo')}" bar="bar")

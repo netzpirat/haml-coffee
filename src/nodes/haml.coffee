@@ -273,7 +273,14 @@ module.exports = class Haml extends Node
     start = 0
     markers = []
 
-    for pos in [0..exp.length]
+    if type is '('
+      startPos = 1
+      endPos = exp.length - 1
+    else
+      startPos = 0
+      endPos = exp.length
+
+    for pos in [startPos...endPos]
       ch = exp[pos]
 
       # Increase level when a parenthesis is started

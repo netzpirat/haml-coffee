@@ -1,3 +1,5 @@
+interactor :simple
+
 guard :coffeescript, :input => 'src', :output => 'lib'
 guard :coffeescript, :input => 'dist/helpers', :output => 'dist/helpers'
 
