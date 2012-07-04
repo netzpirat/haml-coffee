@@ -1,3 +1,7 @@
+# Version 1.1.3, Juli 4, 2012
+
+  * [haml_coffee_assets issue #55](https://github.com/netzpirat/haml_coffee_assets/issues/55): Error parsing HTML attributes with code interpolation.
+
 # Version 1.1.2, June 29, 2012
 
   * Fix line number in the error message.
