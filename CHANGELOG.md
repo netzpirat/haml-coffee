@@ -1,6 +1,7 @@
 # Master
 
   * [haml_coffee_assets issue #57](https://github.com/netzpirat/haml_coffee_assets/issues/57): Fix quotes in text content.
+  * [Issue #30](https://github.com/netzpirat/haml-coffee/issues/30): &apos; doesn't work in IE8
 
 # Version 1.1.3, Juli 4, 2012
 
