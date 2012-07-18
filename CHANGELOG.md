@@ -1,5 +1,6 @@
 # Master
 
+  * [haml_coffee_assets issue #56](https://github.com/netzpirat/haml_coffee_assets/issues/56): Weird behavior when using space before the : of an attribute.
   * [haml_coffee_assets issue #57](https://github.com/netzpirat/haml_coffee_assets/issues/57): Fix quotes in text content.
   * [Issue #30](https://github.com/netzpirat/haml-coffee/issues/30): &apos; doesn't work in IE8
 

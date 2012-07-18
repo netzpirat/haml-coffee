@@ -319,11 +319,11 @@ module.exports = class Haml extends Node
       when '{'
         # Ruby attribute keys
         keys = ///
-               [{,]\s*(\w+[\w:-]*\w?):
+               [{,]\s*(\w+[\w:-]*\w?)\s*:
                |
-               [{,]\s*('[-\w]+[\w:-]*\w?'):
+               [{,]\s*('[-\w]+[\w:-]*\w?')\s*:
                |
-               [{,]\s*("[-\w]+[\w:-]*\w?"):
+               [{,]\s*("[-\w]+[\w:-]*\w?")\s*:
                |
                [{,]\s*:(\w+[\w:-]*\w?)\s*=>
                |

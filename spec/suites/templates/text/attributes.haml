@@ -49,3 +49,7 @@
 
 %label.g-label{:for => 'input-transfer-template-repeat-number'} Время:
 %input#input-transfer-template-repeat-number.g-field{:type => 'text', :name => 'transfer_template[repeat_number]', :placeholder => 'например, 14:50'}
+
+%span.value{ 'foo' : 'foo', 'bar' : 'bar', baz: 'baz' } Foo
+%span.value{ 'foo': 'foo', 'bar' : 'bar', baz: 'baz' } Foo
+%span.value{ data: { 'foo' : 'foo', 'bar': 'bar' } } Foo
