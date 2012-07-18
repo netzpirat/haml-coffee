@@ -1,4 +1,4 @@
-# Master
+# Version 1.2.0, Juli 18, 2012
 
   * [haml_coffee_assets issue #56](https://github.com/netzpirat/haml_coffee_assets/issues/56): Weird behavior when using space before the : of an attribute.
   * [haml_coffee_assets issue #57](https://github.com/netzpirat/haml_coffee_assets/issues/57): Fix quotes in text content.
