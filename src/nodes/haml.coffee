@@ -158,7 +158,7 @@ module.exports = class Haml extends Node
       tag        : tag.tag
       id         : id
       classes    : classes
-      text       : tag.text
+      text       : escapeQuotes(tag.text)
       attributes : attributes
       assignment : tag.assignment
     }

@@ -1,3 +1,7 @@
+# Master
+
+  * [haml_coffee_assets issue #57](https://github.com/netzpirat/haml_coffee_assets/issues/57): Fix quotes in text content.
+
 # Version 1.1.3, Juli 4, 2012
 
   * [haml_coffee_assets issue #55](https://github.com/netzpirat/haml_coffee_assets/issues/55): Error parsing HTML attributes with code interpolation.
