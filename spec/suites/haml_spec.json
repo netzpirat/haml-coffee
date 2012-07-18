@@ -585,8 +585,8 @@
         },
 
         "code following '=' when escape_haml is set to true" : {
-            "haml" : "= '<\"&>'",
-            "html" : "&lt;&quot;&amp;&gt;",
+            "haml" : "= \"<'\\\"&>\"",
+            "html" : "&lt;&#39;&quot;&amp;&gt;",
             "config" : {
                 "escape_html" : "true"
             }
