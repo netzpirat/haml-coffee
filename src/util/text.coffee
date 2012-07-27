@@ -14,9 +14,7 @@ module.exports =
       a.push ' '
     a.join ''
 
-  # Escape quotation in a text. If a quotation should
-  # not be escaped in the final output, it must be
-  # quoted.
+  # Escape quotation in a text.
   #
   # @param [String] text the text containing quotes
   # @return [String] the escaped text
@@ -24,7 +22,7 @@ module.exports =
   escapeQuotes: (text) ->
     return '' unless text
 
-    text.replace(/"/g, '\\"').replace(/\\\\\"/g, '"')
+    text.replace(/"/g, '\\"').replace(/\\\\\"/g, '\\"')
 
   # Unescape quotation in a text.
   #

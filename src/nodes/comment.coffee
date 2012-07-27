@@ -1,4 +1,5 @@
 Node  = require('./node')
+{escapeQuotes} = require('../util/text')
 
 # Comment node for silent code blocks or pure
 # Haml comments.
@@ -39,7 +40,7 @@ module.exports = class Comment extends Node
 
         # With a inline comment
         if comment
-          @opener = @markText "<!-- #{ comment }"
+          @opener = @markText "<!-- #{ escapeQuotes(comment) }"
           @closer = @markText ' -->'
 
         # With multi line comment
