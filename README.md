@@ -7,6 +7,8 @@ can be used in client-side JavaScript applications that are using
 [JavaScriptMVC](http://javascriptmvc.com/), [KnockoutJS](http://knockoutjs.com/) and others, or on the server-side in
 frameworks like [Express](http://expressjs.com/).
 
+You can try Haml Coffee online by visiting [Haml Coffee Online](http://haml-coffee-online.herokuapp.com/).
+
 ## Installation
 
 Haml Coffee is available in NPM and can be installed with:
@@ -215,7 +217,7 @@ By extending the template scope with the context, you can access your context da
 
 This effect is achieved by using the [with](https://developer.mozilla.org/en/JavaScript/Reference/Statements/with)
 statement. Using with is forbidden in ECMAScript 5 strict mode.
- 
+
 ## Haml support
 
 Haml Coffee implements the [Haml Spec](https://github.com/norman/haml-spec) to ensure some degree of compatibility to
