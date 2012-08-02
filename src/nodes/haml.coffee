@@ -266,7 +266,7 @@ module.exports = class Haml extends Node
 
     # Mark key separator characters within quoted values, so they aren't recognized as keys.
     exp = exp.replace /(=|:|=>)\s*('([^\\']|\\\\|\\')*'|"([^\\"]|\\\\|\\")*")/g, (match, type, value) ->
-      type + value?.replace /(:|=|=>)/, '\u0090$1'
+      type + value?.replace /(:|=|=>)/g, '\u0090$1'
 
     # Mark key separator characters within parenthesis, so they aren't recognized as keys.
     level = 0
@@ -296,7 +296,7 @@ module.exports = class Haml extends Node
           level -= 1
 
     for marker in markers.reverse()
-      exp = exp.substring(0, marker.start) + exp.substring(marker.start, marker.end).replace(/(:|=|=>)/, '\u0090$1') + exp.substring(marker.end)
+      exp = exp.substring(0, marker.start) + exp.substring(marker.start, marker.end).replace(/(:|=|=>)/g, '\u0090$1') + exp.substring(marker.end)
 
     # Detect the used key type
     switch type
@@ -347,7 +347,7 @@ module.exports = class Haml extends Node
       key = quoted[2] if quoted = key.match /^("|')(.*)\1$/
 
       # Trim value, remove succeeding comma and remove markers
-      value = keyValue[1]?.replace(/^\s+|[\s,]+$/g, '').replace(/\u0090/, '')
+      value = keyValue[1]?.replace(/^\s+|[\s,]+$/g, '').replace(/\u0090/g, '')
 
       if key is 'data'
         inDataAttribute = true

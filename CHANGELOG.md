@@ -1,3 +1,7 @@
+# Master
+
+  * [Issue #33](https://github.com/netzpirat/haml-coffee/issues/33): Fix tag attributes that contains multiple attribute keys.
+
 # Version 1.2.0, Juli 18, 2012
 
   * [haml_coffee_assets issue #56](https://github.com/netzpirat/haml_coffee_assets/issues/56): Weird behavior when using space before the : of an attribute.
