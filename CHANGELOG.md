@@ -1,6 +1,8 @@
 # Master
 
   * [Issue #33](https://github.com/netzpirat/haml-coffee/issues/33): Fix tag attributes that contains multiple attribute keys.
+  * Fix comments with tag attributes that follows a tag with attributes (multiline bug).
+  * Fix wrong quotes that appears in comments.
 
 # Version 1.2.0, Juli 18, 2012
 
