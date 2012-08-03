@@ -392,6 +392,43 @@ chosen in the compile option:
 Again, please consult the official [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more
 details. Haml Coffee implements the same functionality like Ruby Haml, only for CoffeeScript.
 
+#### Multiline code blocks
+
+Running code must be placed on a single line and unlike Ruby Haml, you cannot stretch a it over multiple lines by
+putting a comma at the end.
+
+However, you can use multiline endings `|` to stretch your code over multiple lines to some extend:
+
+```Haml
+- links = {          |
+    home: '/',       |
+    docs: '/docs',   |
+    about: '/about'  |
+  }                  |
+
+%ul
+  - for name, link of links
+    %li
+      %a{ href: link }= name  
+```
+
+Please note, that since the line is concatenated before the compilation, you cannot omit the curly braces and the
+commas in the above example, like you'd do in normal CoffeeScript code. Therefore it's recommended to use the
+CoffeeScript filter have real multiline code blocks:
+
+```Haml
+:coffeescript
+  links =
+    home: '/'
+    docs: '/docs'
+    about: '/about'
+
+%ul
+  - for name, link of links
+    %li
+      %a{ href: link }= name  
+```
+
 #### Functions
 
 You can also create functions that generate Haml:
