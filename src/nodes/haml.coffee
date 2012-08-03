@@ -472,22 +472,92 @@ module.exports = class Haml extends Node
   quoteAndEscapeAttributeValue: (value, code = false) ->
     return unless value
 
-    value = quoted[2] if quoted = value.match /^("|')(.*)\1$/
+    value  = quoted[2] if quoted = value.match /^("|')(.*)\1$/
+    tokens = @splitInterpolations value
 
-    # Our value is in a code block
+    hasSingleQuotes = false
+    hasDoubleQuotes = false
+    hasInterpolation = false
+
+    # Analyse existing quotes
+    for token in tokens
+      if token[0..1] is '#{'
+        hasInterpolation = true
+      else
+        hasSingleQuotes = token.indexOf("'") isnt -1 unless hasSingleQuotes
+        hasDoubleQuotes = token.indexOf('"') isnt -1 unless hasDoubleQuotes
+
     if code
-      if value.indexOf('#{') is -1
-        result = "'#{ value }'"
+      if hasInterpolation
+        result = "\"#{ tokens.join('') }\""
       else
-        result = "\"#{ value }\""
+        result = "'#{ tokens.join('') }'"
+    
     else
-      if value.indexOf('#{') is -1
-        result = "'#{ value.replace(/"/g, '\\\"').replace(/'/g, '\\\"') }'"
-      else
-        result = "'#{ value }'"
+      # Without any qoutes, wrap the value in single quotes
+      if not hasDoubleQuotes and not hasSingleQuotes
+        result = "'#{ tokens.join('') }'"
+
+      # With only single quotes, wrap the value in double quotes
+      if hasSingleQuotes and not hasDoubleQuotes
+        result = "\\\"#{ tokens.join('') }\\\""
+
+      # With only double quotes, wrap the value in single quotes and escape the double quotes
+      if hasDoubleQuotes and not hasSingleQuotes
+        escaped = for token in tokens
+          escapeQuotes(token)
+        result = "'#{ escaped.join('') }'"
+
+      # With both type of quotes, wrap the value in single quotes, escape the double quotes and
+      # convert the single quotes to it's entity representation
+      if hasSingleQuotes and hasDoubleQuotes
+        escaped = for token in tokens
+          escapeQuotes(token).replace(/'/g, '&#39;')
+        result = "'#{ escaped.join('') }'"
 
     result
+    
+  # Split expression by its interpolations.
+  #
+  # @example
+  #   'Hello #{ "#{ soso({}) }" } Interpol') => ["Hello ", "#{ "#{ soso({}) }" }", " Interpol"]
+  #   'Hello #{ "#{ soso }" } Interpol') => ["Hello ", "#{ "#{ soso }" }", " Interpol"]
+  #   'Hello #{ int } Interpol') => ["Hello ", "#{ int }", " Interpol"]
+  #   'Hello Interpol') => ["Hello Interpol"]
+  #   '#{ int } Interpol') => ["#{ int }", " Interpol"]
+  #   'Hello #{ int }') => ["Hello ", "#{ int }"]
+  #   '#{ int }') => ["#{ int }"]
+  #
+  # @param [String] value the attribute value
+  # @return [Array<String>] the splitted string
+  #
+  splitInterpolations: (value) ->
+    level = 0
+    start = 0
+    tokens = []
+    quoted = false
 
+    for pos in [0...value.length]
+      ch  = value[pos]
+      ch2 = value[pos..pos + 1]
+
+      if ch is '{'
+        level += 1
+
+      if ch2 is '#{' and level is 0
+        tokens.push(value[start...pos])
+        start = pos
+
+      if ch is '}'
+        level -= 1
+
+        if level is 0
+          tokens.push(value[start..pos])
+          start = pos + 1
+
+    tokens.push(value[start...value.length])
+
+    tokens.filter(Boolean)
 
   # Build the DocType string depending on the `!!!` token
   # and the currently used HTML format.
