@@ -5,13 +5,7 @@
   "author" : "Michael Kessler <michi@netzpiraten.ch>",
   "maintainers" : [
     {
-      "name" : "Sebastian Deutsch"
-    },
-    {
       "name" : "Michael Kessler"
-    },
-    {
-      "name" : "Jan Varwig"
     }
   ],
   "version" : "1.2.0",
