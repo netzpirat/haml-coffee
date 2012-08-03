@@ -1,4 +1,4 @@
-# Master
+# Version 1.3.0, August 3, 2012
 
   * [haml_coffee_assets issue #58](https://github.com/netzpirat/haml_coffee_assets/issues/58): Single quotes in attribute values are converted to double quotes.
   * [Issue #33](https://github.com/netzpirat/haml-coffee/issues/33): Fix tag attributes that contains multiple attribute keys.
