@@ -14,6 +14,9 @@ Filter  = require('./nodes/filter')
 #
 module.exports = class HamlCoffee
 
+  # The current version number.
+  @VERSION: '1.2.0'
+
   # Construct the HAML Coffee compiler.
   #
   # @param [Object] options the compiler options
@@ -22,7 +25,7 @@ module.exports = class HamlCoffee
   # @option options [Boolean] cleanValue clean CoffeeScript values before inserting
   # @option options [Boolean] uglify don't indent generated HTML when true
   # @option options [Boolean] basename ignore file path when generate the template name
-  # @option options [Boolean] extendScope extend the template scope with the context 
+  # @option options [Boolean] extendScope extend the template scope with the context
   # @option options [String] format the template format, either `xhtml`, `html4` or `html5`
   # @option options [String] preserveTags a comma separated list of tags to preserve content whitespace
   # @option options [String] selfCloseTags a comma separated list of self closing HTML tags
