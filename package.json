@@ -37,7 +37,7 @@
     "uglify-js" : ">= 1.2.0",
     "async": ">= 0.0.0",
     "codo": ">= 0.0.0",
-    "concat-stream": "0.7.0"
+    "concat-stream": "0.0.7"
   },
   "homepage" : "https://github.com/netzpirat/haml-coffee",
   "repository" : {
