@@ -63,15 +63,50 @@ the [codo](https://github.com/netzpirat/codo) generated
 
 ### Using with Express
 
-You can configure [Express](http://expressjs.com/) to use Haml Coffee as template engine:
+You can configure [Express](http://expressjs.com/) to use Haml Coffee as template engine.
+
+#### Express 3
+
+Starting with version 1.4.0, Haml Coffee has support for Express 3 and can be registered as view engine as follows:
 
 ```coffee-script
 express = require 'express'
-hamlc = require 'haml-coffee'
+cons    = require 'consolidate'
 
 app = express.createServer()
-app.register '.hamlc', hamlc
+app.engine '.hamlc', require('haml-coffee').__express
 ```
+
+Alternatively you can also use [consolidate.js](https://github.com/visionmedia/consolidate.js) to register the engine:
+
+```coffee-script
+express = require 'express'
+
+app = express.createServer()
+app.engine '.hamlc', cons['haml-coffee']
+```
+
+#### Express 2
+
+Starting with version 0.5.0, Haml Coffee has support for Express 2 and can be registered as view engine as follows:
+
+```coffee-script
+express = require 'express'
+
+app = express.createServer()
+app.register '.hamlc', require('haml-coffee')
+```
+
+Alternatively you can also use [consolidate.js](https://github.com/visionmedia/consolidate.js) to register the engine:
+
+```coffee-script
+express = require 'express'
+
+app = express.createServer()
+app.register '.hamlc', cons['haml-coffee']
+```
+
+#### Usage
 
 Express uses a layout file `layout.hamlc` by default and you have to insert the rendered view body into the layout like
 this:
@@ -409,7 +444,7 @@ However, you can use multiline endings `|` to stretch your code over multiple li
 %ul
   - for name, link of links
     %li
-      %a{ href: link }= name  
+      %a{ href: link }= name
 ```
 
 Please note, that since the line is concatenated before the compilation, you cannot omit the curly braces and the
@@ -426,7 +461,7 @@ CoffeeScript filter have real multiline code blocks:
 %ul
   - for name, link of links
     %li
-      %a{ href: link }= name  
+      %a{ href: link }= name
 ```
 
 #### Functions
