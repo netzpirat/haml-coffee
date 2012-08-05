@@ -133,13 +133,7 @@ app.get '/', (req, res) ->
   res.render 'index.hamlc', name: 'Express user'
 ```
 
-You can also turn off the layout rendering by configure the `view options`:
-
-```coffee-script
-app.set 'view options', layout: false
-```
-
-See the [compiler options](#compiler-options) for detailed information about all the available options.
+#### Default template engine
 
 It's possible to use Haml Coffee as the default template engine by setting the `view engine`:
 
@@ -155,8 +149,21 @@ app.get '/', (req, res) ->
   res.render 'index', name: 'Express user'
 ```
 
-You can read more about the view rendering in the
-[Express documentation](http://expressjs.com/guide.html#view-rendering).
+#### Compiler options
+
+With Express 3, you can set global compiler options by using `app.locals`:
+
+```
+app.locals.uglify = true
+```
+
+which is the same as:
+
+```
+res.render view, { uglify: true }
+```
+
+See the [compiler options](#compiler-options) for detailed information about all the available options.
 
 ### Using the CLI tool
 
