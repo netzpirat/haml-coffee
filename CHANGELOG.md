@@ -1,4 +1,4 @@
-# Master
+# Version 1.4.0, August 5, 2012
 
   * Add support for Express 3
 
