@@ -86,7 +86,7 @@ app = express.createServer()
 app.engine '.hamlc', cons['haml-coffee']
 ```
 
-Until [consolidate.js pull request #49)(https://github.com/visionmedia/consolidate.js/pull/49) is merged, it's
+Until [consolidate.js pull request #49](https://github.com/visionmedia/consolidate.js/pull/49) is merged, it's
 recommended to directly use the Haml Coffee `__express` function over consolidate.js to have improved render speed.
 
 #### Express 2
