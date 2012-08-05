@@ -1,4 +1,4 @@
-# Master
+# Version 1.4.1, August 5, 2012
 
   * Fix bug where caching is always enabled.
 
