@@ -63,8 +63,6 @@ module.exports =
   #   @param [Function] the callback
   #
   __express: (filename, options, callback) ->
-    options.cache = true
-
     # Parameter shift
     if !!(options and options.constructor and options.call and options.apply)
       callback = options
