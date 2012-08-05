@@ -69,23 +69,28 @@ task 'pages', 'Generate the Haml-Coffee docs and push it to GitHub pages', -> ge
 publish = (cb) ->
 
   browserPackage = (cb) ->
-    log "Create brower package"
-    b = browserify()
-    b.require "#{ __dirname }/lib/haml-coffee"
+    fs.readFile 'package.json', 'utf8', (err, p) ->
+      onerror err
+      p = JSON.parse p
+      throw new Exception 'Invalid package.json' if !p.version
 
-    code = b.bundle()
-    fs.writeFileSync 'dist/compiler/hamlcoffee.js', code
+      log "Update compiler dist for  #{ p.version }"
+      b = browserify()
+      b.require "#{ __dirname }/lib/haml-coffee"
 
-    ast = sp.parse code
-    ast = pro.ast_mangle ast
-    ast = pro.ast_squeeze ast
+      code = b.bundle()
+      fs.writeFileSync 'dist/compiler/hamlcoffee.js', code
 
-    min = pro.gen_code ast
-    fs.writeFileSync 'dist/compiler/hamlcoffee.min.js', min
+      ast = sp.parse code
+      ast = pro.ast_mangle ast
+      ast = pro.ast_squeeze ast
 
-    exec 'git commit -am "Generate latest browser package"', (err, stdout, stderr) ->
-      log stdout
-      cb err
+      min = pro.gen_code ast
+      fs.writeFileSync 'dist/compiler/hamlcoffee.min.js', min
+
+      exec "git commit -am 'Update compiler dist for #{ p.version }'", (err, stdout, stderr) ->
+        log stdout
+        cb err
 
   npmPublish = (cb) ->
     log 'Publishing to NPM'
