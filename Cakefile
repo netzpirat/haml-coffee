@@ -29,43 +29,6 @@ test = (cb) ->
 
 task 'test', 'Run all tests', -> test onerror
 
-generateGHPages = (cb) ->
-  cloneGHPages = (cb) ->
-    log "Clone gh-pages"
-    exec 'git clone git@github.com:9elements/haml-coffee.git -b gh-pages /tmp/hamlcdoc', (err, stdout, stderr) ->
-      onerror err
-      log stdout
-      cb err
-
-  generateDocs = (cb) ->
-    log "Generacte Haml-Coffee documentation"
-    exec './node_modules/.bin/codo -o /tmp/hamlcdoc', (err, stdout, stderr) ->
-      onerror err
-      log stdout
-      cb err
-
-  pushDocs = (cb) ->
-    log "Push site"
-    exec 'cd /tmp/hamlcdoc && git add * . && git commit -am "Update to docs to latest version." && git push origin gh-pages', (err, stdout, stderr) ->
-      onerror err
-      log stdout
-      cb err
-
-  cleanUp = (cb) ->
-    exec 'rm -rf /tmp/hamlcdoc', (err, stdout, stderr) ->
-      onerror err
-      log "Done."
-      cb err
-
-  series [
-    cloneGHPages
-    generateDocs
-    pushDocs
-    cleanUp
-  ]
-
-task 'pages', 'Generate the Haml-Coffee docs and push it to GitHub pages', -> generateGHPages onerror
-
 publish = (cb) ->
 
   browserPackage = (cb) ->
@@ -119,7 +82,6 @@ publish = (cb) ->
     tagVersion
     pushGithub
     npmPublish
-    generateGHPages
   ], cb
 
 task 'publish', 'Prepare build and push new version to NPM', -> publish onerror
