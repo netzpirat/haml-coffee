@@ -627,23 +627,17 @@ You can find a default implementation for all these helper functions in
 
 ## Development information
 
-You'll need the latest version of `node.js`, `npm`, `coffee-script` and `jasmine-node` to run everything. Start
-the CoffeeScript compilation in the project root directory by running:
-
-```bash
-$ cake watch
-```
-
-And run the tests by calling:
-
-```bash
-$ jasmine-node
-```
-
-You can optionally install [Guard](https://github.com/guard/guard) with the Ruby [Bundler](http://gembundler.com/):
+Haml-Coffee uses [Guard](https://github.com/guard/guard) for development, which you can install Guard with the Ruby
+[Bundler](http://gembundler.com/):
 
 ```bash
 $ bundle install
+```
+
+Install the Node modules with [NPM](https://npmjs.org/):
+
+```bash
+$ npm install
 ```
 
 and run Guard to automatically compile your CoffeeScripts and run the Jasmine specs on file modification:
