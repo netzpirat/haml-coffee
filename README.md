@@ -86,9 +86,6 @@ app = express.createServer()
 app.engine '.hamlc', cons['haml-coffee']
 ```
 
-Until [consolidate.js pull request #49](https://github.com/visionmedia/consolidate.js/pull/49) is merged, it's
-recommended to directly use the Haml Coffee `__express` function over consolidate.js to have improved render speed.
-
 #### Express 2
 
 Starting with version 0.5.0, Haml Coffee has support for Express 2 and can be registered as view engine as follows:
