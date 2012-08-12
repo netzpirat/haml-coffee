@@ -456,7 +456,7 @@ However, you can use multiline endings `|` to stretch your code over multiple li
 
 Please note, that since the line is concatenated before the compilation, you cannot omit the curly braces and the
 commas in the above example, like you'd do in normal CoffeeScript code. Therefore it's recommended to use the
-CoffeeScript filter have real multiline code blocks:
+CoffeeScript filter to have real multiline code blocks:
 
 ```Haml
 :coffeescript
