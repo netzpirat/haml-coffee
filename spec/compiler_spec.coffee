@@ -1,7 +1,7 @@
 fs     = require 'fs'
 
 CoffeeScript  = require 'coffee-script'
-HamlCoffee    = require '../lib/haml-coffee'
+HamlCoffee    = require '../src/haml-coffee'
 
 suites = [
   'haml'
