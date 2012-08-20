@@ -162,7 +162,7 @@ module.exports = class HamlCoffee
       node = new Code(expression, options)
 
     # Detect Haml node
-    else if expression.match(/^(%|#|\.|\!)(.*)/)
+    else if expression.match(/^(%|#[^{]|\.|\!)(.*)/)
       node = new Haml(expression, options)
 
     # Everything else is a text node
