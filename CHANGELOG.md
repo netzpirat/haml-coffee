@@ -1,3 +1,9 @@
+# Master
+
+  * Convert to pure CoffeeScript project. The pure JS compiler is only distributed as bundled file.
+  * Fix colored cli output.
+  * [haml_coffee_assets issue #65](https://github.com/netzpirat/haml_coffee_assets/issues/65): CoffeScript interpolation does not work.
+
 # Version 1.4.1, August 5, 2012
 
   * Fix bug where caching is always enabled.
