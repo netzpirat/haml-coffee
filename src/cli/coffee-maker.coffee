@@ -1,6 +1,9 @@
-CoffeeScript  = require('coffee-script')
-HamlCoffee    = require('../haml-coffee')
-fs            = require('fs')
+CoffeeScript  = require 'coffee-script'
+HamlCoffee    = require '../haml-coffee'
+fs            = require 'fs'
+
+red   = '\u001b[31m'
+reset = '\u001b[0m'
 
 module.exports = class CoffeeMaker
 
@@ -18,7 +21,7 @@ module.exports = class CoffeeMaker
     try
       source = fs.readFileSync(filename).toString()
     catch error
-      console.error '  \x33[91mError opening file:\x33[0m %s', error
+      console.error "  #{ red }Error opening file:#{ reset } %s", error
       console.error error
 
     try
@@ -31,11 +34,11 @@ module.exports = class CoffeeMaker
         haml = compiler.render templateName, namespace
 
       else
-        console.error '  \x33[91m[haml coffee] no valid Haml extension.\x33[0m'
+        console.error "  #{ red }[haml coffee] no valid Haml extension.#{ reset }"
         process.exit 1
 
     catch error
-      console.error '  \x33[91m[haml coffee] error compiling Haml file:\x33[0m %s', error
+      console.error "  #{ red }[haml coffee] error compiling Haml file:#{ reset } %s", error
       console.error error.stack
       process.exit 1
 
@@ -43,7 +46,7 @@ module.exports = class CoffeeMaker
       output = CoffeeScript.compile haml
 
     catch error
-      console.error '  \x33[91m[haml coffee] CoffeeScript compilation error:\x33[0m %s', error
+      console.error '  #{ red }[haml coffee] CoffeeScript compilation error:#{ reset } %s', error
       console.error error.stack
       process.exit 1
 
