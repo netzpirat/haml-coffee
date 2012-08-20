@@ -341,7 +341,7 @@ exports.extname = function(path) {
 
 });
 
-require.define("/haml-coffee.js", function (require, module, exports, __dirname, __filename) {
+require.define("/haml-coffee.coffee", function (require, module, exports, __dirname, __filename) {
 (function() {
   var Code, Comment, Filter, Haml, HamlCoffee, Node, Text, indent, whitespace;
 
@@ -363,37 +363,35 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
 
   module.exports = HamlCoffee = (function() {
 
-    HamlCoffee.VERSION = '1.4.1';
+    HamlCoffee.VERSION = '1.4.2';
 
     function HamlCoffee(options) {
-      var _base, _base1, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
+      var _base, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
       this.options = options != null ? options : {};
       if ((_ref = (_base = this.options).escapeHtml) == null) {
         _base.escapeHtml = true;
       }
-      if ((_ref1 = (_base1 = this.options).escapeAttributes) == null) {
-        _base1.escapeAttributes = true;
+      if ((_ref2 = (_base2 = this.options).escapeAttributes) == null) {
+        _base2.escapeAttributes = true;
       }
-      if ((_ref2 = (_base2 = this.options).cleanValue) == null) {
-        _base2.cleanValue = true;
+      if ((_ref3 = (_base3 = this.options).cleanValue) == null) {
+        _base3.cleanValue = true;
       }
-      if ((_ref3 = (_base3 = this.options).uglify) == null) {
-        _base3.uglify = false;
+      if ((_ref4 = (_base4 = this.options).uglify) == null) _base4.uglify = false;
+      if ((_ref5 = (_base5 = this.options).basename) == null) {
+        _base5.basename = false;
       }
-      if ((_ref4 = (_base4 = this.options).basename) == null) {
-        _base4.basename = false;
+      if ((_ref6 = (_base6 = this.options).extendScope) == null) {
+        _base6.extendScope = false;
       }
-      if ((_ref5 = (_base5 = this.options).extendScope) == null) {
-        _base5.extendScope = false;
+      if ((_ref7 = (_base7 = this.options).format) == null) {
+        _base7.format = 'html5';
       }
-      if ((_ref6 = (_base6 = this.options).format) == null) {
-        _base6.format = 'html5';
+      if ((_ref8 = (_base8 = this.options).preserveTags) == null) {
+        _base8.preserveTags = 'pre,textarea';
       }
-      if ((_ref7 = (_base7 = this.options).preserveTags) == null) {
-        _base7.preserveTags = 'pre,textarea';
-      }
-      if ((_ref8 = (_base8 = this.options).selfCloseTags) == null) {
-        _base8.selfCloseTags = 'meta,img,link,br,hr,input,area,param,col,base';
+      if ((_ref9 = (_base9 = this.options).selfCloseTags) == null) {
+        _base9.selfCloseTags = 'meta,img,link,br,hr,input,area,param,col,base';
       }
     }
 
@@ -446,18 +444,16 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
     };
 
     HamlCoffee.prototype.popParent = function() {
-      var i, _i, _ref, _results;
+      var i, _ref, _results;
       _results = [];
-      for (i = _i = 0, _ref = this.delta - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+      for (i = 0, _ref = this.delta - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
         _results.push(this.parentNode = this.stack.pop());
       }
       return _results;
     };
 
     HamlCoffee.prototype.getNodeOptions = function(override) {
-      if (override == null) {
-        override = {};
-      }
+      if (override == null) override = {};
       return {
         parentNode: override.parentNode || this.parentNode,
         blockLevel: override.blockLevel || this.currentBlockLevel,
@@ -474,9 +470,7 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
 
     HamlCoffee.prototype.nodeFactory = function(expression) {
       var node, options, _ref;
-      if (expression == null) {
-        expression = '';
-      }
+      if (expression == null) expression = '';
       options = this.getNodeOptions();
       if (expression.match(/^:(escaped|preserve|css|javascript|plain|cdata|coffeescript)/)) {
         node = new Filter(expression, options);
@@ -484,22 +478,18 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
         node = new Comment(expression, options);
       } else if (expression.match(/^(-#|-|=|!=|\&=|~)\s*(.*)/)) {
         node = new Code(expression, options);
-      } else if (expression.match(/^(%|#|\.|\!)(.*)/)) {
+      } else if (expression.match(/^(%|#[^{]|\.|\!)(.*)/)) {
         node = new Haml(expression, options);
       } else {
         node = new Text(expression, options);
       }
-      if ((_ref = options.parentNode) != null) {
-        _ref.addChild(node);
-      }
+      if ((_ref = options.parentNode) != null) _ref.addChild(node);
       return node;
     };
 
     HamlCoffee.prototype.parse = function(source) {
       var attributes, expression, line, lines, result, text, ws, _ref;
-      if (source == null) {
-        source = '';
-      }
+      if (source == null) source = '';
       this.lineNumber = this.previousIndent = this.tabSize = this.currentBlockLevel = this.previousBlockLevel = 0;
       this.currentCodeBlockLevel = this.previousCodeBlockLevel = 0;
       this.node = null;
@@ -533,9 +523,7 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
           result = line.match(/^(\s*)(.*)/);
           ws = result[1];
           expression = result[2];
-          if (/^\s*$/.test(line)) {
-            continue;
-          }
+          if (/^\s*$/.test(line)) continue;
           while (/^[%.#].*[{(]/.test(expression) && !/^(\s*)[-=&!~.%#</]/.test(lines[0]) && /([-\w]+[\w:-]*\w?)\s*=|('\w+[\w:-]*\w?')\s*=|("\w+[\w:-]*\w?")\s*=|(\w+[\w:-]*\w?):|('[-\w]+[\w:-]*\w?'):|("[-\w]+[\w:-]*\w?"):|:(\w+[\w:-]*\w?)\s*=>|:?'([-\w]+[\w:-]*\w?)'\s*=>|:?"([-\w]+[\w:-]*\w?)"\s*=>/.test(lines[0])) {
             attributes = lines.shift();
             expression = expression.replace(/(\s)+\|\s*$/, '');
@@ -577,9 +565,7 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
 
     HamlCoffee.prototype.render = function(templateName, namespace) {
       var segment, segments, template, _i, _len;
-      if (namespace == null) {
-        namespace = 'window.HAML';
-      }
+      if (namespace == null) namespace = 'window.HAML';
       template = '';
       segments = ("" + namespace + "." + templateName).replace(/(\s|-)+/g, '_').split(/\./);
       templateName = this.options.basename ? segments.pop().split(/\/|\\/).pop() : segments.pop();
@@ -670,7 +656,7 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
     };
 
     HamlCoffee.prototype.createCode = function() {
-      var child, code, line, processors, _i, _j, _len, _len1, _ref, _ref1;
+      var child, code, line, processors, _i, _j, _len, _len2, _ref, _ref2;
       code = [];
       this.lines = [];
       _ref = this.root.children;
@@ -680,9 +666,9 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
       }
       this.lines = this.combineText(this.lines);
       this.blockLevel = 0;
-      _ref1 = this.lines;
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        line = _ref1[_j];
+      _ref2 = this.lines;
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        line = _ref2[_j];
         if (line !== null) {
           switch (line.type) {
             case 'text':
@@ -698,18 +684,10 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
               break;
             case 'insert':
               processors = '';
-              if (line.findAndPreserve) {
-                processors += '$fp ';
-              }
-              if (line.preserve) {
-                processors += '$p ';
-              }
-              if (line.escape) {
-                processors += '$e ';
-              }
-              if (this.options.cleanValue) {
-                processors += '$c ';
-              }
+              if (line.findAndPreserve) processors += '$fp ';
+              if (line.preserve) processors += '$p ';
+              if (line.escape) processors += '$e ';
+              if (this.options.cleanValue) processors += '$c ';
               code.push("" + (whitespace(line.cw)) + (this.getBuffer(this.blockLevel)) + ".push \"" + (whitespace(line.hw)) + "\" + " + processors + line.code);
               if (line.block === 'start') {
                 this.blockLevel += 1;
@@ -768,7 +746,7 @@ require.define("/haml-coffee.js", function (require, module, exports, __dirname,
 
 });
 
-require.define("/nodes/node.js", function (require, module, exports, __dirname, __filename) {
+require.define("/nodes/node.coffee", function (require, module, exports, __dirname, __filename) {
 (function() {
   var Node, escapeHTML;
 
@@ -782,9 +760,7 @@ require.define("/nodes/node.js", function (require, module, exports, __dirname, 
 
     function Node(expression, options) {
       this.expression = expression != null ? expression : '';
-      if (options == null) {
-        options = {};
-      }
+      if (options == null) options = {};
       this.parentNode = options.parentNode;
       this.children = [];
       this.opener = this.closer = null;
@@ -831,9 +807,7 @@ require.define("/nodes/node.js", function (require, module, exports, __dirname, 
     };
 
     Node.prototype.isPreserved = function() {
-      if (this.preserve) {
-        return true;
-      }
+      if (this.preserve) return true;
       if (this.parentNode) {
         return this.parentNode.isPreserved();
       } else {
@@ -842,9 +816,7 @@ require.define("/nodes/node.js", function (require, module, exports, __dirname, 
     };
 
     Node.prototype.isCommented = function() {
-      if (this.constructor.name === 'Comment') {
-        return true;
-      }
+      if (this.constructor.name === 'Comment') return true;
       if (this.parentNode) {
         return this.parentNode.isCommented();
       } else {
@@ -853,9 +825,7 @@ require.define("/nodes/node.js", function (require, module, exports, __dirname, 
     };
 
     Node.prototype.markText = function(text, escape) {
-      if (escape == null) {
-        escape = false;
-      }
+      if (escape == null) escape = false;
       return {
         type: 'text',
         cw: this.codeBlockLevel,
@@ -873,15 +843,9 @@ require.define("/nodes/node.js", function (require, module, exports, __dirname, 
     };
 
     Node.prototype.markInsertingCode = function(code, escape, preserve, findAndPreserve) {
-      if (escape == null) {
-        escape = false;
-      }
-      if (preserve == null) {
-        preserve = false;
-      }
-      if (findAndPreserve == null) {
-        findAndPreserve = false;
-      }
+      if (escape == null) escape = false;
+      if (preserve == null) preserve = false;
+      if (findAndPreserve == null) findAndPreserve = false;
       return {
         type: 'insert',
         cw: this.codeBlockLevel,
@@ -896,11 +860,9 @@ require.define("/nodes/node.js", function (require, module, exports, __dirname, 
     Node.prototype.evaluate = function() {};
 
     Node.prototype.render = function() {
-      var child, output, rendered, tag, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4;
+      var child, output, rendered, tag, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref, _ref2, _ref3, _ref4, _ref5;
       output = [];
-      if (this.silent) {
-        return output;
-      }
+      if (this.silent) return output;
       if (this.children.length === 0) {
         if (this.opener && this.closer) {
           tag = this.getOpener();
@@ -921,9 +883,9 @@ require.define("/nodes/node.js", function (require, module, exports, __dirname, 
             _ref = this.children;
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               child = _ref[_i];
-              _ref1 = child.render();
-              for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-                rendered = _ref1[_j];
+              _ref2 = child.render();
+              for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+                rendered = _ref2[_j];
                 rendered.hw = this.blockLevel;
                 output.push(rendered);
               }
@@ -931,24 +893,24 @@ require.define("/nodes/node.js", function (require, module, exports, __dirname, 
             output.push(this.getCloser());
           } else {
             output.push(this.getOpener());
-            _ref2 = this.children;
-            for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
-              child = _ref2[_k];
+            _ref3 = this.children;
+            for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+              child = _ref3[_k];
               output = output.concat(child.render());
             }
             output.push(this.getCloser());
           }
         } else if (this.opener) {
           output.push(this.getOpener());
-          _ref3 = this.children;
-          for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
-            child = _ref3[_l];
+          _ref4 = this.children;
+          for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
+            child = _ref4[_l];
             output = output.concat(child.render());
           }
         } else {
-          _ref4 = this.children;
-          for (_m = 0, _len4 = _ref4.length; _m < _len4; _m++) {
-            child = _ref4[_m];
+          _ref5 = this.children;
+          for (_m = 0, _len5 = _ref5.length; _m < _len5; _m++) {
+            child = _ref5[_m];
             output.push(this.markText(child.render().text));
           }
         }
@@ -964,8 +926,7 @@ require.define("/nodes/node.js", function (require, module, exports, __dirname, 
 
 });
 
-require.define("/util/text.js", function (require, module, exports, __dirname, __filename) {
-(function() {
+require.define("/util/text.coffee", function (require, module, exports, __dirname, __filename) {
 
   module.exports = {
     whitespace: function(n) {
@@ -978,21 +939,15 @@ require.define("/util/text.js", function (require, module, exports, __dirname, _
       return a.join('');
     },
     escapeQuotes: function(text) {
-      if (!text) {
-        return '';
-      }
+      if (!text) return '';
       return text.replace(/"/g, '\\"').replace(/\\\\\"/g, '\\"');
     },
     unescapeQuotes: function(text) {
-      if (!text) {
-        return '';
-      }
+      if (!text) return '';
       return text.replace(/\\"/g, '"');
     },
     escapeHTML: function(text) {
-      if (!text) {
-        return '';
-      }
+      if (!text) return '';
       return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;');
     },
     preserve: function(code) {
@@ -1007,26 +962,23 @@ require.define("/util/text.js", function (require, module, exports, __dirname, _
     }
   };
 
-}).call(this);
-
 });
 
-require.define("/nodes/text.js", function (require, module, exports, __dirname, __filename) {
+require.define("/nodes/text.coffee", function (require, module, exports, __dirname, __filename) {
 (function() {
-  var Node, Text, escapeQuotes,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  var Node, Text, escapeQuotes;
+  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   Node = require('./node');
 
   escapeQuotes = require('../util/text').escapeQuotes;
 
-  module.exports = Text = (function(_super) {
+  module.exports = Text = (function() {
 
-    __extends(Text, _super);
+    __extends(Text, Node);
 
     function Text() {
-      return Text.__super__.constructor.apply(this, arguments);
+      Text.__super__.constructor.apply(this, arguments);
     }
 
     Text.prototype.evaluate = function() {
@@ -1035,28 +987,27 @@ require.define("/nodes/text.js", function (require, module, exports, __dirname, 
 
     return Text;
 
-  })(Node);
+  })();
 
 }).call(this);
 
 });
 
-require.define("/nodes/haml.js", function (require, module, exports, __dirname, __filename) {
+require.define("/nodes/haml.coffee", function (require, module, exports, __dirname, __filename) {
 (function() {
-  var Haml, Node, escapeQuotes,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  var Haml, Node, escapeQuotes;
+  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   Node = require('./node');
 
   escapeQuotes = require('../util/text').escapeQuotes;
 
-  module.exports = Haml = (function(_super) {
+  module.exports = Haml = (function() {
 
-    __extends(Haml, _super);
+    __extends(Haml, Node);
 
     function Haml() {
-      return Haml.__super__.constructor.apply(this, arguments);
+      Haml.__super__.constructor.apply(this, arguments);
     }
 
     Haml.prototype.evaluate = function() {
@@ -1120,18 +1071,16 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
     };
 
     Haml.prototype.parseExpression = function(exp) {
-      var attributes, classes, id, key, tag, value, _ref, _ref1;
+      var attributes, classes, id, key, tag, value, _ref, _ref2;
       tag = this.parseTag(exp);
-      if (this.preserveTags.indexOf(tag.tag) !== -1) {
-        this.preserve = true;
-      }
+      if (this.preserveTags.indexOf(tag.tag) !== -1) this.preserve = true;
       id = this.wrapCode((_ref = tag.ids) != null ? _ref.pop() : void 0, true);
       classes = tag.classes;
       attributes = {};
       if (tag.attributes) {
-        _ref1 = tag.attributes;
-        for (key in _ref1) {
-          value = _ref1[key];
+        _ref2 = tag.attributes;
+        for (key in _ref2) {
+          value = _ref2[key];
           if (key === 'id') {
             if (id) {
               id += '_' + this.wrapCode(value, true);
@@ -1158,7 +1107,7 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
     };
 
     Haml.prototype.parseTag = function(exp) {
-      var assignment, attributes, ch, classes, doctype, end, haml, id, ids, klass, level, pos, rest, start, tag, text, whitespace, _i, _ref, _ref1, _ref2;
+      var assignment, attributes, ch, classes, doctype, end, haml, id, ids, klass, level, pos, rest, start, tag, text, whitespace, _ref, _ref2, _ref3;
       try {
         doctype = (_ref = exp.match(/^(\!{3}.*)/)) != null ? _ref[1] : void 0;
         if (doctype) {
@@ -1179,11 +1128,9 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
             }
           })();
           level = 0;
-          for (pos = _i = 0, _ref1 = rest.length; 0 <= _ref1 ? _i <= _ref1 : _i >= _ref1; pos = 0 <= _ref1 ? ++_i : --_i) {
+          for (pos = 0, _ref2 = rest.length; 0 <= _ref2 ? pos <= _ref2 : pos >= _ref2; 0 <= _ref2 ? pos++ : pos--) {
             ch = rest[pos];
-            if (ch === start) {
-              level += 1;
-            }
+            if (ch === start) level += 1;
             if (ch === end) {
               if (level === 1) {
                 break;
@@ -1198,20 +1145,16 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
           attributes = '';
           assignment = rest;
         }
-        if (whitespace = (_ref2 = assignment.match(/^[<>]{0,2}/)) != null ? _ref2[0] : void 0) {
+        if (whitespace = (_ref3 = assignment.match(/^[<>]{0,2}/)) != null ? _ref3[0] : void 0) {
           assignment = assignment.substring(whitespace.length);
         }
-        if (assignment[0] === ' ') {
-          assignment = assignment.substring(1);
-        }
+        if (assignment[0] === ' ') assignment = assignment.substring(1);
         if (assignment && !assignment.match(/^(=|!=|&=|~)/)) {
           text = assignment.replace(/^ /, '');
           assignment = void 0;
         }
         if (whitespace) {
-          if (whitespace.indexOf('>') !== -1) {
-            this.wsRemoval.around = true;
-          }
+          if (whitespace.indexOf('>') !== -1) this.wsRemoval.around = true;
           if (whitespace.indexOf('<') !== -1) {
             this.wsRemoval.inside = true;
             this.preserve = true;
@@ -1223,19 +1166,19 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
         return {
           tag: tag ? tag[1] : 'div',
           ids: ids ? (function() {
-            var _j, _len, _results;
+            var _i, _len, _results;
             _results = [];
-            for (_j = 0, _len = ids.length; _j < _len; _j++) {
-              id = ids[_j];
+            for (_i = 0, _len = ids.length; _i < _len; _i++) {
+              id = ids[_i];
               _results.push("'" + (id.substr(1)) + "'");
             }
             return _results;
           })() : void 0,
           classes: classes ? (function() {
-            var _j, _len, _results;
+            var _i, _len, _results;
             _results = [];
-            for (_j = 0, _len = classes.length; _j < _len; _j++) {
-              klass = classes[_j];
+            for (_i = 0, _len = classes.length; _i < _len; _i++) {
+              klass = classes[_i];
               _results.push("'" + (klass.substr(1)) + "'");
             }
             return _results;
@@ -1250,11 +1193,9 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
     };
 
     Haml.prototype.parseAttributes = function(exp) {
-      var attributes, ch, endPos, hasDataAttribute, inDataAttribute, key, keyValue, keys, level, marker, markers, pairs, pos, quoted, start, startPos, type, value, _i, _j, _len, _ref, _ref1, _ref2;
+      var attributes, ch, endPos, hasDataAttribute, inDataAttribute, key, keyValue, keys, level, marker, markers, pairs, pos, quoted, start, startPos, type, value, _i, _len, _ref, _ref2, _ref3;
       attributes = {};
-      if (exp === void 0) {
-        return attributes;
-      }
+      if (exp === void 0) return attributes;
       type = exp.substring(0, 1);
       exp = exp.replace(/(=|:|=>)\s*('([^\\']|\\\\|\\')*'|"([^\\"]|\\\\|\\")*")/g, function(match, type, value) {
         return type + (value != null ? value.replace(/(:|=|=>)/g, '\u0090$1') : void 0);
@@ -1269,7 +1210,7 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
         startPos = 0;
         endPos = exp.length;
       }
-      for (pos = _i = startPos; startPos <= endPos ? _i < endPos : _i > endPos; pos = startPos <= endPos ? ++_i : --_i) {
+      for (pos = startPos; startPos <= endPos ? pos < endPos : pos > endPos; startPos <= endPos ? pos++ : pos--) {
         ch = exp[pos];
         if (ch === '(') {
           level += 1;
@@ -1289,8 +1230,8 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
         }
       }
       _ref = markers.reverse();
-      for (_j = 0, _len = _ref.length; _j < _len; _j++) {
-        marker = _ref[_j];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        marker = _ref[_i];
         exp = exp.substring(0, marker.start) + exp.substring(marker.start, marker.end).replace(/(:|=|=>)/g, '\u0090$1') + exp.substring(marker.end);
       }
       switch (type) {
@@ -1305,20 +1246,16 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
       hasDataAttribute = false;
       while (pairs.length) {
         keyValue = pairs.splice(0, 2);
-        key = (_ref1 = keyValue[0]) != null ? _ref1.replace(/^\s+|\s+$/g, '').replace(/^:/, '') : void 0;
-        if (quoted = key.match(/^("|')(.*)\1$/)) {
-          key = quoted[2];
-        }
-        value = (_ref2 = keyValue[1]) != null ? _ref2.replace(/^\s+|[\s,]+$/g, '').replace(/\u0090/g, '') : void 0;
+        key = (_ref2 = keyValue[0]) != null ? _ref2.replace(/^\s+|\s+$/g, '').replace(/^:/, '') : void 0;
+        if (quoted = key.match(/^("|')(.*)\1$/)) key = quoted[2];
+        value = (_ref3 = keyValue[1]) != null ? _ref3.replace(/^\s+|[\s,]+$/g, '').replace(/\u0090/g, '') : void 0;
         if (key === 'data') {
           inDataAttribute = true;
           hasDataAttribute = true;
         } else if (key && value) {
           if (inDataAttribute) {
             key = "data-" + key;
-            if (/}\s*$/.test(value)) {
-              inDataAttribute = false;
-            }
+            if (/}\s*$/.test(value)) inDataAttribute = false;
           }
         }
         switch (type) {
@@ -1329,9 +1266,7 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
             attributes[key] = value.replace(/^\s+|[\s}]+$/g, '');
         }
       }
-      if (hasDataAttribute) {
-        delete attributes['data'];
-      }
+      if (hasDataAttribute) delete attributes['data'];
       return attributes;
     };
 
@@ -1347,9 +1282,7 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             name = _ref[_i];
             name = this.wrapCode(name, true);
-            if (name.indexOf('#{') !== -1) {
-              hasDynamicClass = true;
-            }
+            if (name.indexOf('#{') !== -1) hasDynamicClass = true;
             _results.push(name);
           }
           return _results;
@@ -1366,9 +1299,7 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
         }
         tagParts.push("class='" + classes + "'");
       }
-      if (tokens.id) {
-        tagParts.push("id='" + tokens.id + "'");
-      }
+      if (tokens.id) tagParts.push("id='" + tokens.id + "'");
       if (tokens.attributes) {
         _ref = tokens.attributes;
         for (key in _ref) {
@@ -1391,12 +1322,8 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
 
     Haml.prototype.wrapCode = function(text, unwrap) {
       var quoted;
-      if (unwrap == null) {
-        unwrap = false;
-      }
-      if (!text) {
-        return;
-      }
+      if (unwrap == null) unwrap = false;
+      if (!text) return;
       if (!text.match(/^("|').*\1$/)) {
         if (this.escapeAttributes) {
           if (this.cleanValue) {
@@ -1412,25 +1339,15 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
           }
         }
       }
-      if (unwrap) {
-        if (quoted = text.match(/^("|')(.*)\1$/)) {
-          text = quoted[2];
-        }
-      }
+      if (unwrap) if (quoted = text.match(/^("|')(.*)\1$/)) text = quoted[2];
       return text;
     };
 
     Haml.prototype.quoteAndEscapeAttributeValue = function(value, code) {
       var escaped, hasDoubleQuotes, hasInterpolation, hasSingleQuotes, quoted, result, token, tokens, _i, _len;
-      if (code == null) {
-        code = false;
-      }
-      if (!value) {
-        return;
-      }
-      if (quoted = value.match(/^("|')(.*)\1$/)) {
-        value = quoted[2];
-      }
+      if (code == null) code = false;
+      if (!value) return;
+      if (quoted = value.match(/^("|')(.*)\1$/)) value = quoted[2];
       tokens = this.splitInterpolations(value);
       hasSingleQuotes = false;
       hasDoubleQuotes = false;
@@ -1440,12 +1357,8 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
         if (token.slice(0, 2) === '#{') {
           hasInterpolation = true;
         } else {
-          if (!hasSingleQuotes) {
-            hasSingleQuotes = token.indexOf("'") !== -1;
-          }
-          if (!hasDoubleQuotes) {
-            hasDoubleQuotes = token.indexOf('"') !== -1;
-          }
+          if (!hasSingleQuotes) hasSingleQuotes = token.indexOf("'") !== -1;
+          if (!hasDoubleQuotes) hasDoubleQuotes = token.indexOf('"') !== -1;
         }
       }
       if (code) {
@@ -1463,9 +1376,9 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
         }
         if (hasDoubleQuotes && !hasSingleQuotes) {
           escaped = (function() {
-            var _j, _len1, _results;
+            var _j, _len2, _results;
             _results = [];
-            for (_j = 0, _len1 = tokens.length; _j < _len1; _j++) {
+            for (_j = 0, _len2 = tokens.length; _j < _len2; _j++) {
               token = tokens[_j];
               _results.push(escapeQuotes(token));
             }
@@ -1475,9 +1388,9 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
         }
         if (hasSingleQuotes && hasDoubleQuotes) {
           escaped = (function() {
-            var _j, _len1, _results;
+            var _j, _len2, _results;
             _results = [];
-            for (_j = 0, _len1 = tokens.length; _j < _len1; _j++) {
+            for (_j = 0, _len2 = tokens.length; _j < _len2; _j++) {
               token = tokens[_j];
               _results.push(escapeQuotes(token).replace(/'/g, '&#39;'));
             }
@@ -1490,17 +1403,15 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
     };
 
     Haml.prototype.splitInterpolations = function(value) {
-      var ch, ch2, level, pos, quoted, start, tokens, _i, _ref;
+      var ch, ch2, level, pos, quoted, start, tokens, _ref;
       level = 0;
       start = 0;
       tokens = [];
       quoted = false;
-      for (pos = _i = 0, _ref = value.length; 0 <= _ref ? _i < _ref : _i > _ref; pos = 0 <= _ref ? ++_i : --_i) {
+      for (pos = 0, _ref = value.length; 0 <= _ref ? pos < _ref : pos > _ref; 0 <= _ref ? pos++ : pos--) {
         ch = value[pos];
         ch2 = value.slice(pos, (pos + 1) + 1 || 9e9);
-        if (ch === '{') {
-          level += 1;
-        }
+        if (ch === '{') level += 1;
         if (ch2 === '#{' && level === 0) {
           tokens.push(value.slice(start, pos));
           start = pos;
@@ -1552,26 +1463,25 @@ require.define("/nodes/haml.js", function (require, module, exports, __dirname, 
 
     return Haml;
 
-  })(Node);
+  })();
 
 }).call(this);
 
 });
 
-require.define("/nodes/code.js", function (require, module, exports, __dirname, __filename) {
+require.define("/nodes/code.coffee", function (require, module, exports, __dirname, __filename) {
 (function() {
-  var Code, Node,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  var Code, Node;
+  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   Node = require('./node');
 
-  module.exports = Code = (function(_super) {
+  module.exports = Code = (function() {
 
-    __extends(Code, _super);
+    __extends(Code, Node);
 
     function Code() {
-      return Code.__super__.constructor.apply(this, arguments);
+      Code.__super__.constructor.apply(this, arguments);
     }
 
     Code.prototype.evaluate = function() {
@@ -1605,28 +1515,27 @@ require.define("/nodes/code.js", function (require, module, exports, __dirname, 
 
     return Code;
 
-  })(Node);
+  })();
 
 }).call(this);
 
 });
 
-require.define("/nodes/comment.js", function (require, module, exports, __dirname, __filename) {
+require.define("/nodes/comment.coffee", function (require, module, exports, __dirname, __filename) {
 (function() {
-  var Comment, Node, escapeQuotes,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  var Comment, Node, escapeQuotes;
+  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   Node = require('./node');
 
   escapeQuotes = require('../util/text').escapeQuotes;
 
-  module.exports = Comment = (function(_super) {
+  module.exports = Comment = (function() {
 
-    __extends(Comment, _super);
+    __extends(Comment, Node);
 
     function Comment() {
-      return Comment.__super__.constructor.apply(this, arguments);
+      Comment.__super__.constructor.apply(this, arguments);
     }
 
     Comment.prototype.evaluate = function() {
@@ -1652,17 +1561,16 @@ require.define("/nodes/comment.js", function (require, module, exports, __dirnam
 
     return Comment;
 
-  })(Node);
+  })();
 
 }).call(this);
 
 });
 
-require.define("/nodes/filter.js", function (require, module, exports, __dirname, __filename) {
+require.define("/nodes/filter.coffee", function (require, module, exports, __dirname, __filename) {
 (function() {
-  var Filter, Node, unescapeQuotes, whitespace,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  var Filter, Node, unescapeQuotes, whitespace;
+  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   Node = require('./node');
 
@@ -1670,12 +1578,12 @@ require.define("/nodes/filter.js", function (require, module, exports, __dirname
 
   unescapeQuotes = require('../util/text').unescapeQuotes;
 
-  module.exports = Filter = (function(_super) {
+  module.exports = Filter = (function() {
 
-    __extends(Filter, _super);
+    __extends(Filter, Node);
 
     function Filter() {
-      return Filter.__super__.constructor.apply(this, arguments);
+      Filter.__super__.constructor.apply(this, arguments);
     }
 
     Filter.prototype.evaluate = function() {
@@ -1684,7 +1592,7 @@ require.define("/nodes/filter.js", function (require, module, exports, __dirname
     };
 
     Filter.prototype.render = function() {
-      var child, indent, output, preserve, _i, _j, _len, _len1, _ref, _ref1;
+      var child, indent, output, preserve, _i, _j, _len, _len2, _ref, _ref2;
       output = [];
       switch (this.filter) {
         case 'escaped':
@@ -1696,9 +1604,9 @@ require.define("/nodes/filter.js", function (require, module, exports, __dirname
           break;
         case 'preserve':
           preserve = '';
-          _ref1 = this.children;
-          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-            child = _ref1[_j];
+          _ref2 = this.children;
+          for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+            child = _ref2[_j];
             preserve += "" + (child.render()[0].text) + "&#x000A;";
           }
           preserve = preserve.replace(/\&\#x000A;$/, '');
@@ -1718,9 +1626,7 @@ require.define("/nodes/filter.js", function (require, module, exports, __dirname
           }
           indent = this.format === 'xhtml' ? 2 : 1;
           this.renderFilterContent(indent, output);
-          if (this.format === 'xhtml') {
-            output.push(this.markText('  /*]]>*/'));
-          }
+          if (this.format === 'xhtml') output.push(this.markText('  /*]]>*/'));
           output.push(this.markText('</style>'));
           break;
         case 'javascript':
@@ -1729,14 +1635,10 @@ require.define("/nodes/filter.js", function (require, module, exports, __dirname
           } else {
             output.push(this.markText('<script type=\'text/javascript\'>'));
           }
-          if (this.format === 'xhtml') {
-            output.push(this.markText('  //<![CDATA['));
-          }
+          if (this.format === 'xhtml') output.push(this.markText('  //<![CDATA['));
           indent = this.format === 'xhtml' ? 2 : 1;
           this.renderFilterContent(indent, output);
-          if (this.format === 'xhtml') {
-            output.push(this.markText('  //]]>'));
-          }
+          if (this.format === 'xhtml') output.push(this.markText('  //]]>'));
           output.push(this.markText('</script>'));
           break;
         case 'cdata':
@@ -1751,10 +1653,8 @@ require.define("/nodes/filter.js", function (require, module, exports, __dirname
     };
 
     Filter.prototype.renderFilterContent = function(indent, output, type) {
-      var child, content, e, empty, line, _i, _j, _k, _len, _len1, _ref, _results;
-      if (type == null) {
-        type = 'text';
-      }
+      var child, content, e, empty, line, _i, _j, _len, _len2, _ref, _results;
+      if (type == null) type = 'text';
       content = [];
       empty = 0;
       _ref = this.children;
@@ -1763,14 +1663,14 @@ require.define("/nodes/filter.js", function (require, module, exports, __dirname
         content.push(child.render()[0].text);
       }
       _results = [];
-      for (_j = 0, _len1 = content.length; _j < _len1; _j++) {
+      for (_j = 0, _len2 = content.length; _j < _len2; _j++) {
         line = content[_j];
         if (line === '') {
           _results.push(empty += 1);
         } else {
           switch (type) {
             case 'text':
-              for (e = _k = 0; 0 <= empty ? _k < empty : _k > empty; e = 0 <= empty ? ++_k : --_k) {
+              for (e = 0; 0 <= empty ? e < empty : e > empty; 0 <= empty ? e++ : e--) {
                 output.push(this.markText(""));
               }
               output.push(this.markText("" + (whitespace(indent)) + line));
@@ -1786,7 +1686,7 @@ require.define("/nodes/filter.js", function (require, module, exports, __dirname
 
     return Filter;
 
-  })(Node);
+  })();
 
 }).call(this);
 
