@@ -1,4 +1,4 @@
-# Master
+# Version 1.4.2, August 20, 2012
 
   * Convert to pure CoffeeScript project. The pure JS compiler is only distributed as bundled file.
   * Fix colored cli output.
