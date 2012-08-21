@@ -71,19 +71,19 @@ Starting with version 1.4.0, Haml Coffee has support for Express 3 and can be re
 
 ```coffee-script
 express = require 'express'
-cons    = require 'consolidate'
+app     = express()
 
-app = express.createServer()
-app.engine '.hamlc', require('haml-coffee').__express
+app.engine 'hamlc', require('haml-coffee').__express
 ```
 
 Alternatively you can also use [consolidate.js](https://github.com/visionmedia/consolidate.js) to register the engine:
 
 ```coffee-script
 express = require 'express'
+cons    = require 'consolidate'
+app     = express()
 
-app = express.createServer()
-app.engine '.hamlc', cons['haml-coffee']
+app.engine 'hamlc', cons['haml-coffee']);
 ```
 
 #### Express 2
@@ -101,6 +101,7 @@ Alternatively you can also use [consolidate.js](https://github.com/visionmedia/c
 
 ```coffee-script
 express = require 'express'
+cons    = require 'consolidate'
 
 app = express.createServer()
 app.register '.hamlc', cons['haml-coffee']
