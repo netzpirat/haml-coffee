@@ -1694,15 +1694,13 @@ require.define("/nodes/filter.coffee", function (require, module, exports, __dir
 
 require.define("/hamlc.coffee", function (require, module, exports, __dirname, __filename) {
 (function() {
-  var CoffeeScript, Compiler, fs, __expressCache;
+  var Compiler, fs, __expressCache;
 
   fs = require('fs');
 
   Compiler = require('./haml-coffee');
 
-  if (this.toString().indexOf('Window') === -1) {
-    CoffeeScript = require('coffee-script');
-  }
+  CoffeeScript || (CoffeeScript = require('coffee-script'));
 
   __expressCache = {};
 

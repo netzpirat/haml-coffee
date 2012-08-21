@@ -1,9 +1,7 @@
 fs = require 'fs'
 
-Compiler     = require './haml-coffee'
-
-unless @toString().indexOf('Window') isnt -1
-  CoffeeScript = require 'coffee-script'
+Compiler       = require './haml-coffee'
+CoffeeScript or= require 'coffee-script'
 
 # Express 3 template Cache
 __expressCache = {}
