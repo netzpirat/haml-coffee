@@ -39,7 +39,9 @@ publish = (cb) ->
 
       log "Update compiler dist for  #{ p.version }"
       b = browserify()
+      b.ignore 'coffee-script'
       b.require "#{ __dirname }/src/haml-coffee.coffee"
+      b.require "#{ __dirname }/src/hamlc.coffee"
 
       code = b.bundle()
       fs.writeFileSync 'dist/compiler/hamlcoffee.js', code
