@@ -1700,7 +1700,9 @@ require.define("/hamlc.coffee", function (require, module, exports, __dirname, _
 
   Compiler = require('./haml-coffee');
 
-  CoffeeScript = require('coffee-script');
+  if (this.toString().indexOf('Window') === -1) {
+    CoffeeScript = require('coffee-script');
+  }
 
   __expressCache = {};
 
