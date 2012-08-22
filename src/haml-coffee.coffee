@@ -492,10 +492,13 @@ module.exports = class HamlCoffee
   # @return [String] the clean up whitespace code if necessary
   #
   convertBooleans: (code) ->
-    if @options.format is 'xhtml'
-      '.replace(/\\s(\\w+)=\'\u0093true\'/mg, " $1=\'$1\'").replace(/\\s(\\w+)=\'\u0093false\'/mg, \'\')'
+    if code.indexOf('$c') isnt -1
+      if @options.format is 'xhtml'
+        '.replace(/\\s(\\w+)=\'\u0093true\'/mg, " $1=\'$1\'").replace(/\\s(\\w+)=\'\u0093false\'/mg, \'\')'
+      else
+        '.replace(/\\s(\\w+)=\'\u0093true\'/mg, \' $1\').replace(/\\s(\\w+)=\'\u0093false\'/mg, \'\')'
     else
-      '.replace(/\\s(\\w+)=\'\u0093true\'/mg, \' $1\').replace(/\\s(\\w+)=\'\u0093false\'/mg, \'\')'
+      ''
 
   # Adds whitespace cleanup function when needed by the
   # template. The cleanup must be done AFTER the template

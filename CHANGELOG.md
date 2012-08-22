@@ -1,3 +1,7 @@
+# Master
+
+  * Don't add the Boolean conversion without any cleaned value.
+
 # Version 1.4.4. August 22, 2012
 
   * Fix CoffeeScript compiler loading.
