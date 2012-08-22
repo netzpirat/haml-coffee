@@ -20,9 +20,9 @@
     "node" : ">=0.4.0"
   },
   "directories" : {
-    "lib" : "./lib"
+    "lib" : "./src"
   },
-  "main" : "./lib/hamlc",
+  "main" : "./src/hamlc",
   "bin" : {
     "haml-coffee" : "./bin/haml-coffee"
   },
