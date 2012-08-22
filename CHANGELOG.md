@@ -1,3 +1,8 @@
+# Version 1.4.3. August 22, 2012
+
+  * Add [hamlc](https://github.com/netzpirat/haml-coffee/blob/master/src/hamlc.coffee) facade to the compiler dist.
+  * Fix package distribution.
+
 # Version 1.4.2, August 20, 2012
 
   * Convert to pure CoffeeScript project. The pure JS compiler is only distributed as bundled file.
