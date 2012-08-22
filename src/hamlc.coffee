@@ -1,7 +1,11 @@
 fs = require 'fs'
 
 Compiler       = require './haml-coffee'
-CoffeeScript or= require 'coffee-script'
+
+if process.title is 'node'
+  CoffeeScript = require 'coffee-script'
+else
+  CoffeeScript = window.CoffeeScript
 
 # Express 3 template Cache
 __expressCache = {}

@@ -1,3 +1,7 @@
+# Master
+
+  * Fix CoffeeScript compiler loading.
+
 # Version 1.4.3. August 22, 2012
 
   * Add [hamlc](https://github.com/netzpirat/haml-coffee/blob/master/src/hamlc.coffee) facade to the compiler dist.

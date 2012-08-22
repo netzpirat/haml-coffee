@@ -32,7 +32,9 @@ If you like to integrate Haml Coffee seamless into the Rails asset pipeline, che
 For using the Haml Coffee compiler in the browser, a [browserified](https://github.com/substack/node-browserify) version
 is provided in the `dist/compiler` directory:
 [Haml Coffee compiler](https://raw.github.com/netzpirat/haml-coffee/master/dist/compiler/hamlcoffee.js)
-([minified](https://raw.github.com/netzpirat/haml-coffee/master/dist/compiler/hamlcoffee.min.js))
+([minified](https://raw.github.com/netzpirat/haml-coffee/master/dist/compiler/hamlcoffee.min.js)). The browser
+distribution doesn't come bundled with CoffeeScript, so you'll have to make sure you've included it before requiring
+haml-coffee.
 
 ## Compile Haml Coffee
 
