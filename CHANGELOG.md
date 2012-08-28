@@ -1,4 +1,4 @@
-# Master
+# Version 1.4.6, August 28, 2012
 
   * Fix Browserify environment detection.
 
