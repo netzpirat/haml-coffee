@@ -363,7 +363,7 @@ require.define("/haml-coffee.coffee", function (require, module, exports, __dirn
 
   module.exports = HamlCoffee = (function() {
 
-    HamlCoffee.VERSION = '1.4.2';
+    HamlCoffee.VERSION = '1.4.5';
 
     function HamlCoffee(options) {
       var _base, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
@@ -723,10 +723,14 @@ require.define("/haml-coffee.coffee", function (require, module, exports, __dirn
     };
 
     HamlCoffee.prototype.convertBooleans = function(code) {
-      if (this.options.format === 'xhtml') {
-        return '.replace(/\\s(\\w+)=\'\u0093true\'/mg, " $1=\'$1\'").replace(/\\s(\\w+)=\'\u0093false\'/mg, \'\')';
+      if (code.indexOf('$c') !== -1) {
+        if (this.options.format === 'xhtml') {
+          return '.replace(/\\s(\\w+)=\'\u0093true\'/mg, " $1=\'$1\'").replace(/\\s(\\w+)=\'\u0093false\'/mg, \'\')';
+        } else {
+          return '.replace(/\\s(\\w+)=\'\u0093true\'/mg, \' $1\').replace(/\\s(\\w+)=\'\u0093false\'/mg, \'\')';
+        }
       } else {
-        return '.replace(/\\s(\\w+)=\'\u0093true\'/mg, \' $1\').replace(/\\s(\\w+)=\'\u0093false\'/mg, \'\')';
+        return '';
       }
     };
 
@@ -1074,7 +1078,7 @@ require.define("/nodes/haml.coffee", function (require, module, exports, __dirna
       var attributes, classes, id, key, tag, value, _ref, _ref2;
       tag = this.parseTag(exp);
       if (this.preserveTags.indexOf(tag.tag) !== -1) this.preserve = true;
-      id = this.wrapCode((_ref = tag.ids) != null ? _ref.pop() : void 0, true);
+      id = this.interpolateCodeAttribute((_ref = tag.ids) != null ? _ref.pop() : void 0, true);
       classes = tag.classes;
       attributes = {};
       if (tag.attributes) {
@@ -1083,9 +1087,9 @@ require.define("/nodes/haml.coffee", function (require, module, exports, __dirna
           value = _ref2[key];
           if (key === 'id') {
             if (id) {
-              id += '_' + this.wrapCode(value, true);
+              id += '_' + this.interpolateCodeAttribute(value, true);
             } else {
-              id = this.wrapCode(value, true);
+              id = this.interpolateCodeAttribute(value, true);
             }
           } else if (key === 'class') {
             classes || (classes = []);
@@ -1281,7 +1285,7 @@ require.define("/nodes/haml.coffee", function (require, module, exports, __dirna
           _results = [];
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             name = _ref[_i];
-            name = this.wrapCode(name, true);
+            name = this.interpolateCodeAttribute(name, true);
             if (name.indexOf('#{') !== -1) hasDynamicClass = true;
             _results.push(name);
           }
@@ -1313,14 +1317,14 @@ require.define("/nodes/haml.coffee", function (require, module, exports, __dirna
               }
             }
           } else {
-            tagParts.push("" + key + "=" + (this.quoteAndEscapeAttributeValue(this.wrapCode(value))));
+            tagParts.push("" + key + "=" + (this.quoteAndEscapeAttributeValue(this.interpolateCodeAttribute(value))));
           }
         }
       }
       return tagParts.join(' ');
     };
 
-    Haml.prototype.wrapCode = function(text, unwrap) {
+    Haml.prototype.interpolateCodeAttribute = function(text, unwrap) {
       var quoted;
       if (unwrap == null) unwrap = false;
       if (!text) return;
@@ -1344,7 +1348,7 @@ require.define("/nodes/haml.coffee", function (require, module, exports, __dirna
     };
 
     Haml.prototype.quoteAndEscapeAttributeValue = function(value, code) {
-      var escaped, hasDoubleQuotes, hasInterpolation, hasSingleQuotes, quoted, result, token, tokens, _i, _len;
+      var escaped, hasDoubleQuotes, hasInterpolation, hasSingleQuotes, quoted, result, token, tokens;
       if (code == null) code = false;
       if (!value) return;
       if (quoted = value.match(/^("|')(.*)\1$/)) value = quoted[2];
@@ -1352,15 +1356,32 @@ require.define("/nodes/haml.coffee", function (require, module, exports, __dirna
       hasSingleQuotes = false;
       hasDoubleQuotes = false;
       hasInterpolation = false;
-      for (_i = 0, _len = tokens.length; _i < _len; _i++) {
-        token = tokens[_i];
-        if (token.slice(0, 2) === '#{') {
-          hasInterpolation = true;
-        } else {
-          if (!hasSingleQuotes) hasSingleQuotes = token.indexOf("'") !== -1;
-          if (!hasDoubleQuotes) hasDoubleQuotes = token.indexOf('"') !== -1;
+      tokens = (function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = tokens.length; _i < _len; _i++) {
+          token = tokens[_i];
+          if (token.slice(0, 2) === '#{') {
+            if (token.indexOf('$e') === -1 && token.indexOf('$c') === -1) {
+              if (this.escapeAttributes) {
+                if (this.cleanValue) {
+                  token = '#{ $e($c(' + token.slice(2, -1) + ')) }';
+                } else {
+                  token = '#{ $e(' + token.slice(2, -1) + ') }';
+                }
+              } else {
+                if (this.cleanValue) token = '#{ $c(' + token.slice(2, -1) + ') }';
+              }
+            }
+            hasInterpolation = true;
+          } else {
+            if (!hasSingleQuotes) hasSingleQuotes = token.indexOf("'") !== -1;
+            if (!hasDoubleQuotes) hasDoubleQuotes = token.indexOf('"') !== -1;
+          }
+          _results.push(token);
         }
-      }
+        return _results;
+      }).call(this);
       if (code) {
         if (hasInterpolation) {
           result = "\"" + (tokens.join('')) + "\"";
@@ -1376,10 +1397,10 @@ require.define("/nodes/haml.coffee", function (require, module, exports, __dirna
         }
         if (hasDoubleQuotes && !hasSingleQuotes) {
           escaped = (function() {
-            var _j, _len2, _results;
+            var _i, _len, _results;
             _results = [];
-            for (_j = 0, _len2 = tokens.length; _j < _len2; _j++) {
-              token = tokens[_j];
+            for (_i = 0, _len = tokens.length; _i < _len; _i++) {
+              token = tokens[_i];
               _results.push(escapeQuotes(token));
             }
             return _results;
@@ -1388,10 +1409,10 @@ require.define("/nodes/haml.coffee", function (require, module, exports, __dirna
         }
         if (hasSingleQuotes && hasDoubleQuotes) {
           escaped = (function() {
-            var _j, _len2, _results;
+            var _i, _len, _results;
             _results = [];
-            for (_j = 0, _len2 = tokens.length; _j < _len2; _j++) {
-              token = tokens[_j];
+            for (_i = 0, _len = tokens.length; _i < _len; _i++) {
+              token = tokens[_i];
               _results.push(escapeQuotes(token).replace(/'/g, '&#39;'));
             }
             return _results;
