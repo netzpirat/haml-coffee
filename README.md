@@ -309,7 +309,7 @@ Haml Coffee supports a small subset of the Ruby Haml [helpers](http://haml-lang.
 Surrounds a block of Haml code with strings, with no whitespace in between.
 
 ```haml
-= surround '(', ')', ->
+!= surround '(', ')', ->
   %a{:href => "food"} chicken
 ```
 
@@ -325,7 +325,7 @@ Appends a string to the end of a Haml block, with no whitespace between.
 
 ```haml
 click
-= succeed '.', ->
+!= succeed '.', ->
   %a{:href=>"thing"} here
 ```
 
@@ -341,7 +341,7 @@ click
 Prepends a string to the beginning of a Haml block, with no whitespace between.
 
 ```haml
-= precede '*', ->
+!= precede '*', ->
   %span.small Not really
 ```
 
