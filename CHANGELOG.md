@@ -1,3 +1,7 @@
+# Master
+
+  * Fix Browserify environment detection.
+
 # Version 1.4.5, August 28, 2012
 
   * Escape and clean every attribute interpolation.
