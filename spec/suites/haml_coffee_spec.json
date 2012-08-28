@@ -225,7 +225,11 @@
 
     "Quotes within attributes" : {
       "haml_template" : "coffee/quotes",
-      "html_template" : "coffee/quotes"
+      "html_template" : "coffee/quotes",
+      "config" : {
+        "escape_html" : "true",
+        "escape_attributes" : "true"
+      }
     }
   },
 

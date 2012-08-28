@@ -129,7 +129,7 @@ module.exports = class Haml extends Node
 
     @preserve = true if @preserveTags.indexOf(tag.tag) isnt -1
 
-    id         = @wrapCode(tag.ids?.pop(), true)
+    id         = @interpolateCodeAttribute(tag.ids?.pop(), true)
     classes    = tag.classes
     attributes = {}
 
@@ -139,10 +139,10 @@ module.exports = class Haml extends Node
         if key is 'id'
           if id
             # Merge attribute id into existing id
-            id += '_' + @wrapCode(value, true)
+            id += '_' + @interpolateCodeAttribute(value, true)
           else
             # Push id from attribute
-            id = @wrapCode(value, true)
+            id = @interpolateCodeAttribute(value, true)
 
         # Merge classes
         else if key is 'class'
@@ -395,7 +395,7 @@ module.exports = class Haml extends Node
 
       # Prepare static and dynamic class names
       classList = for name in tokens.classes
-        name = @wrapCode(name, true)
+        name = @interpolateCodeAttribute(name, true)
         hasDynamicClass = true if name.indexOf('#{') isnt -1
         name
 
@@ -430,7 +430,7 @@ module.exports = class Haml extends Node
 
         # Anything but booleans
         else
-          tagParts.push "#{ key }=#{ @quoteAndEscapeAttributeValue(@wrapCode(value)) }"
+          tagParts.push "#{ key }=#{ @quoteAndEscapeAttributeValue(@interpolateCodeAttribute(value)) }"
 
     tagParts.join(' ')
 
@@ -442,7 +442,7 @@ module.exports = class Haml extends Node
   # @param [Boolean] unwrap unwrap static text from quotes
   # @return [String] the text of the wrapped code
   #
-  wrapCode: (text, unwrap = false) ->
+  interpolateCodeAttribute: (text, unwrap = false) ->
     return unless text
 
     if not text.match /^("|').*\1$/
@@ -463,7 +463,9 @@ module.exports = class Haml extends Node
     text
 
   # Quote the attribute value, depending on its
-  # content.
+  # content. If the attribute contains an interpolation,
+  # each interpolation will be cleaned and/or escaped,
+  # depending on the compiler options.
   #
   # @param [String] value the without start and end quote
   # @param [String] code if we are in a code block
@@ -479,20 +481,33 @@ module.exports = class Haml extends Node
     hasDoubleQuotes = false
     hasInterpolation = false
 
-    # Analyse existing quotes
-    for token in tokens
+    # Analyse existing quotes and escape/clean interpolations
+    tokens = for token in tokens
       if token[0..1] is '#{'
+        # Skip interpolated code attributes
+        if token.indexOf('$e') is -1 and token.indexOf('$c') is -1
+          if @escapeAttributes
+            if @cleanValue
+              token = '#{ $e($c(' + token[2...-1] + ')) }'
+            else
+              token = '#{ $e(' + token[2...-1] + ') }'
+          else
+            if @cleanValue
+              token = '#{ $c(' + token[2...-1] + ') }'
+
         hasInterpolation = true
       else
         hasSingleQuotes = token.indexOf("'") isnt -1 unless hasSingleQuotes
         hasDoubleQuotes = token.indexOf('"') isnt -1 unless hasDoubleQuotes
+
+      token
 
     if code
       if hasInterpolation
         result = "\"#{ tokens.join('') }\""
       else
         result = "'#{ tokens.join('') }'"
-    
+
     else
       # Without any qoutes, wrap the value in single quotes
       if not hasDoubleQuotes and not hasSingleQuotes
@@ -516,7 +531,7 @@ module.exports = class Haml extends Node
         result = "'#{ escaped.join('') }'"
 
     result
-    
+
   # Split expression by its interpolations.
   #
   # @example
