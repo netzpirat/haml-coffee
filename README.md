@@ -43,7 +43,7 @@ haml-coffee.
 You can compile a Haml Coffee template to a JavaScript function and execute the function with the locals to render the
 HTML. The following code
 
-```coffee-script
+```coffeescript
 hamlc = require 'haml-coffee'
 tmpl = hamlc.compile '%h1= @title'
 html = tmpl title: 'Haml Coffee rocks!'
@@ -53,7 +53,7 @@ will create the HTML `<h1>Haml Coffee rocks!</h1>`.
 
 The `compile` function can take the compiler options as second parameter to customize the template function:
 
-```coffee-script
+```coffeescript
 hamlc.compile '%h1= @title'
   cleanValue: false
   escapeHtml: false
@@ -71,7 +71,7 @@ You can configure [Express](http://expressjs.com/) to use Haml Coffee as templat
 
 Starting with version 1.4.0, Haml Coffee has support for Express 3 and can be registered as view engine as follows:
 
-```coffee-script
+```coffeescript
 express = require 'express'
 app     = express()
 
@@ -80,7 +80,7 @@ app.engine 'hamlc', require('haml-coffee').__express
 
 Alternatively you can also use [consolidate.js](https://github.com/visionmedia/consolidate.js) to register the engine:
 
-```coffee-script
+```coffeescript
 express = require 'express'
 cons    = require 'consolidate'
 app     = express()
@@ -92,7 +92,7 @@ app.engine 'hamlc', cons['haml-coffee']);
 
 Starting with version 0.5.0, Haml Coffee has support for Express 2 and can be registered as view engine as follows:
 
-```coffee-script
+```coffeescript
 express = require 'express'
 
 app = express.createServer()
@@ -101,7 +101,7 @@ app.register '.hamlc', require('haml-coffee')
 
 Alternatively you can also use [consolidate.js](https://github.com/visionmedia/consolidate.js) to register the engine:
 
-```coffee-script
+```coffeescript
 express = require 'express'
 cons    = require 'consolidate'
 
@@ -131,7 +131,7 @@ Now you can create a Haml Coffee view
 
 that you can render with:
 
-```coffee-script
+```coffeescript
 app.get '/', (req, res) ->
   res.render 'index.hamlc', name: 'Express user'
 ```
@@ -140,14 +140,14 @@ app.get '/', (req, res) ->
 
 It's possible to use Haml Coffee as the default template engine by setting the `view engine`:
 
-```coffee-script
+```coffeescript
 app.configure ->
   app.set 'view engine', 'hamlc'
 ```
 
 which allows you to omit the `.hamlc` extension when rendering a template:
 
-```coffee-script
+```coffeescript
 app.get '/', (req, res) ->
   res.render 'index', name: 'Express user'
 ```
