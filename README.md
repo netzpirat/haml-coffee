@@ -61,7 +61,7 @@ hamlc.compile '%h1= @title'
 
 See the [compiler options](#compiler-options) for detailed information about all the available options and browse
 the [codo](https://github.com/netzpirat/codo) generated
-[Haml-Coffee API documentation](http://netzpirat.github.com/haml-coffee/).
+[Haml-Coffee API documentation](http://coffeedoc.info/github/netzpirat/haml-coffee/master/).
 
 ### Using with Express
 
