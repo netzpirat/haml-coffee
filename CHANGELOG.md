@@ -1,13 +1,13 @@
-# Master
+# Version 1.4.5, August 28, 2012
 
   * Escape and clean every attribute interpolation.
   * Don't add the Boolean conversion without any cleaned value.
 
-# Version 1.4.4. August 22, 2012
+# Version 1.4.4, August 22, 2012
 
   * Fix CoffeeScript compiler loading.
 
-# Version 1.4.3. August 22, 2012
+# Version 1.4.3, August 22, 2012
 
   * Add [hamlc](https://github.com/netzpirat/haml-coffee/blob/master/src/hamlc.coffee) facade to the compiler dist.
   * Fix package distribution.
