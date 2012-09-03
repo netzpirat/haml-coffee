@@ -403,7 +403,7 @@ module.exports = class Haml extends Node
       if hasDynamicClass && classList.length > 1
         classes = '#{ ['
         classes += "#{ @quoteAndEscapeAttributeValue(klass, true) }," for klass in classList
-        classes = classes.substring(0, classes.length - 1) + '].sort().join(\' \').trim() }'
+        classes = classes.substring(0, classes.length - 1) + '].sort().join(\' \').replace(/^\\s+|\\s+$/g, \'\') }'
 
       # Compile time classes
       else

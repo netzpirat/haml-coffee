@@ -1,3 +1,7 @@
+# Master
+
+  * Don't use trim() for IE <= 8 compatibility.
+
 # Version 1.4.6, August 28, 2012
 
   * Fix Browserify environment detection.
