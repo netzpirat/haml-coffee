@@ -1,6 +1,6 @@
-# Master
+# Version 1.4.7, September 3, 2012
 
-  * Don't use trim() for IE <= 8 compatibility.
+  * [haml_coffee_assets issue #68](https://github.com/netzpirat/haml_coffee_assets/issues/68): Don't use trim() for IE <= 8 compatibility.
 
 # Version 1.4.6, August 28, 2012
 
