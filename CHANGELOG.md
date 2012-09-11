@@ -1,4 +1,4 @@
-# Master
+# Version 1.4.8, September 11, 2012
 
   * Add `index.js` that loads the CoffeeScript compiler and Haml Coffee on Node.js
 
