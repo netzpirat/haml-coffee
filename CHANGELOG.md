@@ -1,3 +1,7 @@
+# Master
+
+  * Add `index.js` that loads the CoffeeScript compiler and Haml Coffee on Node.js
+
 # Version 1.4.7, September 3, 2012
 
   * [haml_coffee_assets issue #68](https://github.com/netzpirat/haml_coffee_assets/issues/68): Don't use trim() for IE <= 8 compatibility.

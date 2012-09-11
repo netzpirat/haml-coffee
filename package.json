@@ -22,7 +22,6 @@
   "directories" : {
     "lib" : "./src"
   },
-  "main" : "./src/hamlc",
   "bin" : {
     "haml-coffee" : "./bin/haml-coffee"
   },
