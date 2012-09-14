@@ -1,4 +1,4 @@
-# Master
+# Version 1.4.10, September 14, 2012
 
   * Fix template context for compiled functions without JST generation.
   
