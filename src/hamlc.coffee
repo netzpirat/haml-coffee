@@ -39,6 +39,8 @@ module.exports =
   #   compiler options.
   #
   # @param [String] source the Haml Coffee source
+  # @param [String] name the template name
+  # @param [String] namespace the template namespace
   # @param [Object] options the compiler options
   # @return [String] the template source code
   #
