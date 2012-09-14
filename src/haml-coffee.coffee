@@ -376,23 +376,23 @@ module.exports = class HamlCoffee
     # Surround helper
     if code.indexOf('surround') isnt -1
       if @options.customSurround
-        fn += "surround = (start, end, fn) -> #{ @options.customSurround }.call(context, start, end, fn)\n"
+        fn += "surround = (start, end, fn) => #{ @options.customSurround }.call(@, start, end, fn)\n"
       else
-        fn += "surround = (start, end, fn) -> start + fn.call(context)?.replace(/^\s+|\s+$/g, '') + end\n"
+        fn += "surround = (start, end, fn) => start + fn.call(@)?.replace(/^\s+|\s+$/g, '') + end\n"
 
     # Succeed helper
     if code.indexOf('succeed') isnt -1
       if @options.customSucceed
-        fn += "succeed = (start, end, fn) ->  #{ @options.customSucceed }.call(context, start, end, fn)\n"
+        fn += "succeed = (start, end, fn) => #{ @options.customSucceed }.call(@, start, end, fn)\n"
       else
-        fn += "succeed = (end, fn) -> fn.call(context)?.replace(/\s+$/g, '') + end\n"
+        fn += "succeed = (end, fn) => fn.call(@)?.replace(/\s+$/g, '') + end\n"
 
     # Precede helper
     if code.indexOf('precede') isnt -1
       if @options.customPrecede
-        fn += "precede = (start, end, fn) ->  #{ @options.customPrecede }.call(context, start, end, fn)\n"
+        fn += "precede = (start, end, fn) => #{ @options.customPrecede }.call(@, start, end, fn)\n"
       else
-        fn += "precede = (start, fn) -> start + fn.call(context)?.replace(/^\s+/g, '')\n"
+        fn += "precede = (start, fn) => start + fn.call(@)?.replace(/^\s+/g, '')\n"
 
     fn  += "$o = []\n"
     fn  += "#{ code }\n"

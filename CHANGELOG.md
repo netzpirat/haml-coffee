@@ -1,3 +1,7 @@
+# Master
+
+  * Fix template context for compiled functions without JST generation.
+  
 # Version 1.4.9, September 14, 2012
 
   * [Issue #38](https://github.com/netzpirat/haml-coffee/issues/38): Helpers should run in the template's context.
