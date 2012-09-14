@@ -1,3 +1,8 @@
+# Master
+
+  * [Issue #38](https://github.com/netzpirat/haml-coffee/issues/38): Helpers should run in the template's context.
+  * Trim whitespace in the helpers.
+  
 # Version 1.4.8, September 11, 2012
 
   * Add `index.js` that loads the CoffeeScript compiler and Haml Coffee on Node.js

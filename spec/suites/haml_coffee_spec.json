@@ -245,7 +245,12 @@
   "Helpers" : {
     "Haml helpers" : {
       "haml_template" : "coffee/helpers",
-      "html_template" : "coffee/helpers"
+      "html_template" : "coffee/helpers",
+      "locals" : {
+        "food" : "chicken",
+        "thing" : "table",
+        "really": "Not really"
+      }
     }
   },
 

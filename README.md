@@ -302,7 +302,8 @@ can also be written in Ruby 1.9 style:
 
 ### Helpers
 
-Haml Coffee supports a small subset of the Ruby Haml [helpers](http://haml-lang.com/docs/yardoc/Haml/Helpers.html):
+Haml Coffee supports a small subset of the Ruby Haml [helpers](http://haml-lang.com/docs/yardoc/Haml/Helpers.html). The
+provided helpers will bind the helper function to the template context, so it isn't necessary to use `=>`. 
 
 #### Surround
 
@@ -621,6 +622,9 @@ To change these functions, simply assign the new function name to one of the fol
   * `customSurround`: Surrounds a block of Haml code with strings, with no whitespace in between.
   * `customSucceed`: Appends a string to the end of a Haml block, with no whitespace between.
   * `customPrecede`: Prepends a string to the beginning of a Haml block, with no whitespace between.
+
+
+The `customSurround`, `customSucceed` and `customPrecede` are bound to the template context.
 
 You can find a default implementation for all these helper functions in
 [Haml Coffee Assets](https://github.com/netzpirat/haml_coffee_assets/blob/master/vendor/assets/javascripts/hamlcoffee.js.coffee.erb).
