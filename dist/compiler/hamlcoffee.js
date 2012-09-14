@@ -363,7 +363,7 @@ require.define("/haml-coffee.coffee", function (require, module, exports, __dirn
 
   module.exports = HamlCoffee = (function() {
 
-    HamlCoffee.VERSION = '1.4.9';
+    HamlCoffee.VERSION = '1.4.10';
 
     function HamlCoffee(options) {
       var _base, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
@@ -631,23 +631,23 @@ require.define("/haml-coffee.coffee", function (require, module, exports, __dirn
       }
       if (code.indexOf('surround') !== -1) {
         if (this.options.customSurround) {
-          fn += "surround = (start, end, fn) -> " + this.options.customSurround + ".call(context, start, end, fn)\n";
+          fn += "surround = (start, end, fn) => " + this.options.customSurround + ".call(@, start, end, fn)\n";
         } else {
-          fn += "surround = (start, end, fn) -> start + fn.call(context)?.replace(/^\s+|\s+$/g, '') + end\n";
+          fn += "surround = (start, end, fn) => start + fn.call(@)?.replace(/^\s+|\s+$/g, '') + end\n";
         }
       }
       if (code.indexOf('succeed') !== -1) {
         if (this.options.customSucceed) {
-          fn += "succeed = (start, end, fn) ->  " + this.options.customSucceed + ".call(context, start, end, fn)\n";
+          fn += "succeed = (start, end, fn) => " + this.options.customSucceed + ".call(@, start, end, fn)\n";
         } else {
-          fn += "succeed = (end, fn) -> fn.call(context)?.replace(/\s+$/g, '') + end\n";
+          fn += "succeed = (end, fn) => fn.call(@)?.replace(/\s+$/g, '') + end\n";
         }
       }
       if (code.indexOf('precede') !== -1) {
         if (this.options.customPrecede) {
-          fn += "precede = (start, end, fn) ->  " + this.options.customPrecede + ".call(context, start, end, fn)\n";
+          fn += "precede = (start, end, fn) => " + this.options.customPrecede + ".call(@, start, end, fn)\n";
         } else {
-          fn += "precede = (start, fn) -> start + fn.call(context)?.replace(/^\s+/g, '')\n";
+          fn += "precede = (start, fn) => start + fn.call(@)?.replace(/^\s+/g, '')\n";
         }
       }
       fn += "$o = []\n";
