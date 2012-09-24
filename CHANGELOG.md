@@ -1,4 +1,4 @@
-# Master
+# Version 1.5.0, September 24, 2012
 
   * Remove empty `id` and `class` attributes from the generated HTML.
   
