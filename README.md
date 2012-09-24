@@ -29,6 +29,9 @@ developing your [Spine](http://spinejs.com/) application.
 If you like to integrate Haml Coffee seamless into the Rails asset pipeline, check out
 [haml_coffee_assets](https://github.com/netzpirat/haml_coffee_assets).
 
+If you like to compile your Haml Coffee templates with [Guard](https://github.com/guard/guard), you should give the
+[guard-haml-coffee](https://github.com/ouvrages/guard-haml-coffee) a try.
+
 For using the Haml Coffee compiler in the browser, a [browserified](https://github.com/substack/node-browserify) version
 is provided in the `dist/compiler` directory:
 [Haml Coffee compiler](https://raw.github.com/netzpirat/haml-coffee/master/dist/compiler/hamlcoffee.js)
