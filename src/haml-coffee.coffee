@@ -396,7 +396,7 @@ module.exports = class HamlCoffee
 
     fn  += "$o = []\n"
     fn  += "#{ code }\n"
-    fn  += "return $o.join(\"\\n\")#{ @convertBooleans(code) }#{ @cleanupWhitespace(code) }\n"
+    fn  += "return $o.join(\"\\n\")#{ @convertBooleans(code) }#{ @removeEmptyIDAndClass(code) }#{ @cleanupWhitespace(code) }\n"
 
   # Create the CoffeeScript code for the template.
   #
@@ -489,6 +489,7 @@ module.exports = class HamlCoffee
   # will be converted to `checked` and `checked='false'` will
   # be completely removed.
   #
+  # @param [String] code the CoffeeScript template code
   # @return [String] the clean up whitespace code if necessary
   #
   convertBooleans: (code) ->
@@ -500,6 +501,16 @@ module.exports = class HamlCoffee
     else
       ''
 
+  # Remove empty ID and class attribute from the
+  # final template. In case of the ID this is required
+  # in order to generate valid HTML.
+  #
+  # @param [String] code the CoffeeScript template code
+  # @return [String] the template code with the code added
+  #
+  removeEmptyIDAndClass: (code) ->
+    '.replace(/\\s(?:id|class)=([\'"])(\\1)/mg, "")'
+    
   # Adds whitespace cleanup function when needed by the
   # template. The cleanup must be done AFTER the template
   # has been rendered.
@@ -510,7 +521,7 @@ module.exports = class HamlCoffee
   # * `\u0091` Cleanup surrounding whitespace to the left
   # * `\u0092` Cleanup surrounding whitespace to the right
   #
-  # @param [String] code the template code
+  # @param [String] code the CoffeeScript template code
   # @return [String] the clean up whitespace code if necessary
   #
   cleanupWhitespace: (code) ->

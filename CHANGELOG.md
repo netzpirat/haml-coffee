@@ -1,3 +1,7 @@
+# Master
+
+  * Remove empty `id` and `class` attributes from the generated HTML.
+  
 # Version 1.4.10, September 14, 2012
 
   * Fix template context for compiled functions without JST generation.
