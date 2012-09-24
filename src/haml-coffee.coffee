@@ -509,8 +509,11 @@ module.exports = class HamlCoffee
   # @return [String] the template code with the code added
   #
   removeEmptyIDAndClass: (code) ->
-    '.replace(/\\s(?:id|class)=([\'"])(\\1)/mg, "")'
-    
+    if code.indexOf('id=') isnt -1 || code.indexOf('class=') isnt -1
+      '.replace(/\\s(?:id|class)=([\'"])(\\1)/mg, "")'
+    else
+      ''
+      
   # Adds whitespace cleanup function when needed by the
   # template. The cleanup must be done AFTER the template
   # has been rendered.
