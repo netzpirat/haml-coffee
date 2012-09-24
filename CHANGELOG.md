@@ -1,3 +1,7 @@
+# Version 1.5.1, September 24, 2012
+
+  * Simple check to see if the template has an id or class to cleanup
+
 # Version 1.5.0, September 24, 2012
 
   * Remove empty `id` and `class` attributes from the generated HTML.
