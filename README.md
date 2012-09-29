@@ -18,7 +18,7 @@ $ npm install haml-coffee
 ```
 
 Please have a look at the [CHANGELOG](https://github.com/netzpirat/haml-coffee/blob/master/CHANGELOG.md) when upgrading to a
-newer Codo version with `npm update`.
+newer Haml Coffee version with `npm update`.
 
 ## Integration
 
@@ -29,7 +29,7 @@ developing your [Spine](http://spinejs.com/) application.
 If you like to integrate Haml Coffee seamless into the Rails asset pipeline, check out
 [haml_coffee_assets](https://github.com/netzpirat/haml_coffee_assets).
 
-If you like to compile your Haml Coffee templates with [Guard](https://github.com/guard/guard), you should give the
+If you like to compile your Haml Coffee templates with [Guard](https://github.com/guard/guard), you should give
 [guard-haml-coffee](https://github.com/ouvrages/guard-haml-coffee) a try.
 
 For using the Haml Coffee compiler in the browser, a [browserified](https://github.com/substack/node-browserify) version
@@ -294,13 +294,19 @@ details.
 Haml Coffee supports both Ruby 1.8 and Ruby 1.9 style attributes. So the following Ruby 1.8 style attribute
 
 ```haml
-%a{ :href => 'http://haml-lang.com/' } Haml
+%a{ :href => 'http://haml-lang.com/', :title => 'Haml home' } Haml
 ```
 
 can also be written in Ruby 1.9 style:
 
 ```haml
-%a{ href: 'http://haml-lang.com/' } Haml
+%a{ href: 'http://haml-lang.com/', title: 'Haml home' } Haml
+```
+
+HTML style tags are also supported:
+
+```haml
+%a( href='http://haml-lang.com/' title='Haml home') Haml
 ```
 
 ### Helpers
@@ -398,8 +404,8 @@ More fancy stuff can be done when use interpolation within a double quoted attri
   %user{ class: "#{ if @user.get('roles').indexOf('admin') is -1 then 'normal' else 'admin' }" }= @user.getDisplayName()
 ```
 
-_But think about it twice before putting such fancy stuff into your template, there are better places like models,
-controllers or helpers to put heavy logic into._
+_But think twice about it before putting such fancy stuff into your template, there are better places like models,
+views or helpers to put heavy logic into._
 
 You can define your attributes over multiple lines and the next line must not be correctly indented, so you can align
 them properly:
