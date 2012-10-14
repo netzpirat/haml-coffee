@@ -312,7 +312,7 @@ HTML style tags are also supported:
 ### Helpers
 
 Haml Coffee supports a small subset of the Ruby Haml [helpers](http://haml-lang.com/docs/yardoc/Haml/Helpers.html). The
-provided helpers will bind the helper function to the template context, so it isn't necessary to use `=>`. 
+provided helpers will bind the helper function to the template context, so it isn't necessary to use `=>`.
 
 #### Surround
 
@@ -609,6 +609,24 @@ the newline characters to their equivalent HTML entity.
 * Default: `meta,img,link,br,hr,input,area,param,col,base`
 
 The autoclose option defines a list of tag names that should be automatically closed if they have no content.
+
+#### Module loader support
+
+* Name: `placement`
+* Type: `String`
+* Default: `global`
+
+The `placement` option defines where the template function is inserted
+upon compilation.
+
+Possible values are:
+
+* `global` <br />
+  Inserts the optionally namespaced template function into `window.HAML`.
+
+* `amd` <br />
+  Wraps the template function into a `define()` statement to allow async
+  loading via AMD.
 
 ### Custom helper function options
 

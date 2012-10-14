@@ -20,6 +20,7 @@ module.exports = class HamlCoffee
   # Construct the HAML Coffee compiler.
   #
   # @param [Object] options the compiler options
+  # @option options [String] placement where to place the resultant function
   # @option options [Boolean] escapeHtml escape the output when true
   # @option options [Boolean] escapeAttributes escape the tag attributes when true
   # @option options [Boolean] cleanValue clean CoffeeScript values before inserting
@@ -35,6 +36,7 @@ module.exports = class HamlCoffee
   # @option options [String] customPreserve the name of the function used to preserve the whitespace
   #
   constructor: (@options = {}) ->
+    @options.placement        ?= 'global'
     @options.escapeHtml       ?= true
     @options.escapeAttributes ?= true
     @options.cleanValue       ?= true
@@ -287,6 +289,28 @@ module.exports = class HamlCoffee
   # @param [String] namespace the namespace to register the template
   #
   render: (templateName, namespace = 'window.HAML') ->
+    switch @options.placement
+      when 'amd' then @_render_amd()
+      else @_render_global templateName, namespace
+
+  # Render the parsed source code as CoffeeScript template wrapped in a
+  # define() statement for AMD.
+  _render_amd: ->
+    """
+    define ->
+      (context) ->
+        render = ->
+          \n#{ indent(@precompile(), 4) }
+        render.call(context)
+    """
+
+  # Render the parsed source code as CoffeeScript template to a global
+  # window.HAML variable.
+  #
+  # @param [String] templateName the name to register the template
+  # @param [String] namespace the namespace to register the template
+  #
+  _render_global: (templateName, namespace = 'window.HAML') ->
     template = ''
 
     # Create parameter name from the filename, e.g. a file `users/new.hamlc`
@@ -318,6 +342,8 @@ module.exports = class HamlCoffee
       template += ").call(context)"
 
     template
+
+
 
   # Pre-compiles the parsed source and generates
   # the function source code.
@@ -513,7 +539,7 @@ module.exports = class HamlCoffee
       '.replace(/\\s(?:id|class)=([\'"])(\\1)/mg, "")'
     else
       ''
-      
+
   # Adds whitespace cleanup function when needed by the
   # template. The cleanup must be done AFTER the template
   # has been rendered.

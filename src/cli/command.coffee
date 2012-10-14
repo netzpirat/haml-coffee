@@ -49,6 +49,11 @@ argv = require('optimist')
     default   : false
     describe  : 'Extend the template scope with the context'
   )
+  .options('p',
+    alias     : 'placement',
+    default   : 'global'
+    describe  : 'Where to place the template function; one of: global, amd'
+   )
   .options('preserve',
     default   : 'pre,textarea'
     describe  : 'Set a comma separated list of HTML tags to preserve'
@@ -112,6 +117,7 @@ exports.run = ->
   namespace       = argv.n
 
   compilerOptions =
+    placement             : argv.p
     format                : argv.f
     uglify                : argv.u
     extendScope           : argv.e
