@@ -15,7 +15,7 @@ Filter  = require('./nodes/filter')
 module.exports = class HamlCoffee
 
   # The current version number.
-  @VERSION: '1.5.1'
+  @VERSION: '1.6.0'
 
   # Construct the HAML Coffee compiler.
   #
@@ -295,6 +295,7 @@ module.exports = class HamlCoffee
 
   # Render the parsed source code as CoffeeScript template wrapped in a
   # define() statement for AMD.
+  #
   _render_amd: ->
     """
     define ->
@@ -342,8 +343,6 @@ module.exports = class HamlCoffee
       template += ").call(context)"
 
     template
-
-
 
   # Pre-compiles the parsed source and generates
   # the function source code.

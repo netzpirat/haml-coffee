@@ -1,3 +1,7 @@
+# Version 1.6.0, October 16, 2012
+
+  * [#40](https://github.com/netzpirat/haml-coffee/pull/40) Added placement option to allow for AMD support. ([@mehcode](https://github.com/mehcode))
+
 # Version 1.5.1, September 24, 2012
 
   * Simple check to see if the template has an id or class to cleanup
@@ -5,16 +9,16 @@
 # Version 1.5.0, September 24, 2012
 
   * Remove empty `id` and `class` attributes from the generated HTML.
-  
+
 # Version 1.4.10, September 14, 2012
 
   * Fix template context for compiled functions without JST generation.
-  
+
 # Version 1.4.9, September 14, 2012
 
   * [Issue #38](https://github.com/netzpirat/haml-coffee/issues/38): Helpers should run in the template's context.
   * Trim whitespace in the helpers.
-  
+
 # Version 1.4.8, September 11, 2012
 
   * Add `index.js` that loads the CoffeeScript compiler and Haml Coffee on Node.js
