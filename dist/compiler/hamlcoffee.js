@@ -363,35 +363,38 @@ require.define("/haml-coffee.coffee", function (require, module, exports, __dirn
 
   module.exports = HamlCoffee = (function() {
 
-    HamlCoffee.VERSION = '1.5.1';
+    HamlCoffee.VERSION = '1.6.0';
 
     function HamlCoffee(options) {
-      var _base, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+      var _base, _base10, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _ref, _ref10, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
       this.options = options != null ? options : {};
-      if ((_ref = (_base = this.options).escapeHtml) == null) {
-        _base.escapeHtml = true;
+      if ((_ref = (_base = this.options).placement) == null) {
+        _base.placement = 'global';
       }
-      if ((_ref2 = (_base2 = this.options).escapeAttributes) == null) {
-        _base2.escapeAttributes = true;
+      if ((_ref2 = (_base2 = this.options).escapeHtml) == null) {
+        _base2.escapeHtml = true;
       }
-      if ((_ref3 = (_base3 = this.options).cleanValue) == null) {
-        _base3.cleanValue = true;
+      if ((_ref3 = (_base3 = this.options).escapeAttributes) == null) {
+        _base3.escapeAttributes = true;
       }
-      if ((_ref4 = (_base4 = this.options).uglify) == null) _base4.uglify = false;
-      if ((_ref5 = (_base5 = this.options).basename) == null) {
-        _base5.basename = false;
+      if ((_ref4 = (_base4 = this.options).cleanValue) == null) {
+        _base4.cleanValue = true;
       }
-      if ((_ref6 = (_base6 = this.options).extendScope) == null) {
-        _base6.extendScope = false;
+      if ((_ref5 = (_base5 = this.options).uglify) == null) _base5.uglify = false;
+      if ((_ref6 = (_base6 = this.options).basename) == null) {
+        _base6.basename = false;
       }
-      if ((_ref7 = (_base7 = this.options).format) == null) {
-        _base7.format = 'html5';
+      if ((_ref7 = (_base7 = this.options).extendScope) == null) {
+        _base7.extendScope = false;
       }
-      if ((_ref8 = (_base8 = this.options).preserveTags) == null) {
-        _base8.preserveTags = 'pre,textarea';
+      if ((_ref8 = (_base8 = this.options).format) == null) {
+        _base8.format = 'html5';
       }
-      if ((_ref9 = (_base9 = this.options).selfCloseTags) == null) {
-        _base9.selfCloseTags = 'meta,img,link,br,hr,input,area,param,col,base';
+      if ((_ref9 = (_base9 = this.options).preserveTags) == null) {
+        _base9.preserveTags = 'pre,textarea';
+      }
+      if ((_ref10 = (_base10 = this.options).selfCloseTags) == null) {
+        _base10.selfCloseTags = 'meta,img,link,br,hr,input,area,param,col,base';
       }
     }
 
@@ -564,6 +567,20 @@ require.define("/haml-coffee.coffee", function (require, module, exports, __dirn
     };
 
     HamlCoffee.prototype.render = function(templateName, namespace) {
+      if (namespace == null) namespace = 'window.HAML';
+      switch (this.options.placement) {
+        case 'amd':
+          return this._render_amd();
+        default:
+          return this._render_global(templateName, namespace);
+      }
+    };
+
+    HamlCoffee.prototype._render_amd = function() {
+      return "define ->\n  (context) ->\n    render = ->\n      \n" + (indent(this.precompile(), 4)) + "\n    render.call(context)";
+    };
+
+    HamlCoffee.prototype._render_global = function(templateName, namespace) {
       var segment, segments, template, _i, _len;
       if (namespace == null) namespace = 'window.HAML';
       template = '';
