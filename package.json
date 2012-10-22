@@ -15,7 +15,7 @@
       "url" : "http://github.com/netzpirat/haml-coffee/raw/master/LICENSE"
     }
   ],
-  "browserify" : "./lib/haml-coffee",
+  "browserify" : "./src/haml-coffee",
   "engines" : {
     "node" : ">=0.4.0"
   },
