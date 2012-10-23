@@ -1,3 +1,7 @@
+# Version 1.6.1, October 23, 2012
+
+* [#41](https://github.com/netzpirat/haml-coffee/issues/41) Fix browserify package configuration.
+
 # Version 1.6.0, October 16, 2012
 
   * [#40](https://github.com/netzpirat/haml-coffee/pull/40) Added placement option to allow for AMD support. ([@mehcode](https://github.com/mehcode))
