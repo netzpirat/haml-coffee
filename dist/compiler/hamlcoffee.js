@@ -363,7 +363,7 @@ require.define("/haml-coffee.coffee", function (require, module, exports, __dirn
 
   module.exports = HamlCoffee = (function() {
 
-    HamlCoffee.VERSION = '1.6.1';
+    HamlCoffee.VERSION = '1.6.2';
 
     function HamlCoffee(options) {
       var _base, _base10, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _ref, _ref10, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
@@ -1278,7 +1278,7 @@ require.define("/nodes/haml.coffee", function (require, module, exports, __dirna
         key = (_ref2 = keyValue[0]) != null ? _ref2.replace(/^\s+|\s+$/g, '').replace(/^:/, '') : void 0;
         if (quoted = key.match(/^("|')(.*)\1$/)) key = quoted[2];
         value = (_ref3 = keyValue[1]) != null ? _ref3.replace(/^\s+|[\s,]+$/g, '').replace(/\u0090/g, '') : void 0;
-        if (key === 'data') {
+        if (key === 'data' && !value) {
           inDataAttribute = true;
           hasDataAttribute = true;
         } else if (key && value) {
