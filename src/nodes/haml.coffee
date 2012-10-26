@@ -349,7 +349,7 @@ module.exports = class Haml extends Node
       # Trim value, remove succeeding comma and remove markers
       value = keyValue[1]?.replace(/^\s+|[\s,]+$/g, '').replace(/\u0090/g, '')
 
-      if key is 'data'
+      if key is 'data' and !value
         inDataAttribute = true
         hasDataAttribute = true
 

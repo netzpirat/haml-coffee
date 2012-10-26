@@ -1,3 +1,7 @@
+# Master
+
+* [#42](https://github.com/netzpirat/haml-coffee/issues/42)  Ensure HTML5 `data` attribute format is correct.
+
 # Version 1.6.1, October 23, 2012
 
 * [#41](https://github.com/netzpirat/haml-coffee/issues/41) Fix browserify package configuration.
