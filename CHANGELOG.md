@@ -1,4 +1,4 @@
-# Master
+# Version 1.6.2, October 26, 2012
 
 * [#42](https://github.com/netzpirat/haml-coffee/issues/42)  Ensure HTML5 `data` attribute format is correct.
 
