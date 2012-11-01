@@ -1,6 +1,7 @@
-CoffeeMaker = require './coffee-maker'
-fs          = require 'fs'
-findit      = require 'findit'
+CoffeeScript  = require 'coffee-script'
+CoffeeMaker   = require './coffee-maker'
+fs            = require 'fs'
+findit        = require 'findit'
 
 red   = '\u001b[31m'
 green = '\u001b[32m'
@@ -27,33 +28,38 @@ argv = require('optimist')
     describe  : 'Set a custom template name'
   )
   .options('b',
-    alias     : 'basename',
+    alias     : 'basename'
     boolean   : true
     default   : false
     describe  : 'Ignore file path when generate the template name'
   )
   .options('f',
-    alias     : 'format',
+    alias     : 'format'
     default   : 'html5'
     describe  : 'Set HTML output format, either `xhtml`, `html4` or `html5`'
   )
   .options('u',
-    alias     : 'uglify',
+    alias     : 'uglify'
     boolean   : true
     default   : false
     describe  : 'Do not properly indent or format the HTML output'
   )
   .options('e',
-    alias     : 'extend',
+    alias     : 'extend'
     boolean   : true
     default   : false
     describe  : 'Extend the template scope with the context'
   )
   .options('p',
-    alias     : 'placement',
+    alias     : 'placement'
     default   : 'global'
     describe  : 'Where to place the template function; one of: global, amd'
    )
+  .options('d',
+    alias     : 'dependencies'
+    default   : "{ hc: 'hamlcoffee' }"
+    describe  : 'The global template amd module dependencies'
+  )
   .options('preserve',
     default   : 'pre,textarea'
     describe  : 'Set a comma separated list of HTML tags to preserve'
@@ -115,9 +121,16 @@ exports.run = ->
   inputFilename   = argv.i
   templateName    = argv.t
   namespace       = argv.n
+  dependencies    = {}
+
+  try
+    dependencies = CoffeeScript.eval(argv.d)
+  catch err
+    console.error "  #{ red }[Haml Coffee] Invalid dependencies:#{ reset } %s (%s)", argv.d, err
 
   compilerOptions =
     placement             : argv.p
+    dependencies          : dependencies
     format                : argv.f
     uglify                : argv.u
     extendScope           : argv.e

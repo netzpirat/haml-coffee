@@ -628,6 +628,18 @@ Possible values are:
   Wraps the template function into a `define()` statement to allow async
   loading via AMD.
 
+See AMD support for more information.
+
+### Module dependencies
+
+* Name: `dependencies`
+* Type: `Object`
+* Default: `{ hc: 'hamlcoffee' }`
+
+The `dependencies` option allows you to define the modules that must be required for the AMD template `define` function.
+The object key will be the function parameter name of the module the object value defines. See AMD support for more
+information.
+
 ### Custom helper function options
 
 Haml Coffee provides helper functions for HTML escaping, value cleaning and whitespace preservation, which must be
@@ -655,6 +667,45 @@ The `customSurround`, `customSucceed` and `customPrecede` are bound to the templ
 
 You can find a default implementation for all these helper functions in
 [Haml Coffee Assets](https://github.com/netzpirat/haml_coffee_assets/blob/master/vendor/assets/javascripts/hamlcoffee.js.coffee.erb).
+
+## AMD support
+
+* Global dependencies
+* Trivial dependency detection
+
+Haml Coffee has built in AMD support by setting the `placement` option to `amd`. This will generate a module definition
+for the JavaScript template. The `dependencies` options can be used to provide a mapping of module names to parameters.
+To illustrate this, the default value will result in the following module declaration:
+
+```CoffeeScript
+define ['hamlcoffee'], (hc) ->
+```
+
+When the template contains a require call in the form of
+
+```CoffeeScript
+ - require 'module'
+ - require 'deep/nested/other'
+```
+
+it will be added to the module definition list
+
+```CoffeeScript
+define ['hamlcoffee', 'module', 'deep/nested/other'], (hc, module, other) ->
+```
+
+allowing you to render a partial template:
+
+```CoffeeScript
+!= module()
+!= other()
+```
+
+Of course the require call can have different quotes or parenthesises, allowing you to directly require and render:
+
+```CoffeeScript
+!= require("another/other")()
+```
 
 ## Development information
 

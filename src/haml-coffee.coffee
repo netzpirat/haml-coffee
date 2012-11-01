@@ -21,6 +21,7 @@ module.exports = class HamlCoffee
   #
   # @param [Object] options the compiler options
   # @option options [String] placement where to place the resultant function
+  # @option options [Array<String>] dependencies dependencies for the amd module
   # @option options [Boolean] escapeHtml escape the output when true
   # @option options [Boolean] escapeAttributes escape the tag attributes when true
   # @option options [Boolean] cleanValue clean CoffeeScript values before inserting
@@ -37,6 +38,7 @@ module.exports = class HamlCoffee
   #
   constructor: (@options = {}) ->
     @options.placement        ?= 'global'
+    @options.dependencies     ?= { hc: 'hamlcoffee' }
     @options.escapeHtml       ?= true
     @options.escapeAttributes ?= true
     @options.cleanValue       ?= true
@@ -297,11 +299,32 @@ module.exports = class HamlCoffee
   # define() statement for AMD.
   #
   _render_amd: ->
+    template = indent(@precompile(), 4)
+
+    modules = []
+    params  = []
+
+    for param, module of @options.dependencies
+      modules.push module
+      params.push param
+
+    for param, module of @findDependencies(template)
+      modules.push module
+      params.push param
+
+    if modules.length isnt 0
+      modules = for m in modules
+        "'#{ m }'"
+
+      modules = "[#{ modules }], (#{ params.join(', ') })"
+    else
+      modules = ''
+
     """
-    define ->
+    define #{ modules } ->
       (context) ->
         render = ->
-          \n#{ indent(@precompile(), 4) }
+          \n#{ template }
         render.call(context)
     """
 
@@ -557,3 +580,24 @@ module.exports = class HamlCoffee
       ".replace(/[\\s\\n]*\\u0091/mg, '').replace(/\\u0092[\\s\\n]*/mg, '')"
     else
       ''
+
+  # Searches for AMD require statements to find
+  # all template dependencies.
+  #
+  # @example CST source code
+  #   $o.push "" + $c require('assets/templates/test')()   =>   { test: 'assets/templates/test' }
+  #
+  # @param [String] code the CoffeeScript template source code
+  # @return [Object] the module dependencies
+  #
+  findDependencies: (code) ->
+    requireRegexp = /require(?:\s+|\()(['"])(.+?)(\1)\)?/gm
+    dependencies = {}
+
+    while match = requireRegexp.exec code
+      module = match[2]
+      name   = module.split('/').pop()
+
+      dependencies[name] = module
+
+    dependencies

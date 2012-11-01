@@ -1,3 +1,7 @@
+# Master
+
+* [haml_coffee_assets issue #74](https://github.com/netzpirat/haml_coffee_assets/issues/74): Add AMD dependency management.
+
 # Version 1.6.2, October 26, 2012
 
 * [#42](https://github.com/netzpirat/haml-coffee/issues/42)  Ensure HTML5 `data` attribute format is correct.
