@@ -292,14 +292,29 @@ module.exports = class HamlCoffee
   #
   render: (templateName, namespace = 'window.HAML') ->
     switch @options.placement
-      when 'amd' then @_render_amd()
-      else @_render_global templateName, namespace
+      when 'amd'
+        @renderAmd()
+      else
+        @renderGlobal templateName, namespace
 
   # Render the parsed source code as CoffeeScript template wrapped in a
-  # define() statement for AMD.
+  # define() statement for AMD. If the global modules list contains a module
+  # that starts with `hamlcoffee` and is assigned to the `hc` param, then
+  # all known helper functions will be taken from the `hamlcoffee` helper
+  # module.
   #
-  _render_amd: ->
-    template = indent(@precompile(), 4)
+  # @private
+  # @return [String] the CoffeeScript template source code
+  #
+  renderAmd: ->
+    if /^hamlcoffee/.test @options.dependencies['hc']
+      @options.customHtmlEscape = 'hc.escape'
+      @options.customCleanValue = 'hc.cleanValue'
+      @options.customPreserve = 'hc.preserve'
+      @options.customFindAndPreserve = 'hc.findAndPreserve'
+      @options.customSurround = 'hc.surround'
+      @options.customSucceed = 'hc.succeed'
+      @options.customPrecede = 'hc.precede'
 
     modules = []
     params  = []
@@ -307,6 +322,8 @@ module.exports = class HamlCoffee
     for param, module of @options.dependencies
       modules.push module
       params.push param
+
+    template = indent(@precompile(), 4)
 
     for param, module of @findDependencies(template)
       modules.push module
@@ -331,10 +348,12 @@ module.exports = class HamlCoffee
   # Render the parsed source code as CoffeeScript template to a global
   # window.HAML variable.
   #
+  # @private
   # @param [String] templateName the name to register the template
   # @param [String] namespace the namespace to register the template
+  # @return [String] the CoffeeScript template source code
   #
-  _render_global: (templateName, namespace = 'window.HAML') ->
+  renderGlobal: (templateName, namespace = 'window.HAML') ->
     template = ''
 
     # Create parameter name from the filename, e.g. a file `users/new.hamlc`
