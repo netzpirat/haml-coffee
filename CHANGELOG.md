@@ -1,4 +1,4 @@
-# Master
+# Version 1.7.0, November 2, 2012
 
 * [haml_coffee_assets issue #75](https://github.com/netzpirat/haml_coffee_assets/issues/75): Escape forward slash.
 * [haml_coffee_assets issue #74](https://github.com/netzpirat/haml_coffee_assets/issues/74): Add AMD dependency management.
