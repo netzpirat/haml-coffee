@@ -388,6 +388,7 @@ module.exports = class HamlCoffee
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;')
                 .replace(/\'/g, '&#39;')
+                .replace(/\\//g, '&#47;')
                 .replace(/\"/g, '&quot;')\n
               """
 
