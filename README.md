@@ -112,9 +112,11 @@ app = express.createServer()
 app.register '.hamlc', cons['haml-coffee']
 ```
 
-#### Usage
+#### Express Usage
 
-Express uses a layout file `layout.hamlc` by default and you have to insert the rendered view body into the layout like
+##### Layouts
+
+Express 2 uses a layout file `layout.hamlc` by default and you have to insert the rendered view body into the layout like
 this:
 
 ```haml
@@ -139,7 +141,15 @@ app.get '/', (req, res) ->
   res.render 'index.hamlc', name: 'Express user'
 ```
 
-#### Default template engine
+Express 3 has removed layout support, but you can get it back by installing
+[express-partials](https://github.com/publicclass/express-partials) and configure it as middleware:
+
+```
+partials = require 'express-partials'
+app.use partials()
+```
+
+##### Default template engine
 
 It's possible to use Haml Coffee as the default template engine by setting the `view engine`:
 
@@ -155,7 +165,7 @@ app.get '/', (req, res) ->
   res.render 'index', name: 'Express user'
 ```
 
-#### Compiler options
+##### Compiler options
 
 With Express 3, you can set global compiler options by using `app.locals`:
 
