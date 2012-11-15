@@ -51,3 +51,39 @@ module.exports = class CoffeeMaker
       process.exit 1
 
     output
+
+  # Compiles a Haml-Coffee file to a JavaScript template.
+  # When the output template is omitted, it will be derived from the file name.
+  #
+  # @param [String] source the template source code
+  # @param [String] templateName the name of the output template
+  # @param [String] namespace the template namespace
+  # @param [Object] compilerOptions the compiler options
+  #
+  @compile = (source, templateName, namespace = null, compilerOptions = {}) ->
+    output = ''
+
+    try
+      if templateName || compilerOptions.placement is 'amd'
+        compiler = new HamlCoffee compilerOptions
+        compiler.parse source
+        haml = compiler.render templateName, namespace
+
+      else
+        console.error "  #{ red }[haml coffee] no template name given.#{ reset }"
+        process.exit 1
+
+    catch error
+      console.error "  #{ red }[haml coffee] error compiling Haml file:#{ reset } %s", error
+      console.error error.stack
+      process.exit 1
+
+    try
+      output = CoffeeScript.compile haml
+
+    catch error
+      console.error '  #{ red }[haml coffee] CoffeeScript compilation error:#{ reset } %s', error
+      console.error error.stack
+      process.exit 1
+
+    output

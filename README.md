@@ -204,6 +204,8 @@ _The following section describes only the options that are unique to the command
 You can see all the available options by executing `haml-coffee --help` and have a look at the
 [compiler options](#compiler-options) for detailed information about all the options.
 
+The `input` and `output` are optional and you can also directly redirect the streams.
+
 #### Input filename
 
 You can either specify a single template or a directory with the `-i`/`--input` argument. When you supply a directory,
@@ -275,6 +277,31 @@ By extending the template scope with the context, you can access your context da
 
 This effect is achieved by using the [with](https://developer.mozilla.org/en/JavaScript/Reference/Statements/with)
 statement. Using with is forbidden in ECMAScript 5 strict mode.
+
+#### Stream redirection
+
+You can use Haml Coffee on the command line to enter a template and stop it with `Ctrl-D`:
+
+```bash
+$ haml-coffee -p amd
+%h1 Hello AMD
+^D
+```
+
+which will output the AMD module source code to the console. You either have to set the placement option to `amd` or
+give it a template name like
+
+```bash
+$ haml-coffee -t name
+%p JST rocks!
+^D
+```
+
+which will output the JST source code. Now you can also redirect files like:
+
+```bash
+$ haml-coffee -t name < input.hamlc > output.jst
+```
 
 ## Haml support
 

@@ -11,7 +11,6 @@ argv = require('optimist')
   .usage('Usage: $0')
   .options('i',
     alias     : 'input'
-    demand    : true
     describe  : 'Either a file or a directory name to be compiled'
   )
   .options('o',
@@ -147,53 +146,63 @@ exports.run = ->
     customPrecede         : argv['custom-precede']
     basename              : argv['basename']
 
-  fs.stat inputFilename, (err, stat) ->
-    unless err
+  if inputFilename
+    fs.stat inputFilename, (err, stat) ->
+      unless err
 
-      # Compile a single Haml CoffeeScript template
-      unless stat.isDirectory()
-        outputFilename  = argv.o || "#{ argv.i.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] }.jst"
-        console.error "  #{ green }[Haml Coffee] Compiling file#{ reset } %s to %s", inputFilename, outputFilename
-        fs.writeFileSync outputFilename, CoffeeMaker.compileFile(inputFilename, compilerOptions, namespace, templateName)
+        # Compile a single Haml CoffeeScript template
+        unless stat.isDirectory()
+          outputFilename  = argv.o || "#{ argv.i.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] }.jst"
+          console.error "  #{ green }[Haml Coffee] Compiling file#{ reset } %s to %s", inputFilename, outputFilename
+          fs.writeFileSync outputFilename, CoffeeMaker.compileFile(inputFilename, compilerOptions, namespace, templateName)
 
-        process.exit 0
+          process.exit 0
 
-      # Compile a directory of Haml CoffeeScript files
+        # Compile a directory of Haml CoffeeScript files
+        else
+          if templateName
+            console.error "  #{ red }[Haml Coffee] You can\'t compile all Haml templates in a directory and give a single template name!#{ reset }"
+            process.exit 1
+
+          console.log "  #{ green }[Haml Coffee] Compiling directory#{ reset } %s", inputFilename
+
+          # Removing a trailing slash
+          baseDir  = inputFilename.replace(/\/$/, '')
+
+          # When an output filename is given, all templates will be concatenated
+          compound = ''
+
+          # Loop through all Haml files and compile them
+          for filename in findit.sync baseDir
+            if filename.match /([^\.]+)(\.html)?\.haml[c]?$/
+
+              # Combine all files into a single output
+              if argv.o
+                console.log "    #{ green }[Haml Coffee] Compiling file#{ reset } %s", filename
+                compound += CoffeeMaker.compileFile(filename, compilerOptions, namespace)
+
+              # Compile and write each file on its own
+              else
+                outputFilename  = "#{ filename.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] }.jst"
+                console.log "  #{ green }[Haml Coffee] Compiling file#{ reset } %s to %s", inputFilename, outputFilename
+                fs.writeFileSync outputFilename, CoffeeMaker.compileFile(filename, compilerOptions)
+
+          # Write concatenated output
+          if argv.o
+            console.log "    #{ green }[Haml Coffee] Writing all templates to#{ reset } %s", argv.o
+            fs.writeFileSync argv.o, compound
+
+          process.exit 0
+
       else
-        if templateName
-          console.error "  #{ red }[Haml Coffee] You can\'t compile all Haml templates in a directory and give a single template name!#{ reset }"
-          process.exit 1
+        console.error "  #{ red }[Haml Coffee] Error compiling file#{ reset } %s: %s", argv.i, err
+        process.exit 1
 
-        console.log "  #{ green }[Haml Coffee] Compiling directory#{ reset } %s", inputFilename
-
-        # Removing a trailing slash
-        baseDir  = inputFilename.replace(/\/$/, '')
-
-        # When an output filename is given, all templates will be concatenated
-        compound = ''
-
-        # Loop through all Haml files and compile them
-        for filename in findit.sync baseDir
-          if filename.match /([^\.]+)(\.html)?\.haml[c]?$/
-
-            # Combine all files into a single output
-            if argv.o
-              console.log "    #{ green }[Haml Coffee] Compiling file#{ reset } %s", filename
-              compound += CoffeeMaker.compileFile(filename, compilerOptions, namespace)
-
-            # Compile and write each file on its own
-            else
-              outputFilename  = "#{ filename.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] }.jst"
-              console.log "  #{ green }[Haml Coffee] Compiling file#{ reset } %s to %s", inputFilename, outputFilename
-              fs.writeFileSync outputFilename,  CoffeeMaker.compileFile(filename, compilerOptions)
-
-        # Write concatenated output
-        if argv.o
-          console.log "    #{ green }[Haml Coffee] Writing all templates to#{ reset } %s", argv.o
-          fs.writeFileSync argv.o, compound
-
-        process.exit 0
-
-    else
-      console.error "  #{ red }[Haml Coffee] Error compiling file#{ reset } %s: %s", argv.i, err
-      process.exit 1
+  # Read from stdin and write result to stdout
+  else
+    source = '';
+    process.stdin.resume()
+    process.stdin.setEncoding 'utf8'
+    process.stdin.on 'data', (chunk) -> source += chunk
+    process.stdin.on 'end', ->
+      process.stdout.write CoffeeMaker.compile(source, templateName, namespace, compilerOptions)
