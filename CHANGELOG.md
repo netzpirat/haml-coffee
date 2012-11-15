@@ -1,6 +1,6 @@
 # Haml Coffee Changelog
 
-## Master
+## Version 1.8.0, November 15, 2012
 
 * [#44](https://github.com/netzpirat/haml-coffee/issues/44): Allow stream redirection from the CLI.
 
