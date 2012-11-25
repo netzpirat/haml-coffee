@@ -7,7 +7,7 @@ red   = '\u001b[31m'
 green = '\u001b[32m'
 reset = '\u001b[0m'
 
-argv = require('optimist')
+optimist = require('optimist')
   .usage('Usage: $0')
   .options('i',
     alias     : 'input'
@@ -107,13 +107,13 @@ argv = require('optimist')
     default   : ''
     describe  : 'Set the custom precede function name'
   )
-  .argv
 
 # Main function to run from console. This can either compile a single Haml Coffee template,
 # compile a directory of Haml Coffee templates into several JavaScript templates or a directory
 # of Haml Coffee templates into one JavaScript template.
 #
 exports.run = ->
+  argv = optimist.argv
 
   throw "Unknown template format '#{ argv.f }'" if ['xhtml', 'html4', 'html5'].indexOf(argv.f) is -1
 
@@ -198,11 +198,18 @@ exports.run = ->
         console.error "  #{ red }[Haml Coffee] Error compiling file#{ reset } %s: %s", argv.i, err
         process.exit 1
 
+  else if argv.help
+    console.log optimist.help()
+
   # Read from stdin and write result to stdout
   else
+    if require('tty').isatty(process.stdin)
+      console.log 'Please enter template source code and press Ctrl-D to generate:\n'
+
     source = '';
     process.stdin.resume()
     process.stdin.setEncoding 'utf8'
     process.stdin.on 'data', (chunk) -> source += chunk
     process.stdin.on 'end', ->
-      process.stdout.write CoffeeMaker.compile(source, templateName, namespace, compilerOptions)
+      console.log '\n'
+      process.stdout.write CoffeeMaker.compile(source, (templateName || 'test'), namespace, compilerOptions)

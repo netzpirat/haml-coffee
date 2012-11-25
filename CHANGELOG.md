@@ -1,5 +1,9 @@
 # Haml Coffee Changelog
 
+## Master
+
+* [#45](https://github.com/netzpirat/haml-coffee/issues/45): Fix CLI usage help and give a hint when read from STDIN.
+
 ## Version 1.8.0, November 15, 2012
 
 * [#44](https://github.com/netzpirat/haml-coffee/issues/44): Allow stream redirection from the CLI.
