@@ -1,5 +1,9 @@
 # Haml Coffee Changelog
 
+## Master
+
+* [haml_coffee_assets issue #78](https://github.com/netzpirat/haml_coffee_assets/issues/78): Fix nested parenthesis detection within attributes..
+
 ## Version 1.8.1, November 25, 2012
 
 * [#45](https://github.com/netzpirat/haml-coffee/issues/45): Fix CLI usage help and give a hint when read from STDIN.

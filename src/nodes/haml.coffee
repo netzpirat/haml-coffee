@@ -286,7 +286,7 @@ module.exports = class Haml extends Node
       # Increase level when a parenthesis is started
       if ch is '('
         level += 1
-        start = pos
+        start = pos if level is 1
 
       # Decrease level when a parenthesis is end
       if ch is ')'
@@ -550,7 +550,6 @@ module.exports = class Haml extends Node
     level = 0
     start = 0
     tokens = []
-    quoted = false
 
     for pos in [0...value.length]
       ch  = value[pos]

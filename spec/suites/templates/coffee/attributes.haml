@@ -20,3 +20,16 @@
 
 %ul.avatars{:class => 'all-shown' if false }
 %ul.avatars{:class => 'all-shown' unless false }
+
+- otherFunction = (number) -> number + 'number'
+- someFunction = (text, options) -> text + options.someOption
+
+%input{ value: someFunction('literal', someOption: otherFunction(1)) }
+%input{ value: someFunction('literal', { someOption: otherFunction(1) }) }
+%input{ value: someFunction('literal', { someOption: otherFunction(1) }) }
+%input{ value: someFunction('literal', 'someOption': otherFunction(1)) }
+%input{ value: someFunction('literal', { 'someOption': otherFunction(1) }) }
+%input{ value: (someFunction('literal', someOption: otherFunction(1))) }
+%input{ value: (someFunction('literal', { someOption: otherFunction(1) })) }
+%input{ value: (someFunction('literal', 'someOption': otherFunction(1))) }
+%input{ value: (someFunction('literal', { 'someOption': otherFunction(1) })) }
