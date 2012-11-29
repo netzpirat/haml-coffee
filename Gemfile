@@ -1,7 +1,6 @@
 source :rubygems
 
-gem 'growl'
-gem 'coolline'
+gem 'ruby_gntp'
 gem 'rb-fsevent'
 
 gem 'guard'
