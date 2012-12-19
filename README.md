@@ -22,22 +22,18 @@ newer Haml Coffee version with `npm update`.
 
 ## Integration
 
-If you're using [Hem](https://github.com/maccman/hem) to manage your CommonJS modules,
-use [hem-haml-coffee](https://github.com/vojto/hem-haml-coffee). This is excellent for
-developing your [Spine](http://spinejs.com/) application.
+There are different packages available for integrating Haml-Coffee into your workflow:
 
-If you like to integrate Haml Coffee seamless into the Rails asset pipeline, check out
-[haml_coffee_assets](https://github.com/netzpirat/haml_coffee_assets).
+* [grunt-contrib-haml](https://github.com/concordusapps/grunt-contrib-haml) for projects using [Grunt](http://gruntjs.com/).
+* [hem-haml-coffee](https://github.com/vojto/hem-haml-coffee) for project using [Hem](https://github.com/maccman/hem/).
+* [haml_coffee_assets](https://github.com/netzpirat/haml_coffee_assets) for projects using Rails.
+* [guard-haml-coffee](https://github.com/ouvrages/guard-haml-coffee) for projects using [Guard](https://github.com/guard/guard).
+* [Haml Coffee compiler](https://raw.github.com/netzpirat/haml-coffee/master/dist/compiler/hamlcoffee.js)
+  ([minified](https://raw.github.com/netzpirat/haml-coffee/master/dist/compiler/hamlcoffee.min.js))
+  for compiling in the browser.
 
-If you like to compile your Haml Coffee templates with [Guard](https://github.com/guard/guard), you should give
-[guard-haml-coffee](https://github.com/ouvrages/guard-haml-coffee) a try.
-
-For using the Haml Coffee compiler in the browser, a [browserified](https://github.com/substack/node-browserify) version
-is provided in the `dist/compiler` directory:
-[Haml Coffee compiler](https://raw.github.com/netzpirat/haml-coffee/master/dist/compiler/hamlcoffee.js)
-([minified](https://raw.github.com/netzpirat/haml-coffee/master/dist/compiler/hamlcoffee.min.js)). The browser
-distribution doesn't come bundled with CoffeeScript, so you'll have to make sure you've included it before requiring
-haml-coffee.
+The browser distribution doesn't come bundled with CoffeeScript, so you'll have to make sure you've
+included it before requiring haml-coffee.
 
 ## Compile Haml Coffee
 
