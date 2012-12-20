@@ -24,7 +24,7 @@ newer Haml Coffee version with `npm update`.
 
 There are different packages available for integrating Haml-Coffee into your workflow:
 
-* [grunt-contrib-haml](https://github.com/concordusapps/grunt-contrib-haml) for projects using [Grunt](http://gruntjs.com/).
+* [grunt-haml](https://github.com/concordusapps/grunt-haml) for projects using [Grunt](http://gruntjs.com/).
 * [hem-haml-coffee](https://github.com/vojto/hem-haml-coffee) for project using [Hem](https://github.com/maccman/hem/).
 * [haml_coffee_assets](https://github.com/netzpirat/haml_coffee_assets) for projects using Rails.
 * [guard-haml-coffee](https://github.com/ouvrages/guard-haml-coffee) for projects using [Guard](https://github.com/guard/guard).
