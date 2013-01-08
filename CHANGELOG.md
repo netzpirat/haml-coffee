@@ -1,5 +1,9 @@
 # Haml Coffee Changelog
 
+## Master
+
+* Fix setting a custom reference function.
+
 ## Version 1.9.0, January 8, 2013
 
 * HTML and Ruby style attributes can be mixed.

@@ -467,7 +467,7 @@ module.exports = class HamlCoffee
     # Generate object reference
     if code.indexOf('$r') isnt -1
       if @options.customReference
-        fn += "$e = #{ @options.customReference }\n"
+        fn += "$r = #{ @options.customReference }\n"
       else
         fn += """
               $r = (object, prefix) ->
