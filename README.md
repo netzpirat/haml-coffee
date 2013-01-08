@@ -395,6 +395,52 @@ produces the HTML output
 *<span class='small'>Not really</span>
 ```
 
+### Object reference: `[]`
+
+Haml-Coffee supports object references, but they are implemented slightly different due to the underlying runtime and
+different code style for CoffeeScript.
+
+Square brackets contain a CoffeeScript object or class that is used to set the class and id of that tag. The class is
+set to the object’s constructor name (transformed to use underlines rather than camel case) and the id is set to the
+object’s constructor name, followed by the value of its `id` property or its `#to_key` or `#id` functions (in that
+order). Additionally, the second argument (if present) will be used as a prefix for both the id and class attributes.
+
+For example:
+
+```haml
+%div[@user, 'greeting']
+  Hello
+```
+
+is compiled to:
+
+```html
+<div class='greeting_user' id='greeting_user_15'>
+  Hello!
+</div>
+```
+
+If the user object is for example a Backbone model with the id of 15. If you require that the class be something other
+than the underscored object’s constructor name, you can implement the `#hamlObjectRef` function on the object:
+
+```haml
+:coffeescript
+  class User
+    id: 23
+    hamlObjectRef: -> 'custom'
+
+%div[new User()]
+  Hello
+```
+
+is compiled to:
+
+```html
+<div class='custom' id='custom_23'>
+  Hello!
+</div>
+```
+
 ## CoffeeScript support
 
 Haml and CoffeeScript are a winning team, both use indention for blocks and are a perfect match for this reason. You can
@@ -450,52 +496,6 @@ them properly:
 ```
 
 In the above example you also see the usage for generating HTML5 data attributes.
-
-### Object reference: `[]`
-
-Haml-Coffee supports object references, but they are implemented slightly different due to the underlying runtime and
-different code style for CoffeeScript.
-
-Square brackets contain a CoffeeScript object or class that is used to set the class and id of that tag. The class is
-set to the object’s constructor name (transformed to use underlines rather than camel case) and the id is set to the
-object’s constructor name, followed by the value of its `id` property or its `#to_key` or `#id` functions (in that
-order). Additionally, the second argument (if present) will be used as a prefix for both the id and class attributes.
-
-For example:
-
-```haml
-%div[@user, 'greeting']
-  Hello
-```
-
-is compiled to:
-
-```html
-<div class='greeting_user' id='greeting_user_15'>
-  Hello!
-</div>
-```
-
-If the user object is for example a Backbone model with the id of 15. If you require that the class be something other
-than the underscored object’s constructor name, you can implement the `#hamlObjectRef` function on the object:
-
-```haml
-:coffeescript
-  class User
-    id: 23
-    hamlObjectRef: -> 'custom'
-
-%div[new User()]
-  Hello
-```
-
-is compiled to:
-
-```html
-<div class='custom' id='custom_23'>
-  Hello!
-</div>
-```
 
 ### Running Code
 
