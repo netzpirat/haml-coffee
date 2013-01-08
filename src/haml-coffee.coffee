@@ -15,7 +15,7 @@ Filter  = require('./nodes/filter')
 module.exports = class HamlCoffee
 
   # The current version number.
-  @VERSION: '1.8.2'
+  @VERSION: '1.9.0'
 
   # Construct the HAML Coffee compiler.
   #
