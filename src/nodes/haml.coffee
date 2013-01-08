@@ -161,6 +161,7 @@ module.exports = class Haml extends Node
       text       : escapeQuotes(tag.text)
       attributes : attributes
       assignment : tag.assignment
+      reference  : tag.reference
     }
 
   # Parse a tag line. This recognizes DocType tags `!!!` and
@@ -168,6 +169,8 @@ module.exports = class Haml extends Node
   #
   # It also parses the code assignment `=`, `}=` and `)=` or
   # inline text and the whitespace removal markers `<` and `>`.
+  #
+  # It detects an object reference `[` and attributes `(` / `{`.
   #
   # @param [String] exp the HAML expression
   # @return [Object] the parsed tag tokens
@@ -182,34 +185,57 @@ module.exports = class Haml extends Node
       rest = exp.substring(haml.length)
 
       # The haml tag has attributes
-      if rest.match /^[{(]/
+      if rest.match /^[{([]/
 
-        # Get used attribute surround start and end character
-        start = rest[0]
-        end   = switch start
-                  when '{' then '}'
-                  when '(' then ')'
+        reference  = ''
+        htmlAttributes = ''
+        rubyAttributes = ''
 
-        # Extract attributes by keeping track of brace/parenthesis level
-        level = 0
-        for pos in [0..rest.length]
-          ch = rest[pos]
+        for start in ['[', '{', '(', '[', '{', '(']
+          if start is rest[0]
+            # Get used attribute surround end character
+            end = switch start
+                    when '{' then '}'
+                    when '(' then ')'
+                    when '[' then ']'
 
-          # Increase level when a nested brace/parenthesis is started
-          level += 1 if ch is start
+            # Extract attributes by keeping track of brace/parenthesis level
+            level = 0
+            for pos in [0..rest.length]
+              ch = rest[pos]
 
-          # Decrease level when a nested brace/parenthesis is end or exit when on the last level
-          if ch is end
-            if level is 1 then break else level -= 1
+              # Increase level when a nested brace/parenthesis is started
+              level += 1 if ch is start
 
-        # Extract assignment or tag text
-        attributes = rest.substring(0, pos + 1)
-        assignment = rest.substring(pos + 1)
+              # Decrease level when a nested brace/parenthesis is end or exit when on the last level
+              if ch is end
+                if level is 1 then break else level -= 1
+
+            # Extract result
+            switch start
+              when '{'
+                rubyAttributes += rest.substring(0, pos + 1)
+                rest = rest.substring(pos + 1)
+              when '('
+                htmlAttributes += rest.substring(0, pos + 1)
+                rest = rest.substring(pos + 1)
+              when '['
+                reference = rest.substring(1, pos)
+                rest = rest.substring(pos + 1)
+
+        assignment = rest || ''
 
       # No attributes defined
       else
-        attributes = ''
+        reference = ''
+        htmlAttributes = ''
+        rubyAttributes = ''
         assignment = rest
+
+      # Merge HTML and Ruby style attributes
+      attributes = {}
+      for attr in [@parseAttributes(htmlAttributes), @parseAttributes(rubyAttributes)]
+        attributes[key] = val for key, val of attr
 
       # Extract whitespace removal
       if whitespace = assignment.match(/^[<>]{0,2}/)?[0]
@@ -240,8 +266,9 @@ module.exports = class Haml extends Node
         tag        : if tag then tag[1] else 'div'
         ids        : ("'#{ id.substr(1) }'" for id    in ids)     if ids
         classes    : ("'#{ klass.substr(1) }'" for klass in classes) if classes
-        attributes : @parseAttributes(attributes)
+        attributes : attributes
         assignment : assignment
+        reference  : reference
         text       : text
       }
 
@@ -379,6 +406,9 @@ module.exports = class Haml extends Node
   # contain interpolated classes. This is supported by
   # sorting classes at template render time.
   #
+  # If both an object reference and an id or class attribute is defined,
+  # then the attribute will be ignored.
+  #
   # @example Template render time sorting
   #   <p class='#{ [@user.name(), 'show'].sort().join(' ') }'>
   #
@@ -413,6 +443,14 @@ module.exports = class Haml extends Node
 
     # Set tag id
     tagParts.push "id='#{ tokens.id }'" if tokens.id
+
+    # Add id from object reference
+    if tokens.reference
+      if tokens.attributes
+        delete tokens.attributes['class']
+        delete tokens.attributes['id']
+
+      tagParts.push "\#{$r(" + tokens.reference + ")}"
 
     # Construct tag attributes
     if tokens.attributes

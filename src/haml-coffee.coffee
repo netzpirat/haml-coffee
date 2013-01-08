@@ -35,6 +35,7 @@ module.exports = class HamlCoffee
   # @option options [String] customCleanValue the name of the function to clean code insertion values before output
   # @option options [String] customFindAndPreserve the name of the function used to find and preserve whitespace
   # @option options [String] customPreserve the name of the function used to preserve the whitespace
+  # @option options [String] customReference the name of the function used to create the id from object references
   #
   constructor: (@options = {}) ->
     @options.placement        ?= 'global'
@@ -315,6 +316,7 @@ module.exports = class HamlCoffee
       @options.customSurround = 'hc.surround'
       @options.customSucceed = 'hc.succeed'
       @options.customPrecede = 'hc.precede'
+      @options.customReference = 'hc.reference'
 
     modules = []
     params  = []
@@ -461,6 +463,33 @@ module.exports = class HamlCoffee
         fn += "precede = (start, end, fn) => #{ @options.customPrecede }.call(@, start, end, fn)\n"
       else
         fn += "precede = (start, fn) => start + fn.call(@)?.replace(/^\s+/g, '')\n"
+
+    # Generate object reference
+    if code.indexOf('$r') isnt -1
+      if @options.customReference
+        fn += "$e = #{ @options.customReference }\n"
+      else
+        fn += """
+              $r = (object, prefix) ->
+                name = if prefix then prefix + '_' else ''
+
+                if typeof(object.hamlObjectRef) is 'function'
+                  name += object.hamlObjectRef()
+                else
+                  name += (object.constructor?.name || 'object').replace(/\W+/g, '_').replace(/([a-z\d])([A-Z])/g, '$1_$2').toLowerCase()
+
+                id = if typeof(object.to_key) is 'function'
+                       object.to_key()
+                     else if typeof(object.id) is 'function'
+                       object.id()
+                     else if object.id
+                       object.id
+                    else
+                      object
+
+                result  = "class='\#{ name }'"
+                result += " id='\#{ name }_\#{ id }'" if id\n
+              """
 
     fn  += "$o = []\n"
     fn  += "#{ code }\n"

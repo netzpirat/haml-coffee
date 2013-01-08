@@ -377,7 +377,13 @@
       "locals" : {
         "name" : "Tester"
       }
+    },
+
+    "object reference" : {
+      "haml_template" : "coffee/object_reference",
+      "html_template" : "coffee/object_reference"
     }
+
   },
 
   "filters" : {

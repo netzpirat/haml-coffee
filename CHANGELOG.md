@@ -1,5 +1,10 @@
 # Haml Coffee Changelog
 
+## Master
+
+* HTML and Ruby style attributes can be mixed.
+* [#47](https://github.com/netzpirat/haml-coffee/issues/47): Add support for Haml object reference syntax.
+
 ## Version 1.8.2, November 29, 2012
 
 * [haml_coffee_assets issue #78](https://github.com/netzpirat/haml_coffee_assets/issues/78): Fix nested parenthesis detection within attributes..

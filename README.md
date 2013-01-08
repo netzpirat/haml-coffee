@@ -320,6 +320,7 @@ other Haml implementations and the following sections are fully compatible to Ru
 * Escaping HTML: `&=`, unescaping HTML: `!=`
 * Filters: `:plain`, `:javascript`, `:css`, `:cdata`, `:escaped`, `:preserve`
 * Boolean attributes conversion
+* Haml object reference syntax: `[]`
 
 Please consult the official [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more
 details.
@@ -449,6 +450,52 @@ them properly:
 ```
 
 In the above example you also see the usage for generating HTML5 data attributes.
+
+### Object reference: `[]`
+
+Haml-Coffee supports object references, but they are implemented slightly different due to the underlying runtime and
+different code style for CoffeeScript.
+
+Square brackets contain a CoffeeScript object or class that is used to set the class and id of that tag. The class is
+set to the object’s constructor name (transformed to use underlines rather than camel case) and the id is set to the
+object’s constructor name, followed by the value of its `id` property or its `#to_key` or `#id` functions (in that
+order). Additionally, the second argument (if present) will be used as a prefix for both the id and class attributes.
+
+For example:
+
+```haml
+%div[@user, 'greeting']
+  Hello
+```
+
+is compiled to:
+
+```html
+<div class='greeting_user' id='greeting_user_15'>
+  Hello!
+</div>
+```
+
+If the user object is for example a Backbone model with the id of 15. If you require that the class be something other
+than the underscored object’s constructor name, you can implement the `#hamlObjectRef` function on the object:
+
+```haml
+:coffeescript
+  class User
+    id: 23
+    hamlObjectRef: -> 'custom'
+
+%div[new User()]
+  Hello
+```
+
+is compiled to:
+
+```html
+<div class='custom' id='custom_23'>
+  Hello!
+</div>
+```
 
 ### Running Code
 
@@ -694,7 +741,7 @@ To change these functions, simply assign the new function name to one of the fol
   * `customSurround`: Surrounds a block of Haml code with strings, with no whitespace in between.
   * `customSucceed`: Appends a string to the end of a Haml block, with no whitespace between.
   * `customPrecede`: Prepends a string to the beginning of a Haml block, with no whitespace between.
-
+  * `customReference`: Creates the Haml object reference.
 
 The `customSurround`, `customSucceed` and `customPrecede` are bound to the template context.
 
