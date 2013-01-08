@@ -363,7 +363,7 @@ require.define("/haml-coffee.coffee", function (require, module, exports, __dirn
 
   module.exports = HamlCoffee = (function() {
 
-    HamlCoffee.VERSION = '1.8.2';
+    HamlCoffee.VERSION = '1.9.0';
 
     function HamlCoffee(options) {
       var _base, _base10, _base11, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _ref, _ref10, _ref11, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
@@ -591,6 +591,7 @@ require.define("/haml-coffee.coffee", function (require, module, exports, __dirn
         this.options.customSurround = 'hc.surround';
         this.options.customSucceed = 'hc.succeed';
         this.options.customPrecede = 'hc.precede';
+        this.options.customReference = 'hc.reference';
       }
       modules = [];
       params = [];
@@ -709,6 +710,13 @@ require.define("/haml-coffee.coffee", function (require, module, exports, __dirn
           fn += "precede = (start, end, fn) => " + this.options.customPrecede + ".call(@, start, end, fn)\n";
         } else {
           fn += "precede = (start, fn) => start + fn.call(@)?.replace(/^\s+/g, '')\n";
+        }
+      }
+      if (code.indexOf('$r') !== -1) {
+        if (this.options.customReference) {
+          fn += "$e = " + this.options.customReference + "\n";
+        } else {
+          fn += "$r = (object, prefix) ->\n  name = if prefix then prefix + '_' else ''\n\n  if typeof(object.hamlObjectRef) is 'function'\n    name += object.hamlObjectRef()\n  else\n    name += (object.constructor?.name || 'object').replace(/\W+/g, '_').replace(/([a-z\d])([A-Z])/g, '$1_$2').toLowerCase()\n\n  id = if typeof(object.to_key) is 'function'\n         object.to_key()\n       else if typeof(object.id) is 'function'\n         object.id()\n       else if object.id\n         object.id\n      else\n        object\n\n  result  = \"class='\#{ name }'\"\n  result += \" id='\#{ name }_\#{ id }'\" if id\n";
         }
       }
       fn += "$o = []\n";
@@ -1187,12 +1195,13 @@ require.define("/nodes/haml.coffee", function (require, module, exports, __dirna
         classes: classes,
         text: escapeQuotes(tag.text),
         attributes: attributes,
-        assignment: tag.assignment
+        assignment: tag.assignment,
+        reference: tag.reference
       };
     };
 
     Haml.prototype.parseTag = function(exp) {
-      var assignment, attributes, ch, classes, doctype, end, haml, id, ids, klass, level, pos, rest, start, tag, text, whitespace, _ref, _ref2, _ref3;
+      var assignment, attr, attributes, ch, classes, doctype, end, haml, htmlAttributes, id, ids, key, klass, level, pos, reference, rest, rubyAttributes, start, tag, text, val, whitespace, _i, _j, _len, _len2, _ref, _ref2, _ref3, _ref4, _ref5;
       try {
         doctype = (_ref = exp.match(/^(\!{3}.*)/)) != null ? _ref[1] : void 0;
         if (doctype) {
@@ -1202,35 +1211,68 @@ require.define("/nodes/haml.coffee", function (require, module, exports, __dirna
         }
         haml = exp.match(/^((?:[#%\.][a-z0-9_:\-]*[\/]?)+)/i)[0];
         rest = exp.substring(haml.length);
-        if (rest.match(/^[{(]/)) {
-          start = rest[0];
-          end = (function() {
-            switch (start) {
-              case '{':
-                return '}';
-              case '(':
-                return ')';
-            }
-          })();
-          level = 0;
-          for (pos = 0, _ref2 = rest.length; 0 <= _ref2 ? pos <= _ref2 : pos >= _ref2; 0 <= _ref2 ? pos++ : pos--) {
-            ch = rest[pos];
-            if (ch === start) level += 1;
-            if (ch === end) {
-              if (level === 1) {
-                break;
-              } else {
-                level -= 1;
+        if (rest.match(/^[{([]/)) {
+          reference = '';
+          htmlAttributes = '';
+          rubyAttributes = '';
+          _ref2 = ['[', '{', '(', '[', '{', '('];
+          for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+            start = _ref2[_i];
+            if (start === rest[0]) {
+              end = (function() {
+                switch (start) {
+                  case '{':
+                    return '}';
+                  case '(':
+                    return ')';
+                  case '[':
+                    return ']';
+                }
+              })();
+              level = 0;
+              for (pos = 0, _ref3 = rest.length; 0 <= _ref3 ? pos <= _ref3 : pos >= _ref3; 0 <= _ref3 ? pos++ : pos--) {
+                ch = rest[pos];
+                if (ch === start) level += 1;
+                if (ch === end) {
+                  if (level === 1) {
+                    break;
+                  } else {
+                    level -= 1;
+                  }
+                }
+              }
+              switch (start) {
+                case '{':
+                  rubyAttributes += rest.substring(0, pos + 1);
+                  rest = rest.substring(pos + 1);
+                  break;
+                case '(':
+                  htmlAttributes += rest.substring(0, pos + 1);
+                  rest = rest.substring(pos + 1);
+                  break;
+                case '[':
+                  reference = rest.substring(1, pos);
+                  rest = rest.substring(pos + 1);
               }
             }
           }
-          attributes = rest.substring(0, pos + 1);
-          assignment = rest.substring(pos + 1);
+          assignment = rest || '';
         } else {
-          attributes = '';
+          reference = '';
+          htmlAttributes = '';
+          rubyAttributes = '';
           assignment = rest;
         }
-        if (whitespace = (_ref3 = assignment.match(/^[<>]{0,2}/)) != null ? _ref3[0] : void 0) {
+        attributes = {};
+        _ref4 = [this.parseAttributes(htmlAttributes), this.parseAttributes(rubyAttributes)];
+        for (_j = 0, _len2 = _ref4.length; _j < _len2; _j++) {
+          attr = _ref4[_j];
+          for (key in attr) {
+            val = attr[key];
+            attributes[key] = val;
+          }
+        }
+        if (whitespace = (_ref5 = assignment.match(/^[<>]{0,2}/)) != null ? _ref5[0] : void 0) {
           assignment = assignment.substring(whitespace.length);
         }
         if (assignment[0] === ' ') assignment = assignment.substring(1);
@@ -1251,25 +1293,26 @@ require.define("/nodes/haml.coffee", function (require, module, exports, __dirna
         return {
           tag: tag ? tag[1] : 'div',
           ids: ids ? (function() {
-            var _i, _len, _results;
+            var _k, _len3, _results;
             _results = [];
-            for (_i = 0, _len = ids.length; _i < _len; _i++) {
-              id = ids[_i];
+            for (_k = 0, _len3 = ids.length; _k < _len3; _k++) {
+              id = ids[_k];
               _results.push("'" + (id.substr(1)) + "'");
             }
             return _results;
           })() : void 0,
           classes: classes ? (function() {
-            var _i, _len, _results;
+            var _k, _len3, _results;
             _results = [];
-            for (_i = 0, _len = classes.length; _i < _len; _i++) {
-              klass = classes[_i];
+            for (_k = 0, _len3 = classes.length; _k < _len3; _k++) {
+              klass = classes[_k];
               _results.push("'" + (klass.substr(1)) + "'");
             }
             return _results;
           })() : void 0,
-          attributes: this.parseAttributes(attributes),
+          attributes: attributes,
           assignment: assignment,
+          reference: reference,
           text: text
         };
       } catch (error) {
@@ -1385,6 +1428,13 @@ require.define("/nodes/haml.coffee", function (require, module, exports, __dirna
         tagParts.push("class='" + classes + "'");
       }
       if (tokens.id) tagParts.push("id='" + tokens.id + "'");
+      if (tokens.reference) {
+        if (tokens.attributes) {
+          delete tokens.attributes['class'];
+          delete tokens.attributes['id'];
+        }
+        tagParts.push("\#{$r(" + tokens.reference + ")}");
+      }
       if (tokens.attributes) {
         _ref = tokens.attributes;
         for (key in _ref) {
