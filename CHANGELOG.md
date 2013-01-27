@@ -1,10 +1,10 @@
 # Haml Coffee Changelog
 
-## Master
+##  Version 1.9.1,  January 8, 2013
 
 * Fix setting a custom reference function.
 
-## Version 1.9.0, January 8, 2013
+## Version 1.9.0,  January 8, 2013
 
 * HTML and Ruby style attributes can be mixed.
 * [#47](https://github.com/netzpirat/haml-coffee/issues/47): Add support for Haml object reference syntax.
