@@ -705,6 +705,9 @@ Possible values are:
 * `global` <br />
   Inserts the optionally namespaced template function into `window.HAML`.
 
+* 'standalone' <br />
+  Returns the template function without wrapping it
+
 * `amd` <br />
   Wraps the template function into a `define()` statement to allow async
   loading via AMD.
