@@ -303,9 +303,10 @@ module.exports = class HamlCoffee
   # Render a standalone version
   renderStandalone: ->
     template = """
-    return ->
-      (context) ->
+    return (context) ->
+      (->
     #{indent(@precompile(), 2)}
+      ).call(context)
     """
 
   # Render the parsed source code as CoffeeScript template wrapped in a
