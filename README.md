@@ -641,7 +641,7 @@ rendering speed.
 
 #### HTML escape
 
-* Name: `htmlEscape`
+* Name: `escapeHtml`
 * Type: `Boolean`
 * Default: `true`
 
