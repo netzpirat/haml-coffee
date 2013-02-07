@@ -295,6 +295,8 @@ module.exports = class HamlCoffee
     switch @options.placement
       when 'amd'
         @renderAmd()
+      when 'standalone'
+        @precompile()
       else
         @renderGlobal templateName, namespace
 
