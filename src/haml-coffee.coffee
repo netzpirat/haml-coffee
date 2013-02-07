@@ -295,8 +295,19 @@ module.exports = class HamlCoffee
     switch @options.placement
       when 'amd'
         @renderAmd()
+      when 'standalone'
+        @renderStandalone()
       else
         @renderGlobal templateName, namespace
+
+  # Render a standalone version
+  renderStandalone: ->
+    template = """
+    return (context) ->
+      (->
+    #{indent(@precompile(), 2)}
+      ).call(context)
+    """
 
   # Render the parsed source code as CoffeeScript template wrapped in a
   # define() statement for AMD. If the global modules list contains a module
