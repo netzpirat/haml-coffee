@@ -4,6 +4,7 @@ Haml    = require('./nodes/haml')
 Code    = require('./nodes/code')
 Comment = require('./nodes/comment')
 Filter  = require('./nodes/filter')
+Directive  = require('./nodes/directive')
 
 {whitespace} = require('./util/text')
 {indent}     = require('./util/text')
@@ -49,6 +50,25 @@ module.exports = class HamlCoffee
     @options.format           ?= 'html5'
     @options.preserveTags     ?= 'pre,textarea'
     @options.selfCloseTags    ?= 'meta,img,link,br,hr,input,area,param,col,base'
+
+    if @options.placement is 'global'
+      @options.name           ?= 'test'
+      @options.namespace      ?= 'window.HAML'
+
+      # Create parameter name from the filename, e.g. a file `users/new.hamlc`
+      # will create `window.HAML.user.new`
+      segments = "#{ @options.namespace }.#{ @options.name }".replace(/(\s|-)+/g, '_').split(/\./)
+      @options.name = if @options.basename then segments.pop().split(/\/|\\/).pop() else segments.pop()
+      @options.namespace = segments.shift()
+
+      # Create code for file and namespace creation
+      @intro = ''
+      if segments.length isnt 0
+        for segment in segments
+          @options.namespace += ".#{ segment }"
+          @intro  += "#{ @options.namespace } ?= {}\n"
+      else
+        @intro += "#{ @options.namespace } ?= {}\n"
 
   # Test if the indention level has changed, either
   # increased or decreased.
@@ -139,6 +159,9 @@ module.exports = class HamlCoffee
       preserveTags     : override.preserveTags     || @options.preserveTags
       selfCloseTags    : override.selfCloseTags    || @options.selfCloseTags
       uglify           : override.uglify           || @options.uglify
+      placement        : override.placement        || @options.placement
+      namespace        : override.namespace        || @options.namespace
+      name             : override.name             || @options.name
     }
 
   # Get the matching node type for the given expression. This
@@ -169,6 +192,10 @@ module.exports = class HamlCoffee
     # Detect Haml node
     else if expression.match(/^(%|#[^{]|\.|\!)(.*)/)
       node = new Haml(expression, options)
+
+    # Detect directive node
+    else if expression.match(/^\+(.*)/)
+      node = new Directive(expression, options)
 
     # Everything else is a text node
     else
@@ -288,15 +315,12 @@ module.exports = class HamlCoffee
 
   # Render the parsed source code as CoffeeScript template.
   #
-  # @param [String] templateName the name to register the template
-  # @param [String] namespace the namespace to register the template
-  #
-  render: (templateName, namespace = 'window.HAML') ->
+  render: ->
     switch @options.placement
       when 'amd'
         @renderAmd()
       else
-        @renderGlobal templateName, namespace
+        @renderGlobal()
 
   # Render the parsed source code as CoffeeScript template wrapped in a
   # define() statement for AMD. If the global modules list contains a module
@@ -351,30 +375,15 @@ module.exports = class HamlCoffee
   # window.HAML variable.
   #
   # @private
-  # @param [String] templateName the name to register the template
-  # @param [String] namespace the namespace to register the template
   # @return [String] the CoffeeScript template source code
   #
-  renderGlobal: (templateName, namespace = 'window.HAML') ->
-    template = ''
-
-    # Create parameter name from the filename, e.g. a file `users/new.hamlc`
-    # will create `window.HAML.user.new`
-    segments     = "#{ namespace }.#{ templateName }".replace(/(\s|-)+/g, '_').split(/\./)
-    templateName = if @options.basename then segments.pop().split(/\/|\\/).pop() else segments.pop()
-    namespace    = segments.shift()
-
-    # Create code for file and namespace creation
-    if segments.length isnt 0
-      for segment in segments
-        namespace += ".#{ segment }"
-        template  += "#{ namespace } ?= {}\n"
-    else
-      template += "#{ namespace } ?= {}\n"
+  renderGlobal: ->
+    # Use the existing intro that is generated at the constructor
+    template = @intro
 
     # Render the template and extend the scope with the context
     if @options.extendScope
-      template += "#{ namespace }['#{ templateName }'] = (context) -> ( ->\n"
+      template += "#{ @options.namespace }['#{ @options.name }'] = (context) -> ( ->\n"
       template += "  `with (context || {}) {`\n"
       template += "#{ indent(@precompile(), 1) }"
       template += "`}`\n"
@@ -382,7 +391,7 @@ module.exports = class HamlCoffee
 
     # Render the template without extending the scope
     else
-      template += "#{ namespace }['#{ templateName }'] = (context) -> ( ->\n"
+      template += "#{ @options.namespace }['#{ @options.name }'] = (context) -> ( ->\n"
       template += "#{ indent(@precompile(), 1) }"
       template += ").call(context)"
 

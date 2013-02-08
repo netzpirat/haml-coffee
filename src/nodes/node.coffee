@@ -60,6 +60,10 @@ module.exports = class Node
     @codeBlockLevel    = options.codeBlockLevel
     @blockLevel        = options.blockLevel
 
+    @placement         = options.placement
+    @namespace         = options.namespace
+    @name              = options.name
+
   # Add a child node.
   #
   # @param [Node] child the child node
