@@ -24,10 +24,11 @@ module.exports = class Directive extends Node
     #   +include 'path/to/template', @context
     #
     include: (expression) ->
-      [expression, name, context] = expression.match(/\s*['"](.*)['"](?:,\s*(.*))?\s*/)
+      try [[], name, context] = expression.match(/\s*['"](.*)['"](?:,\s*(.*))?\s*/)
+      catch e
+        throw "Failed to parse the include directive from #{ expression }"
 
       context = 'this' unless context
-
       statement = switch @placement
         when 'global' then "#{ @namespace }['#{ name }'].apply(#{ context })"
         when 'amd' then "require('#{ name }').apply(#{ context })"
@@ -40,11 +41,8 @@ module.exports = class Directive extends Node
   #
   evaluate: ->
     directives = Object.keys(@directives).join('|')
-    match = @expression.match(///\+(#{ directives })(.*)///)
-
-    if match is null
+    try [[], name, rest] = @expression.match(///\+(#{ directives })(.*)///)
+    catch e
       throw "Unable to recognize directive from #{ @expression }"
 
-    [identifier, expression] = [match[1], match[2]]
-
-    @directives[identifier].call this, expression
+    @directives[name].call this, rest
