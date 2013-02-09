@@ -18,6 +18,12 @@ module.exports = class CoffeeMaker
   @compileFile = (filename, compilerOptions = {}, namespace = null, templateName = null) ->
     output = ''
 
+    # Extend the options with the name and namespace so that the
+    # compiler has these configuration properties from the beginning
+    # and that the API for this method can stay the same.
+    compilerOptions.namespace = namespace
+    compilerOptions.name = templateName
+
     try
       source = fs.readFileSync(filename).toString()
     catch error
@@ -31,7 +37,8 @@ module.exports = class CoffeeMaker
       if templateName
         compiler = new HamlCoffee compilerOptions
         compiler.parse source
-        haml = compiler.render templateName, namespace
+
+        haml = compiler.render
 
       else
         console.error "  #{ red }[haml coffee] no valid Haml extension.#{ reset }"
@@ -62,6 +69,12 @@ module.exports = class CoffeeMaker
   #
   @compile = (source, templateName, namespace = null, compilerOptions = {}) ->
     output = ''
+
+    # Extend the options with the name and namespace so that the
+    # compiler has these configuration properties from the beginning
+    # and that the API for this method can stay the same.
+    compilerOptions.namespace = namespace
+    compilerOptions.name = templateName
 
     try
       if templateName || compilerOptions.placement is 'amd'
