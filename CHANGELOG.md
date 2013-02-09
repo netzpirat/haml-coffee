@@ -1,5 +1,9 @@
 # Haml Coffee Changelog
 
+## Master
+
+* [#54](https://github.com/netzpirat/haml-coffee/issues/54): Add `standalone` placement option. ([@Nami-Doc](https://github.com/Nami-Doc))
+
 ##  Version 1.9.1,  January 8, 2013
 
 * Fix setting a custom reference function.
