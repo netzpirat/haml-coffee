@@ -1,5 +1,5 @@
-path  = require('path')
-Node  = require('./node')
+path = require('path')
+Node = require('./node')
 
 # Directive node for HAML statements that change the meaning or do interact
 # uniquely with the HAML document.
