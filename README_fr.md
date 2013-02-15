@@ -1,47 +1,44 @@
 # Haml Coffee Templates [![Build Status](https://secure.travis-ci.org/netzpirat/haml-coffee.png)](http://travis-ci.org/netzpirat/haml-coffee)
 
-Haml Coffee is a JavaScript templating solution that uses [Haml](http://haml-lang.com/) as markup, understands inline
-[CoffeeScript](http://jashkenas.github.com/coffee-script/) and generates a JavaScript function that renders to HTML. It
-can be used in client-side JavaScript applications that are using
+Haml Coffee est un moteur de template en JavaScript utilisant la syntaxe [Haml](http://haml-lang.com/), tout en comprenant
+[CoffeeScript](http://jashkenas.github.com/coffee-script/) pour générer une fonction function qui donnera du HTML.
+Il est possible de l'utiliser dans des applications JavaScript côté client, par exemple avec
 [Backbone.js](http://documentcloud.github.com/backbone/), [Spine.js](http://spinejs.com/),
-[JavaScriptMVC](http://javascriptmvc.com/), [KnockoutJS](http://knockoutjs.com/) and others, or on the server-side in
-frameworks like [Express](http://expressjs.com/).
+[JavaScriptMVC](http://javascriptmvc.com/), [KnockoutJS](http://knockoutjs.com/) ou d'autres, ou côté serveur avec des frameworks comme [Express](http://expressjs.com/).
 
-You can try Haml Coffee online by visiting [Haml Coffee Online](http://haml-coffee-online.herokuapp.com/).
+Vous pouvez essayer Haml Coffee en ligne en visitant [Haml Coffee Online](http://haml-coffee-online.herokuapp.com/).
 
 ## Installation
 
-Haml Coffee is available in NPM and can be installed with:
+Haml Coffee est disponible via npm et peut être installé par la commande:
 
 ```bash
 $ npm install haml-coffee
 ```
 
-Please have a look at the [CHANGELOG](https://github.com/netzpirat/haml-coffee/blob/master/CHANGELOG.md) when upgrading to a
-newer Haml Coffee version with `npm update`.
+Pensez à vérifier le [CHANGELOG](https://github.com/netzpirat/haml-coffee/blob/master/CHANGELOG.md) lorsque vous mettez à jour votre version d'Haml Coffee avec `npm update`.
 
-## Integration
+## Intégration
 
-There are different packages available for integrating Haml Coffee into your workflow:
+Il existe différent packages pour intégrer Haml-Coffee dans votre environnement de travail:
 
-* [grunt-haml](https://github.com/concordusapps/grunt-haml) for projects using [Grunt](http://gruntjs.com/).
-* [hem-haml-coffee](https://github.com/vojto/hem-haml-coffee) for projects using [Hem](https://github.com/maccman/hem/).
-* [haml_coffee_assets](https://github.com/netzpirat/haml_coffee_assets) for projects using Rails.
-* [stitch-haml-coffee](https://github.com/jnbt/stitch-haml-coffee) for projects using [Stitch](https://github.com/sstephenson/stitch).
-* [guard-haml-coffee](https://github.com/ouvrages/guard-haml-coffee) for projects using [Guard](https://github.com/guard/guard).
+* [grunt-haml](https://github.com/concordusapps/grunt-haml) pour les projets utilisants [Grunt](http://gruntjs.com/).
+* [hem-haml-coffee](https://github.com/vojto/hem-haml-coffee) pour les projets utilisants [Hem](https://github.com/maccman/hem/).
+* [haml_coffee_assets](https://github.com/netzpirat/haml_coffee_assets) pour les projets utilisants Rails.
+* [stitch-haml-coffee](https://github.com/jnbt/stitch-haml-coffee) pour les projets utilisants [Stitch](https://github.com/sstephenson/stitch).
+* [guard-haml-coffee](https://github.com/ouvrages/guard-haml-coffee) pour les projets utilisants [Guard](https://github.com/guard/guard).
 * [Haml Coffee compiler](https://raw.github.com/netzpirat/haml-coffee/master/dist/compiler/hamlcoffee.js)
   ([minified](https://raw.github.com/netzpirat/haml-coffee/master/dist/compiler/hamlcoffee.min.js))
-  for compiling in the browser.
+  pour le navigateur.
 
-The browser distribution doesn't come bundled with CoffeeScript, so you'll have to make sure you've
-included it before requiring haml-coffee.
+Veuillez noter que cette dernière version (navigateur) n'inclue pas CoffeeScript, vous devrez vous assurer de l'avoir inclus avant d'inclure haml-coffee.
 
-## Compile Haml Coffee
+## Compilateur Haml Coffee
 
-### Using the API
+### Via l'API
 
-You can compile a Haml Coffee template to a JavaScript function and execute the function with the locals to render the
-HTML. The following code
+Vous pouvez compiler un template Haml Coffee à une fonction JavaScript en lui passant les variables locales à utiliser pour générer le HTML.
+Le code suivant
 
 ```coffeescript
 hamlc = require 'haml-coffee'
@@ -49,9 +46,9 @@ tmpl = hamlc.compile '%h1= @title'
 html = tmpl title: 'Haml Coffee rocks!'
 ```
 
-will create the HTML `<h1>Haml Coffee rocks!</h1>`.
+donnera `<h1>Haml Coffee rocks!</h1>`.
 
-The `compile` function can take the compiler options as second parameter to customize the template function:
+La fonction `compile` peut prendre les options comme second paramètre pour personnaliser la fonction :
 
 ```coffeescript
 hamlc.compile '%h1= @title'
@@ -59,17 +56,15 @@ hamlc.compile '%h1= @title'
   escapeHtml: false
 ```
 
-See the [compiler options](#compiler-options) for detailed information about all the available options and browse
-the [codo](https://github.com/netzpirat/codo) generated
-[Haml Coffee API documentation](http://coffeedoc.info/github/netzpirat/haml-coffee/master/).
+Référez-vous aux [options](#compiler-options) pour avoir des informations plus détaillées sur les options disponibles et n'hésitez pas à naviguer dans le [codo](https://github.com/netzpirat/codo) généré depuis l'[Haml-Coffee API documentation](http://coffeedoc.info/github/netzpirat/haml-coffee/master/).
 
-### Using with Express
+### Avec Express
 
-You can configure [Express](http://expressjs.com/) to use Haml Coffee as template engine.
+Vous pouvez configurer [Express](http://expressjs.com/) pour utiliser Haml Coffee comme moteur de template.
 
 #### Express 3
 
-Starting with version 1.4.0, Haml Coffee has support for Express 3 and can be registered as view engine as follows:
+Depuis la version 1.4.0, Haml Coffee supporte Express 3 et peut être enregistré comme moteur de thème comme il suit :
 
 ```coffeescript
 express = require 'express'
@@ -78,7 +73,7 @@ app     = express()
 app.engine 'hamlc', require('haml-coffee').__express
 ```
 
-Alternatively you can also use [consolidate.js](https://github.com/visionmedia/consolidate.js) to register the engine:
+Vous pouvez aussi utiliser [consolidate.js](https://github.com/visionmedia/consolidate.js) pour l'inclure :
 
 ```coffeescript
 express = require 'express'
@@ -90,7 +85,7 @@ app.engine 'hamlc', cons['haml-coffee']);
 
 #### Express 2
 
-Starting with version 0.5.0, Haml Coffee has support for Express 2 and can be registered as view engine as follows:
+Depuis la version 0.5.0, Haml Coffee supporte Express 2 et peut être enregistré comme moteur de thème comme il suit :
 
 ```coffeescript
 express = require 'express'
@@ -99,7 +94,7 @@ app = express.createServer()
 app.register '.hamlc', require('haml-coffee')
 ```
 
-Alternatively you can also use [consolidate.js](https://github.com/visionmedia/consolidate.js) to register the engine:
+Vous pouvez aussi utiliser [consolidate.js](https://github.com/visionmedia/consolidate.js) pour l'inclure :
 
 ```coffeescript
 express = require 'express'
@@ -109,79 +104,76 @@ app = express.createServer()
 app.register '.hamlc', cons['haml-coffee']
 ```
 
-#### Express Usage
+#### Utilisation avec Express
 
-##### Layouts
+##### Agencements
 
-Express 2 uses a layout file `layout.hamlc` by default and you have to insert the rendered view body into the layout like
-this:
+Express 2 utilise un fichier d'agencement `layout.hamlc` par défaut, dans lequel vous pouvez insérer la vue de cette manière :
 
 ```haml
 !!!
 %head
-  %title Express App
+  %title Application Express
 %body
   != @body
 ```
 
-Now you can create a Haml Coffee view
+Maintenant, vous pouvez créer une vue avec Haml Coffee
 
 ```haml
 %h1= "Welcome #{ @name }"
 %p You've rendered your first Haml Coffee view.
 ```
 
-that you can render with:
+que vous pouvez exécuter comme ceci :
 
 ```coffeescript
 app.get '/', (req, res) ->
   res.render 'index.hamlc', name: 'Express user'
 ```
 
-Express 3 has removed layout support, but you can get it back by installing
-[express-partials](https://github.com/publicclass/express-partials) and configure it as middleware:
+Express 3 a retiré les agencements (layouts), mais vous pouvez installer
+[express-partials](https://github.com/publicclass/express-partials) et le configurer comme middleware :
 
 ```
 partials = require 'express-partials'
 app.use partials()
 ```
 
-##### Default template engine
+##### Moteur de thème par défaut
 
-It's possible to use Haml Coffee as the default template engine by setting the `view engine`:
+Il est possible d'utiliser Haml Coffee comme moteur de template en modifiant l'option `view engine` :
 
 ```coffeescript
 app.configure ->
   app.set 'view engine', 'hamlc'
 ```
 
-which allows you to omit the `.hamlc` extension when rendering a template:
+Qui vous permet d'omettre l'extension `.hamlc` quand vous exécutez une vue :
 
 ```coffeescript
 app.get '/', (req, res) ->
   res.render 'index', name: 'Express user'
 ```
 
-##### Compiler options
+##### Options compilateur
 
-With Express 3, you can set global compiler options by using `app.locals`:
+Avec Express 3, vous pouvez passer des options au compilateur en utilisant `app.locals`:
 
 ```
 app.locals.uglify = true
 ```
 
-which is the same as:
+qui équivaut à faire :
 
 ```
 res.render view, { uglify: true }
 ```
+Référez-vous aux [options](#compiler-options) pour avoir des informations plus détaillées sur les options disponibles.
 
-See the [compiler options](#compiler-options) for detailed information about all the available options.
+### Via l'outil en ligne de commande
 
-### Using the CLI tool
-
-After the installation you will have a `haml-coffee` binary that can be used to compile single templates and even
-compile multiple templates recursively into a single file.
+Après l'installation, vous aurez un fichier binaire `haml-coffee` que vous pourrez utiliser pour compiler des fichiers templates voire plusieurs fichiers templates dans un seul fichier JavaScript.
 
 ```bash
 $ haml-coffee
@@ -196,88 +188,79 @@ Options:
   -e, --extend                       Extend the template scope with the context
 ```
 
-_The following section describes only the options that are unique to the command line tool._
+_La section suivante ne fait que décrire les options qui sont uniques à l'outil en ligne de commande._
 
-You can see all the available options by executing `haml-coffee --help` and have a look at the
-[compiler options](#compiler-options) for detailed information about all the options.
+Vous pouvez obtenir la liste des options en exécutant `haml-coffee --help` et vous référez aux [options](#compiler-options) pour avoir des informations plus détaillées sur les options disponibles
 
-The `input` and `output` are optional and you can also directly redirect the streams.
+`input` et `output` sont optionnels et vous pouvez directement rediriger les flux (streams).
 
-#### Input filename
+#### Nom du fichier d'entrée
 
-You can either specify a single template or a directory with the `-i`/`--input` argument. When you supply a directory,
-templates are being searched recursively:
+Vous pouvez donner un fichier simple ou un nom de dossier avec l'option `-i`/`--input`.
+Si vous passez un dossier, les fichier sont cherchés de manière récursive :
 
 ```bash
 $ haml-coffee -i template.haml
 ```
 
-This will generate a template with the same name as the file but the extension changed to `.jst`. The above command for
-example would generate a template named `template.jst`.
+Cette commande générera un fichier avec le même nom que celui donné mais avec `.jst` comme extension.
+La commande ci-dessus par exemple produirait un fichier `template.jst`.
 
-A valid Haml Coffee template must have one of the following extensions: `.haml`, `.html.haml`, `.hamlc` or
+Un fichier Haml Coffee valide a l'une de ces extensions : `.haml`, `.html.haml`, `.hamlc` or
 `.html.hamlc`.
 
-#### Output filename
+#### Nom du fichier de sortie
 
-You can specify a single output file name to be used instead of the automatic generated output file name with the
-`-o`/`--output` argument:
+Vous pouvez spécifier le fichier de sortie (unique) qui sera utilisé plutôt que laisser Haml Coffee le déduire via l'option `-o`/`--output` :
 
 ```bash
 $ haml-coffee -i template.haml -o t.js
 ```
 
-This creates a template named `t.js`. You can also set a directory as input and give an output file name for
-concatenating all templates into a single file:
+Cette commande générera un fichier nommé `t.js`. Vous pouvez aussi vus servir de cette commande et donner un dossier en entrée pour n'avoir qu'un fichier en sortie :
 
 ```bash
 $ haml-coffee -i templates -o all.js
 ```
 
-This will create all the templates under the `templates` directory into a single, combined output file `all.js`.
+Cela compilera tous les fichiers templates dans le dossier `templates` dans un unique fichier `all.js`.
 
-#### Template namespace
+#### Espace de nom
 
-Each template will register itself by default under the `window.HAML` namespace, but you can change the namespace with
-the `-n`/`--namespace` argument:
+Par défaut, chaque template est disponible dans `window.HAML` mais vous pouvez changer l'espace de nom avec l'option `-n`/`--namespace` :
 
 ```bash
 $ haml-coffee -i template.haml -n exports.JST
 ```
 
-#### Template name
+#### Nom du template
 
-Each template must have a unique name under which it can be addressed. By default the template name is derived from the
-template file name by stripping off all extensions and remove illegal characters. Directory names are converted to
-nested namespaces under the default namespace. For example, a template named `user/show-admin.html.haml` will result in
-a template that can be accessed by `window.HAML['user/show_admin']`.
+Chaque template a un nom unique. Le nom est déduit depuis le fichier source en retirant l'extension et tous les caractères illégaux. Les noms des dossiers sont utilisés en plus de l'espace de nom. Par exemple, un template nommé `user/show-admin.html.haml` sera compilé dans une fonction accessible via `window.HAML['user/show_admin']`.
 
-Given the `-b`/`--basename` argument, the deduced template name will not include the path to the template. For example,
-a template named `user/show-admin.html.haml` will result in a template that can be accessed by
-`window.HAML['show_admin']` instead of `window.HAML['user/show_admin']`.
+Via l'option `-b`/`--basename`, le nom déduit n'incluera pas le chemin vers le thème. Par exemple, un template nommé `user/show-admin.html.haml` sera compilé dans une fonction accessible via `window.HAML['show_admin']` au lieu de `window.HAML['user/show_admin']`.
 
-With the `-t`/`--template` argument you can set a template name manually:
+L'option `-t`/`--template` vous permet de manuellement changer le nom du template :
 
 ```bash
 $ haml-coffee -i template.haml -n exports.JST -t other
 ```
 
-This will result in a template that can be accessed by `exports.JST['other']`.
+La fonction sera accessible via `exports.JST['other']`.
 
-#### Extend the template scope
+#### Extension de la portée (scope)
 
-By extending the template scope with the context, you can access your context data without `@` or `this`:
+En étandant la portée (scope), vous pouvez accéder directement à vos variables locales sans utiliser `@` ou `this`:
 
 ```Haml
 %h2= title
 ```
 
-This effect is achieved by using the [with](https://developer.mozilla.org/en/JavaScript/Reference/Statements/with)
-statement. Using with is forbidden in ECMAScript 5 strict mode.
+Ceci est possible grace au [with](https://developer.mozilla.org/en/JavaScript/Reference/Statements/with)
+de JavaScript. Utiliser `with` est interdit en Mode Strict (ECMAScript 5).
 
-#### Stream redirection
+#### Redirection de flux (streams)
 
-You can use Haml Coffee on the command line to enter a template and stop it with `Ctrl-D`:
+Vous pouvez utiliser Haml Coffee en ligne de commande pour entrer un template et arrêtez via Ctrl+D :
 
 ```bash
 $ haml-coffee -p amd
@@ -285,8 +268,7 @@ $ haml-coffee -p amd
 ^D
 ```
 
-which will output the AMD module source code to the console. You either have to set the placement option to `amd` or
-give it a template name like
+qui produira un module AMD dans la console. Vous devez utiliser le placement `amd` ou donner un nom au template comme par exemple
 
 ```bash
 $ haml-coffee -t name
@@ -294,79 +276,77 @@ $ haml-coffee -t name
 ^D
 ```
 
-which will output the JST source code. Now you can also redirect files like:
+qui donnera le code source JST. Vous pouvez aussi rediriger les flux (streams) comme il suit :
 
 ```bash
 $ haml-coffee -t name < input.hamlc > output.jst
 ```
 
-## Haml support
+## Support de Haml
 
-Haml Coffee implements the [Haml Spec](https://github.com/haml/haml-spec) to ensure some degree of compatibility to
-other Haml implementations and the following sections are fully compatible to Ruby Haml:
+Haml Coffee implémente la [Spécification Haml (EN)](https://github.com/haml/haml-spec) pour assurer un degré de compatibilité avec les autres implémentations HAML. Les sections suivantes sont parfaitement compatibles :
 
-* Plain text
-* Multiline: `|`
-* Element names: `%`
-* Attributes: `{}` or `()`
-* Class and ID: `.` and `#`, implicit `div` elements
-* Self-closing tags: `/`
-* Doctype: `!!!`
-* HTML comments: `/`, conditional comments: `/[]`, Haml comments: `-#`
-* Running CoffeeScript: `-`, inserting CoffeeScript: `=`
-* CoffeeScript interpolation: `#{}`
-* Whitespace preservation: `~`
-* Whitespace removal: `>` and `<`
-* Escaping `\`
-* Escaping HTML: `&=`, unescaping HTML: `!=`
-* Filters: `:plain`, `:javascript`, `:css`, `:cdata`, `:escaped`, `:preserve`
-* Boolean attributes conversion
-* Haml object reference syntax: `[]`
+* Texte seul
+* Multilignes : `|`
+* Balises : `%`
+* Attributs : `{}` or `()`
+* Classes et ID : `.` et `#` (balise `div` implicite)
+* Balises auto-fermantes : `/`
+* Doctype  : `!!!`
+* Commentaires HTML : `/`, commentaires conditionnels : `/[]`, commentaires Haml : `-#`
+* Code CoffeeScript: `-`, insertion de CoffeeScript: `=`
+* Interpolation : `#{}`
+* Préservation d'espaces : `~`
+* Suppression d'espaces : `>` et `<`
+* Échappement `\`
+* Échappement HTML : `&=`, dé-échappement HTML : `!=`
+* Filtres : `:plain`, `:javascript`, `:css`, `:cdata`, `:escaped`, `:preserve`
+* Conversion des attributs booléens
+* Syntaxe de référencement d'objets : `[]`
 
-Please consult the official [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more
-details.
+Consultez la [Référence Haml (EN)](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) pour plus de détails.
 
-Haml Coffee supports both Ruby 1.8 and Ruby 1.9 style attributes. So the following Ruby 1.8 style attribute
+Haml Coffee supporte les attributs style Ruby 1.8 et Ruby 1.9. Les attributs (style Ruby 1.8)
 
 ```haml
 %a{ :href => 'http://haml-lang.com/', :title => 'Haml home' } Haml
 ```
 
-can also be written in Ruby 1.9 style:
+peuvent aussi être écrits comme il suit (style Ruby 1.9) :
 
 ```haml
 %a{ href: 'http://haml-lang.com/', title: 'Haml home' } Haml
 ```
 
-HTML style tags are also supported:
+Le style HTML est aussi
 
 ```haml
 %a( href='http://haml-lang.com/' title='Haml home') Haml
 ```
 
-### Helpers
+### Aides (helpers)
 
-Haml Coffee supports a small subset of the Ruby Haml [helpers](http://haml-lang.com/docs/yardoc/Haml/Helpers.html). The
-provided helpers will bind the helper function to the template context, so it isn't necessary to use `=>`.
+Haml Coffee supporte certain des fonctions incluses dans les [aides (EN)](http://haml-lang.com/docs/yardoc/Haml/Helpers.html) de Ruby Haml.
+Les aides existantes gardent le contexte, il n'est pas nécessaire d'utiliser `=>`.
 
-#### Surround
+#### Surround ("entoure")
 
-Surrounds a block of Haml code with strings, with no whitespace in between.
+Entoure un block de Haml avec des chaînes, sans espaces entre.
 
 ```haml
 != surround '(', ')', ->
   %a{:href => "food"} chicken
 ```
 
-produces the HTML output
+produit
 
 ```html
 (<a href='food'>chicken</a>)
 ```
 
-#### Succeed
+#### Succeed ("succès")
 
-Appends a string to the end of a Haml block, with no whitespace between.
+Ajoute un bloc à la fin d'un bloc Haml, sans espace entre.
 
 ```haml
 click
@@ -374,46 +354,44 @@ click
   %a{:href=>"thing"} here
 ```
 
-produces the HTML output
+produit
 
 ```html
 click
 <a href='thing'>here</a>.
 ```
 
-#### Precede
+#### Precede ("précède")
 
-Prepends a string to the beginning of a Haml block, with no whitespace between.
+Précède un bloc HAML d'une chaîne, sans espace entre.
 
 ```haml
 != precede '*', ->
   %span.small Not really
 ```
 
-produces the HTML output
+produit
 
 ```html
 *<span class='small'>Not really</span>
 ```
 
-### Object reference: `[]`
+### Syntaxe de référencement d'objets
 
-Haml Coffee supports object references, but they are implemented slightly different due to the underlying runtime and
-different code style for CoffeeScript.
+Haml Coffee supporte le référencement d'objets, mais implémenté d'une manière différente à cause de la manière dont fonctionne CoffeeScript et du moteur.
 
-Square brackets contain a CoffeeScript object or class that is used to set the class and id of that tag. The class is
-set to the object’s constructor name (transformed to use underlines rather than camel case) and the id is set to the
-object’s constructor name, followed by the value of its `id` property or its `#to_key` or `#id` functions (in that
-order). Additionally, the second argument (if present) will be used as a prefix for both the id and class attributes.
+Les crochets contiennent l'objet CoffeeScript object ou la classe qui sera utilisé pour la classe et l'ID.
+La classe utilise le nom du constructeur de l'objet (transformé pour utiliser des underscores plutôt que du camelCase) et l'ID utilise le nom du constructor, suivi de la valeur de propriété `id` ou de la valeur de la fonction `#to_key` ou de la fonction `#id` (dans cet ordre).
+Le second argument permet de spécifier un préfixe.
 
-For example:
+Par exemple :
 
 ```haml
 %div[@user, 'greeting']
   Hello
 ```
 
-is compiled to:
+produit
 
 ```html
 <div class='greeting_user' id='greeting_user_15'>
@@ -421,8 +399,7 @@ is compiled to:
 </div>
 ```
 
-If the user object is for example a Backbone model with the id of 15. If you require that the class be something other
-than the underscored object’s constructor name, you can implement the `#hamlObjectRef` function on the object:
+Si vous avez besoin d'utiliser autre chose que le nom du constructeur, vous pouvez utiliser la fonction `#hamlObjectRef` sur l'objet :
 
 ```haml
 :coffeescript
@@ -434,7 +411,7 @@ than the underscored object’s constructor name, you can implement the `#hamlOb
   Hello
 ```
 
-is compiled to:
+produit
 
 ```html
 <div class='custom' id='custom_23'>
@@ -444,24 +421,25 @@ is compiled to:
 
 ### Directives
 
-Haml Coffee supports currently a single directive that extends the Haml syntax.
+Haml Coffee supporte uniquement une directive qui étend la syntaxe Haml
 
 ### Include
 
-You can use the `+include` directive to include another template:
+Vous pouvez utiliser la directive `+include` pour inclure un autre fichier template :
 
 ```haml
 %h1 Include
 +include 'partials/test'
 ```
 
-This will look up the specified template and include it. So if the partial `partials/test` contains
+Cela cherchera le fichier template et l'incluera.
+En imaginant `partials/test` contient
 
 ```haml
 %p Partial content
 ```
 
-The final result will be
+Le résultat final sera
 
 ```html
 <h1>Include</h1>
@@ -819,7 +797,7 @@ Of course the require call can have different quotes or parenthesises, allowing 
 
 ## Development information
 
-Haml Coffee uses [Guard](https://github.com/guard/guard) for development, which you can install Guard with the Ruby
+Haml-Coffee uses [Guard](https://github.com/guard/guard) for development, which you can install Guard with the Ruby
 [Bundler](http://gembundler.com/):
 
 ```bash
