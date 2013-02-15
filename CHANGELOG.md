@@ -2,6 +2,7 @@
 
 ## Master
 
+* [#55](https://github.com/netzpirat/haml-coffee/issues/55): Add `+include` directive. ([@mehcode](https://github.com/mehcode))
 * [#54](https://github.com/netzpirat/haml-coffee/issues/54): Add `standalone` placement option. ([@Nami-Doc](https://github.com/Nami-Doc))
 
 ##  Version 1.9.1,  January 8, 2013
