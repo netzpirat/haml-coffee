@@ -442,6 +442,32 @@ is compiled to:
 </div>
 ```
 
+### Directives
+
+Haml-Coffee supports currently a single directive that extends the HAML syntax.
+
+### Include
+
+You can use the `+include` directive to include another template:
+
+```haml
+%h1 Include
++include 'partials/test'
+```
+
+This will look up the specified template and include it. So if the partial `partials/test` contains
+
+```haml
+%p Partial content
+```
+
+The final result will be
+
+```html
+<h1>Include</h1>
+<p>Partial content</p>
+```
+
 ## CoffeeScript support
 
 Haml and CoffeeScript are a winning team, both use indention for blocks and are a perfect match for this reason. You can

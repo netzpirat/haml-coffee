@@ -1,6 +1,6 @@
 # Haml Coffee Changelog
 
-## Master
+## Version 1.10.0, February 15, 2013
 
 * [#55](https://github.com/netzpirat/haml-coffee/issues/55): Add `+include` directive. ([@mehcode](https://github.com/mehcode))
 * [#54](https://github.com/netzpirat/haml-coffee/issues/54): Add `standalone` placement option. ([@Nami-Doc](https://github.com/Nami-Doc))
