@@ -45,10 +45,16 @@ module.exports =
   # @return [String] the template source code
   #
   template: (source, name, namespace, options = {}) ->
+    # Extend the options with the name and namespace so that the
+    # compiler has these configuration properties from the beginning
+    # and that the API for this method can stay the same.
+    options.namespace = namespace
+    options.name = name
+
     compiler = new Compiler(options)
     compiler.parse source
 
-    CoffeeScript.compile compiler.render(name, namespace)
+    CoffeeScript.compile compiler.render()
 
   # Express 3 templating interface with template function cache.
   # When the template function cache is enabled by setting `cache`
