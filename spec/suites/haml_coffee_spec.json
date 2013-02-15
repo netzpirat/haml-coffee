@@ -368,7 +368,7 @@
       "html_template" : "coffee/evaluation_in_function"
     },
 
-    "evaluation in inserting functions" : {
+    "extending the scope" : {
       "haml_template" : "coffee/extend_scope",
       "html_template" : "coffee/extend_scope",
       "config" : {
@@ -531,5 +531,19 @@
       "html_template" : "text/indention"
     }
 
+  },
+
+  "directives" : {
+    "include" : {
+      "haml_template" : "directives/include",
+      "html_template" : "directives/include",
+      "config": {
+        "placement": "global"
+      },
+      "partials" : {
+        "partials/test" : "directives/partials/test"
+      }
+    }
   }
+
 }

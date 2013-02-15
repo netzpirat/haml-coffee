@@ -23,10 +23,14 @@ for suite in suites
         describe group, ->
           it "handles #{ desc }", ->
 
+            window = {}
+            window.HAML = {}
+
             config = {
               escapeHtml       : if spec.config?.escape_html is 'true' then true else false
               escapeAttributes : if spec.config?.escape_attributes is 'true' then true else false
               extendScope      : if spec.config?.extend_scope is 'true' then true else false
+              placement        : spec.config?.placement || 'global'
               format           : spec.config?.format || 'xhtml'
             }
 
@@ -41,6 +45,17 @@ for suite in suites
               spec.haml = fs.readFileSync("spec/suites/templates/#{ spec.haml_template }.haml").toString()
 
             report += spec.haml
+
+            if spec.partials && config.placement is 'global'
+              report +=  "\n-------------------- Partial templates --------------------------\n"
+
+              for name, partial of spec.partials
+                try
+                  source = fs.readFileSync("spec/suites/templates/#{ partial }.haml").toString()
+                  window.HAML[name] = require('haml-coffee').compile(source)
+                  report += "window.HAML['#{ name }'] compiled from source '#{ partial }'\n"
+                catch error
+                  report += "Error compiling partial #{ name }: #{ error }"
 
             if spec.locals
               report +=  "\n-------------------- Local variables --------------------------\n"
@@ -59,7 +74,6 @@ for suite in suites
             try
               template = CoffeeScript.compile cst
 
-              window = {}
               eval template
 
               html = window.HAML.test(spec.locals)
