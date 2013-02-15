@@ -1,7 +1,8 @@
-fs     = require 'fs'
+fs = require 'fs'
 
-CoffeeScript  = require 'coffee-script'
-HamlCoffee    = require '../src/haml-coffee'
+CoffeeScript = require 'coffee-script'
+HamlCoffee   = require '../src/haml-coffee'
+HC           = require '../src/hamlc'
 
 suites = [
   'haml'
@@ -52,7 +53,7 @@ for suite in suites
               for name, partial of spec.partials
                 try
                   source = fs.readFileSync("spec/suites/templates/#{ partial }.haml").toString()
-                  window.HAML[name] = require('haml-coffee').compile(source)
+                  window.HAML[name] = HC.compile(source)
                   report += "window.HAML['#{ name }'] compiled from source '#{ partial }'\n"
                 catch error
                   report += "Error compiling partial #{ name }: #{ error }"
