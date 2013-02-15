@@ -1,4 +1,4 @@
-source :rubygems
+source 'https://rubygems.org'
 
 gem 'ruby_gntp'
 gem 'rb-fsevent'
