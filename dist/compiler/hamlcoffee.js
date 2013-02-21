@@ -343,7 +343,7 @@ exports.extname = function(path) {
 
 require.define("/haml-coffee.coffee", function (require, module, exports, __dirname, __filename) {
 (function() {
-  var Code, Comment, Filter, Haml, HamlCoffee, Node, Text, indent, whitespace;
+  var Code, Comment, Directive, Filter, Haml, HamlCoffee, Node, Text, indent, whitespace;
 
   Node = require('./nodes/node');
 
@@ -357,16 +357,18 @@ require.define("/haml-coffee.coffee", function (require, module, exports, __dirn
 
   Filter = require('./nodes/filter');
 
+  Directive = require('./nodes/directive');
+
   whitespace = require('./util/text').whitespace;
 
   indent = require('./util/text').indent;
 
   module.exports = HamlCoffee = (function() {
 
-    HamlCoffee.VERSION = '1.9.1';
+    HamlCoffee.VERSION = '1.10.1';
 
     function HamlCoffee(options) {
-      var _base, _base10, _base11, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _ref, _ref10, _ref11, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+      var segment, segments, _base, _base10, _base11, _base12, _base13, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _i, _len, _ref, _ref10, _ref11, _ref12, _ref13, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
       this.options = options != null ? options : {};
       if ((_ref = (_base = this.options).placement) == null) {
         _base.placement = 'global';
@@ -400,6 +402,27 @@ require.define("/haml-coffee.coffee", function (require, module, exports, __dirn
       }
       if ((_ref11 = (_base11 = this.options).selfCloseTags) == null) {
         _base11.selfCloseTags = 'meta,img,link,br,hr,input,area,param,col,base';
+      }
+      if (this.options.placement === 'global') {
+        if ((_ref12 = (_base12 = this.options).name) == null) {
+          _base12.name = 'test';
+        }
+        if ((_ref13 = (_base13 = this.options).namespace) == null) {
+          _base13.namespace = 'window.HAML';
+        }
+        segments = ("" + this.options.namespace + "." + this.options.name).replace(/(\s|-)+/g, '_').split(/\./);
+        this.options.name = this.options.basename ? segments.pop().split(/\/|\\/).pop() : segments.pop();
+        this.options.namespace = segments.shift();
+        this.intro = '';
+        if (segments.length !== 0) {
+          for (_i = 0, _len = segments.length; _i < _len; _i++) {
+            segment = segments[_i];
+            this.options.namespace += "." + segment;
+            this.intro += "" + this.options.namespace + " ?= {}\n";
+          }
+        } else {
+          this.intro += "" + this.options.namespace + " ?= {}\n";
+        }
       }
     }
 
@@ -472,7 +495,10 @@ require.define("/haml-coffee.coffee", function (require, module, exports, __dirn
         format: override.format || this.options.format,
         preserveTags: override.preserveTags || this.options.preserveTags,
         selfCloseTags: override.selfCloseTags || this.options.selfCloseTags,
-        uglify: override.uglify || this.options.uglify
+        uglify: override.uglify || this.options.uglify,
+        placement: override.placement || this.options.placement,
+        namespace: override.namespace || this.options.namespace,
+        name: override.name || this.options.name
       };
     };
 
@@ -488,6 +514,8 @@ require.define("/haml-coffee.coffee", function (require, module, exports, __dirn
         node = new Code(expression, options);
       } else if (expression.match(/^(%|#[^{]|\.|\!)(.*)/)) {
         node = new Haml(expression, options);
+      } else if (expression.match(/^\+(.*)/)) {
+        node = new Directive(expression, options);
       } else {
         node = new Text(expression, options);
       }
@@ -571,14 +599,20 @@ require.define("/haml-coffee.coffee", function (require, module, exports, __dirn
       return node.evaluate();
     };
 
-    HamlCoffee.prototype.render = function(templateName, namespace) {
-      if (namespace == null) namespace = 'window.HAML';
+    HamlCoffee.prototype.render = function() {
       switch (this.options.placement) {
         case 'amd':
           return this.renderAmd();
+        case 'standalone':
+          return this.renderStandalone();
         default:
-          return this.renderGlobal(templateName, namespace);
+          return this.renderGlobal();
       }
+    };
+
+    HamlCoffee.prototype.renderStandalone = function() {
+      var template;
+      return template = "return (context) ->\n  (->\n" + (indent(this.precompile(), 2)) + "\n  ).call(context)";
     };
 
     HamlCoffee.prototype.renderAmd = function() {
@@ -625,30 +659,17 @@ require.define("/haml-coffee.coffee", function (require, module, exports, __dirn
       return "define " + modules + " ->\n  (context) ->\n    render = ->\n      \n" + template + "\n    render.call(context)";
     };
 
-    HamlCoffee.prototype.renderGlobal = function(templateName, namespace) {
-      var segment, segments, template, _i, _len;
-      if (namespace == null) namespace = 'window.HAML';
-      template = '';
-      segments = ("" + namespace + "." + templateName).replace(/(\s|-)+/g, '_').split(/\./);
-      templateName = this.options.basename ? segments.pop().split(/\/|\\/).pop() : segments.pop();
-      namespace = segments.shift();
-      if (segments.length !== 0) {
-        for (_i = 0, _len = segments.length; _i < _len; _i++) {
-          segment = segments[_i];
-          namespace += "." + segment;
-          template += "" + namespace + " ?= {}\n";
-        }
-      } else {
-        template += "" + namespace + " ?= {}\n";
-      }
+    HamlCoffee.prototype.renderGlobal = function() {
+      var template;
+      template = this.intro;
       if (this.options.extendScope) {
-        template += "" + namespace + "['" + templateName + "'] = (context) -> ( ->\n";
+        template += "" + this.options.namespace + "['" + this.options.name + "'] = (context) -> ( ->\n";
         template += "  `with (context || {}) {`\n";
         template += "" + (indent(this.precompile(), 1));
         template += "`}`\n";
         template += ").call(context)";
       } else {
-        template += "" + namespace + "['" + templateName + "'] = (context) -> ( ->\n";
+        template += "" + this.options.namespace + "['" + this.options.name + "'] = (context) -> ( ->\n";
         template += "" + (indent(this.precompile(), 1));
         template += ").call(context)";
       }
@@ -872,6 +893,9 @@ require.define("/nodes/node.coffee", function (require, module, exports, __dirna
       this.uglify = options.uglify;
       this.codeBlockLevel = options.codeBlockLevel;
       this.blockLevel = options.blockLevel;
+      this.placement = options.placement;
+      this.namespace = options.namespace;
+      this.name = options.name;
     }
 
     Node.prototype.addChild = function(child) {
@@ -1321,7 +1345,7 @@ require.define("/nodes/haml.coffee", function (require, module, exports, __dirna
     };
 
     Haml.prototype.parseAttributes = function(exp) {
-      var attributes, ch, endPos, hasDataAttribute, inDataAttribute, key, keyValue, keys, level, marker, markers, pairs, pos, quoted, start, startPos, type, value, _i, _len, _ref, _ref2, _ref3;
+      var attr, attributes, ch, endPos, hasDataAttribute, inDataAttribute, key, keyValue, keys, level, marker, markers, pairs, pos, quote, quoted, start, startPos, type, value, _i, _j, _len, _len2, _ref, _ref2, _ref3, _ref4, _ref5;
       attributes = {};
       if (exp === void 0) return attributes;
       type = exp.substring(0, 1);
@@ -1374,24 +1398,40 @@ require.define("/nodes/haml.coffee", function (require, module, exports, __dirna
       hasDataAttribute = false;
       while (pairs.length) {
         keyValue = pairs.splice(0, 2);
-        key = (_ref2 = keyValue[0]) != null ? _ref2.replace(/^\s+|\s+$/g, '').replace(/^:/, '') : void 0;
-        if (quoted = key.match(/^("|')(.*)\1$/)) key = quoted[2];
-        value = (_ref3 = keyValue[1]) != null ? _ref3.replace(/^\s+|[\s,]+$/g, '').replace(/\u0090/g, '') : void 0;
-        if (key === 'data' && !value) {
-          inDataAttribute = true;
-          hasDataAttribute = true;
-        } else if (key && value) {
-          if (inDataAttribute) {
-            key = "data-" + key;
-            if (/}\s*$/.test(value)) inDataAttribute = false;
+        if (keyValue.length === 1) {
+          attr = keyValue[0].replace(/^[\s({]+|[\s)}]+$/g, '');
+          attributes[attr] = 'true';
+        } else {
+          key = (_ref2 = keyValue[0]) != null ? _ref2.replace(/^\s+|\s+$/g, '').replace(/^:/, '') : void 0;
+          if (quoted = key.match(/^("|')(.*)\1$/)) key = quoted[2];
+          value = (_ref3 = keyValue[1]) != null ? _ref3.replace(/^\s+|[\s,]+$/g, '').replace(/\u0090/g, '') : void 0;
+          if (key === 'data' && !value) {
+            inDataAttribute = true;
+            hasDataAttribute = true;
+          } else if (key && value) {
+            if (inDataAttribute) {
+              key = "data-" + key;
+              if (/}\s*$/.test(value)) inDataAttribute = false;
+            }
           }
-        }
-        switch (type) {
-          case '(':
-            attributes[key] = value.replace(/^\s+|[\s)]+$/g, '');
-            break;
-          case '{':
-            attributes[key] = value.replace(/^\s+|[\s}]+$/g, '');
+          switch (type) {
+            case '(':
+              value = value.replace(/^\s+|[\s)]+$/g, '');
+              quote = (_ref4 = /^(['"])/.exec(value)) != null ? _ref4[1] : void 0;
+              pos = value.lastIndexOf(quote);
+              if (pos > 1) {
+                _ref5 = value.substring(pos + 1).split(' ');
+                for (_j = 0, _len2 = _ref5.length; _j < _len2; _j++) {
+                  attr = _ref5[_j];
+                  if (attr) attributes[attr] = 'true';
+                }
+                value = value.substring(0, pos + 1);
+              }
+              attributes[key] = value;
+              break;
+            case '{':
+              attributes[key] = value.replace(/^\s+|[\s}]+$/g, '');
+          }
         }
       }
       if (hasDataAttribute) delete attributes['data'];
@@ -1843,6 +1883,65 @@ require.define("/nodes/filter.coffee", function (require, module, exports, __dir
 
 });
 
+require.define("/nodes/directive.coffee", function (require, module, exports, __dirname, __filename) {
+(function() {
+  var Directive, Node, path;
+  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  path = require('path');
+
+  Node = require('./node');
+
+  module.exports = Directive = (function() {
+
+    __extends(Directive, Node);
+
+    function Directive() {
+      Directive.__super__.constructor.apply(this, arguments);
+    }
+
+    Directive.prototype.directives = {
+      include: function(expression) {
+        var context, name, statement, _ref;
+        try {
+          _ref = expression.match(/\s*['"](.*)['"](?:,\s*(.*))?\s*/), _ref[0], name = _ref[1], context = _ref[2];
+        } catch (e) {
+          throw "Failed to parse the include directive from " + expression;
+        }
+        if (!context) context = 'this';
+        statement = (function() {
+          switch (this.placement) {
+            case 'global':
+              return "" + this.namespace + "['" + name + "'].apply(" + context + ")";
+            case 'amd':
+              return "require('" + name + "').apply(" + context + ")";
+            default:
+              throw "Include directive not available when placement is " + this.placement;
+          }
+        }).call(this);
+        return this.opener = this.markInsertingCode(statement, false);
+      }
+    };
+
+    Directive.prototype.evaluate = function() {
+      var directives, name, rest, _ref;
+      directives = Object.keys(this.directives).join('|');
+      try {
+        _ref = this.expression.match(RegExp("\\+(" + directives + ")(.*)")), _ref[0], name = _ref[1], rest = _ref[2];
+      } catch (e) {
+        throw "Unable to recognize directive from " + this.expression;
+      }
+      return this.directives[name].call(this, rest);
+    };
+
+    return Directive;
+
+  })();
+
+}).call(this);
+
+});
+
 require.define("/hamlc.coffee", function (require, module, exports, __dirname, __filename) {
 (function() {
   var CoffeeScript, Compiler, fs, __expressCache;
@@ -1875,9 +1974,11 @@ require.define("/hamlc.coffee", function (require, module, exports, __dirname, _
     template: function(source, name, namespace, options) {
       var compiler;
       if (options == null) options = {};
+      options.namespace = namespace;
+      options.name = name;
       compiler = new Compiler(options);
       compiler.parse(source);
-      return CoffeeScript.compile(compiler.render(name, namespace));
+      return CoffeeScript.compile(compiler.render());
     },
     __express: function(filename, options, callback) {
       var source;
