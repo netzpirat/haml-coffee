@@ -183,6 +183,14 @@
       }
     },
 
+    "HTML attributes without values" : {
+      "haml_template" : "text/no_value_attributes",
+      "html_template" : "text/no_value_attributes",
+      "config" : {
+        "format" : "html5"
+      }
+    },
+    
     "class concatenation" : {
       "haml_template" : "coffee/class",
       "html_template" : "coffee/class"

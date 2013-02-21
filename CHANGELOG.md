@@ -1,5 +1,9 @@
 # Haml Coffee Changelog
 
+## Master
+
+* [#56](https://github.com/netzpirat/haml-coffee/issues/56): Detect HTML-style attribute without value.
+
 ## Version 1.10.0, February 15, 2013
 
 * [#55](https://github.com/netzpirat/haml-coffee/issues/55): Add `+include` directive. ([@mehcode](https://github.com/mehcode))
