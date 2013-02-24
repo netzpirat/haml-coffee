@@ -22,13 +22,22 @@ newer Haml Coffee version with `npm update`.
 
 ## Integration
 
-There are different packages available for integrating Haml Coffee into your workflow:
+There are different packages available to integrate Haml Coffee into your workflow:
+
+### Node.JS
 
 * [grunt-haml](https://github.com/concordusapps/grunt-haml) for projects using [Grunt](http://gruntjs.com/).
 * [hem-haml-coffee](https://github.com/vojto/hem-haml-coffee) for projects using [Hem](https://github.com/maccman/hem/).
-* [haml_coffee_assets](https://github.com/netzpirat/haml_coffee_assets) for projects using Rails.
 * [stitch-haml-coffee](https://github.com/jnbt/stitch-haml-coffee) for projects using [Stitch](https://github.com/sstephenson/stitch).
+* [Mincer](https://github.com/nodeca/mincer) the Sprockets inspired web assets compiler.
+
+### Ruby/Rails
+
+* [haml_coffee_assets](https://github.com/netzpirat/haml_coffee_assets) for projects using Rails.
 * [guard-haml-coffee](https://github.com/ouvrages/guard-haml-coffee) for projects using [Guard](https://github.com/guard/guard).
+
+### Browser
+
 * [Haml Coffee compiler](https://raw.github.com/netzpirat/haml-coffee/master/dist/compiler/hamlcoffee.js)
   ([minified](https://raw.github.com/netzpirat/haml-coffee/master/dist/compiler/hamlcoffee.min.js))
   for compiling in the browser.
