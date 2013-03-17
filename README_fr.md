@@ -425,7 +425,7 @@ Haml Coffee supporte uniquement une directive qui étend la syntaxe Haml
 
 ### Include
 
-Vous pouvez utiliser la directive `+include` pour inclure un autre fichier template :
+Vous pouvez utiliser la directive `+include` pour inclure un autre fichier :
 
 ```haml
 %h1 Include
@@ -433,7 +433,7 @@ Vous pouvez utiliser la directive `+include` pour inclure un autre fichier templ
 ```
 
 Cela cherchera le fichier template et l'incluera.
-En imaginant `partials/test` contient
+En imaginant que `partials/test` contient
 
 ```haml
 %p Partial content
@@ -446,65 +446,61 @@ Le résultat final sera
 <p>Partial content</p>
 ```
 
-## CoffeeScript support
+## CoffeeScript
 
-Haml and CoffeeScript are a winning team, both use indention for blocks and are a perfect match for this reason. You can
-use CoffeeScript instead of Ruby in your Haml tags and the attributes.
+Haml & CoffeeScript forment une équipe gagnante, utilisant tous les deux l'indentation pour les blocs et se complètement parfaitement pour cette raison.
 
-**It's not recommended to put too much logic into the template.**
+**Il n'est pas conseillé d'avoir beaucoup de complexité dans vos fichiers templates.**
 
-### Attributes
+### Attributs
 
-When you define an attribute value without putting it into quotes (single or double quotes), it's considered to be
-CoffeeScript code to be run at render time. By default, attributes values from CoffeeScript code are escaped before
-inserting into the document. You can change this behaviour by setting the appropriate compiler option.
+Quand vous définissez un attribut sans l'entourer de guillemets (ou d'apostrophes), Haml-Coffee considérera que c'est du CoffeeScript à exécuter au moment du rendu.
 
-HTML style attributes are the most limited and can only assign a simple variable:
+Par défaut, ces attributs sont échappés avant d'être insérés dans le document. Vous pouvez changer ce comportement avec l'option adéquate du compilateur.
+
+Les attributs style HTML sont les plus limités et ne peuvent utiliser qu'au plus une variable simple :
 
 ```haml
 %img(src='/images/demo.png' width=@width height=@height alt=alt)
 ```
 
-Both the `@width` and `@height` values must be passed as locals when rendering the template and `alt` must be defined
-before the `%img` tag.
+Les variables `@width` et `@height` doivent être passées au rendu et `alt` doit être défini avant ce bout de code.
 
-Ruby style tags can be more complex and can call functions:
+Les attributs styles Ruby peuvent être plus complexes et appeler des fonctions :
 
 ```haml
 %header
   %user{ :class => App.currentUser.get('status') }= App.currentUser.getDisplayName()
 ```
 
-Attribute definitions are also supported in the Ruby 1.9 style:
+Vous pouvez aussi utiliser le style Ruby 1.9 :
 
 ```haml
 %header
   %user{ class: App.currentUser.get('status') }= App.currentUser.getDisplayName()
 ```
 
-More fancy stuff can be done when use interpolation within a double quoted attribute value:
+Vous pouvez aller encore plus loin en utilisant une interpolation entre guillemets :
 
 ```haml
 %header
-  %user{ class: "#{ if @user.get('roles').indexOf('admin') is -1 then 'normal' else 'admin' }" }= @user.getDisplayName()
+  %user{ class: "#{ if ~@user.get('roles').indexOf('admin') then 'normal' else 'admin' }" }= @user.getDisplayName()
 ```
 
-_But think twice about it before putting such fancy stuff into your template, there are better places like models,
-views or helpers to put heavy logic into._
+_Réflechissez à deux fois avant d'utiliser des attributs complexes dans votre fichier template. Il y a d'autres places plus adaptées pour ça, comme vos modèles, vos objets vues ou vos helpers._
 
-You can define your attributes over multiple lines and the next line must not be correctly indented, so you can align
-them properly:
+Vous pouvez définir vos attributs sur plusieurs avec l'indentation qui vous plait, ce qui vous permet par exemple de faire : 
 
 ```haml
 %input#password.hint{ type: 'password', name: 'registration[password]',
                       data: { hint: 'Something very important', align: 'left' } }
 ```
 
-In the above example you also see the usage for generating HTML5 data attributes.
+L'exemple ci-dessus vous montre aussi l'utilisation de l'attribut `data-` HTML5.
 
-### Running Code
+### Exécuter du code
 
-You can run any CoffeeScript code in your template:
+Vous pouvez exécuter n'importe quel code CoffeeScript dans vos templates :
 
 ```haml
 - for project in @projects
@@ -514,30 +510,26 @@ You can run any CoffeeScript code in your template:
       %p&= project.description
 ```
 
-There are several supported types to run your code:
+Il y a plusieurs formats pour exécuter du code : 
 
-* Run code without insert anything into the document: `-`
-* Run code and insert the result into the document: `=`
+* Exécuter du code sans rien insérer dans le document : `-`
+* Exécuter du code et insérer le résultat : `=`
 
-All inserted content from running code is escaped by default. You can change this behaviour by setting the appropriate
-compiler option.
+Toute insertion dans le document est échappée par défaut. Vous pouvez changer ce comportement avec l'option du compilateur adéquate.
 
-There are three variations to run code and insert its result into the document, two of them to change the escaping style
-chosen in the compile option:
+Il y a trois variations pour exécuter le code et l'insérer dans le document, dont deux qui changent l'échappement :
 
-* Run code and do not escape the result: `!=`
-* Run code and escape the result: `&=`
-* Preserve whitespace when insert the result: `~`
+* Exécute le code et n'échappe pas le résultat : `!=`
+* Exécute le code et échappe le résultat : `&=`
+* Préservation des espaces à l'insertion : `~`
 
-Again, please consult the official [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more
-details. Haml Coffee implements the same functionality like Ruby Haml, only for CoffeeScript.
+Encore une fois, référez-vous à la [référence Haml](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) pour plus de détails.
 
-#### Multiline code blocks
+#### Blocs de code multi-lignes
 
-Running code must be placed on a single line and unlike Ruby Haml, you cannot stretch a it over multiple lines by
-putting a comma at the end.
+Le code à exécuter doit être palcé sur une seul ligne et contrairement à Ruby Haml, vous ne pouvez pas exécuter du code multi-lignes en ajoutant une virgule à la fin de votre ligne.
 
-However, you can use multiline endings `|` to stretch your code over multiple lines to some extend:
+Cependant, vous pouvez utiliser la notation multi-lignes `|` :
 
 ```Haml
 - links = {          |
@@ -552,9 +544,8 @@ However, you can use multiline endings `|` to stretch your code over multiple li
       %a{ href: link }= name
 ```
 
-Please note, that since the line is concatenated before the compilation, you cannot omit the curly braces and the
-commas in the above example, like you'd do in normal CoffeeScript code. Therefore it's recommended to use the
-CoffeeScript filter to have real multiline code blocks:
+Notez bien que la ligne est concaténée à la compilation, vous ne pouvez donc pas omettre les crochets comme vous le feriez en CoffeeScript.
+Il est donc recommandé d'utiliser le filtre CoffeeScript pour avoir des vrais blocs de code multi-lignes :
 
 ```Haml
 :coffeescript
@@ -569,9 +560,9 @@ CoffeeScript filter to have real multiline code blocks:
       %a{ href: link }= name
 ```
 
-#### Functions
+#### Fonctions
 
-You can also create functions that generate Haml:
+Vous pouvez aussi créer des functions qui génèrent du HAML
 
 ```haml
 - sum = (a, b) ->
@@ -583,16 +574,15 @@ You can also create functions that generate Haml:
 = sum(3,4)
 ```
 
-or pass generated HTML output through a function for post-processing.
+Ou passer le résultat HTML généré à une fonction
 
 ```haml
 = postProcess ->
   %a{ href: '/' }
 ```
 
-The content of the `:coffeescript` filter is run when the template is rendered and doesn't output anything into the
-resulting document. This comes in handy when you have code to run over multiple lines and don't want to prefix each line
-with `-`:
+Le contenu des filtres `:coffeescript` est exécuté lors du rendu et n'insère rien dans le document.
+C'est pratique pour exécuter du code sur plusieurs lignes sans avoir à préfixer chaque ligne avec `-` :
 
 ```haml
 %body
@@ -605,24 +595,20 @@ with `-`:
       %li= tag
 ```
 
-## Compiler options
+## Options du compilateur
 
-The following section describes all the available compiler options that you can use through the JavaScript API,
-as Express view option or as argument to the command line utility.
+La section suivante décrit les options disponibles depuis l'API JavaScript & en tant que vue Express.
 
-The command line arguments may be slightly different. For example instead of passing `--escape-html=false` you have to
-use the `--disable-html-escaping` argument. You can see a list of all the command line arguments by executing
-`haml-coffee --help`.
+Les options en ligne de commande peuvent être différentes. Par exemple, au lieu de passer `--escape-html=false` vous devez passer l'argument `--disable-html-escaping`.
+Vous pouvez voir la liste des arguments via `haml-coffee --help`.
 
-### HTML generation options
+### Options de génération HTML
 
-The HTML options change the way how the generated HTML will look like.
+#### Format
 
-#### Output format
-
-* Name: 'format'
+* Nom 'format'
 * Type: `String`
-* Default: `html5`
+* Défaut: `html5`
 
 The Haml parser knows different HTML formats to which a given template can be rendered and it must be one of:
 
@@ -635,9 +621,9 @@ Doctype, self-closing tags and attributes handling depends on this setting. Plea
 
 #### Uglify output
 
-* Name: `uglify`
+* Nom: `uglify`
 * Type: `Boolean`
-* Default: `false`
+* Défaut: `false`
 
 All generated HTML tags are properly indented by default, so the output looks nice. This can be helpful when debugging.
 You can skip the indention by setting the `uglify` option to false. This save you some bytes and you'll have increased
@@ -645,9 +631,9 @@ rendering speed.
 
 #### HTML escape
 
-* Name: `escapeHtml`
+* Nom: `escapeHtml`
 * Type: `Boolean`
-* Default: `true`
+* Défaut: `true`
 
 The reserved HTML characters `"`, `'`, `&`, `<` and `>` are converted to their HTML entities by default when they are
 inserted into the HTML document from evaluated CoffeeScript.
@@ -657,9 +643,9 @@ You can always change the escaping mode within the template to either force esca
 
 #### Attributes escape
 
-* Name: `escapeAttributes`
+* Nom: `escapeAttributes`
 * Type: `Boolean`
-* Default: `true`
+* Défaut: `true`
 
 All HTML attributes that are generated by evaluating CoffeeScript are also escaped by default. You can turn of HTML
 escaping of the attributes only by setting `escapeAttributes` to false. You can't change this behaviour in the template
@@ -667,9 +653,9 @@ since there is no Haml markup for this to instruct the compiler to change the es
 
 #### Clean CoffeeScript values
 
-* Name: `cleanValue`
+* Nom: `cleanValue`
 * Type: `Boolean`
-* Default: `true`
+* Défaut: `true`
 
 Every output that is generated from evaluating CoffeeScript code is cleaned before inserting into the document. The
 default implementation converts `null` or `undefined` values into an empty string and marks real boolean values with a
@@ -679,9 +665,9 @@ convert these values to the correct HTML5/XHTML/HTML4 representation.
 
 #### Preserve whitespace tags
 
-* Name: `preserve`
+* Nom: `preserve`
 * Type: `String`
-* Default: `textarea,pre`
+* Défaut: `textarea,pre`
 
 The `preserve` option defines a list of comma separated HTML tags that are whitespace sensitive. Content from these tags
 must be preserved, so that the indention has no influence on the displayed content. This is simply done by converting
@@ -689,17 +675,17 @@ the newline characters to their equivalent HTML entity.
 
 #### Autoclose tags
 
-* Name: `autoclose`
+* Nom: `autoclose`
 * Type: `String`
-* Default: `meta,img,link,br,hr,input,area,param,col,base`
+* Défaut: `meta,img,link,br,hr,input,area,param,col,base`
 
 The autoclose option defines a list of tag names that should be automatically closed if they have no content.
 
 #### Module loader support
 
-* Name: `placement`
+* Nom: `placement`
 * Type: `String`
-* Default: `global`
+* Défaut: `global`
 
 The `placement` option defines where the template function is inserted
 upon compilation.
@@ -720,9 +706,9 @@ See AMD support for more information.
 
 ### Module dependencies
 
-* Name: `dependencies`
+* Nom: `dependencies`
 * Type: `Object`
-* Default: `{ hc: 'hamlcoffee' }`
+* Défaut: `{ hc: 'hamlcoffee' }`
 
 The `dependencies` option allows you to define the modules that must be required for the AMD template `define` function.
 The object key will be the function parameter name of the module the object value defines. See AMD support for more
@@ -836,6 +822,10 @@ Haml Coffee in the  Rails asset pipeline:
 ## Contributors
 
 See all contributors on [the contributor page](https://github.com/netzpirat/haml-coffee/contributors).
+
+## Traduction
+
+Traduction par [Vendethiel](https://github.com/Nami-Doc).
 
 ## License
 
