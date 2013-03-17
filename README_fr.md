@@ -80,7 +80,7 @@ express = require 'express'
 cons    = require 'consolidate'
 app     = express()
 
-app.engine 'hamlc', cons['haml-coffee']);
+app.engine 'hamlc', cons['haml-coffee']
 ```
 
 #### Express 2
