@@ -365,7 +365,7 @@ require.define("/haml-coffee.coffee", function (require, module, exports, __dirn
 
   module.exports = HamlCoffee = (function() {
 
-    HamlCoffee.VERSION = '1.10.1';
+    HamlCoffee.VERSION = '1.10.2';
 
     function HamlCoffee(options) {
       var segment, segments, _base, _base10, _base11, _base12, _base13, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _i, _len, _ref, _ref10, _ref11, _ref12, _ref13, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
