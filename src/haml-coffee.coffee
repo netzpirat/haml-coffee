@@ -16,7 +16,7 @@ Directive = require('./nodes/directive')
 module.exports = class HamlCoffee
 
   # The current version number.
-  @VERSION: '1.10.1'
+  @VERSION: '1.10.2'
 
   # Construct the HAML Coffee compiler.
   #

@@ -1,8 +1,11 @@
 # Haml Coffee Changelog
 
-## Master
+## Version 1.10.2, March 17, 2013
 
 * [#60](https://github.com/netzpirat/haml-coffee/issues/60): Fix broken CLI compilation.
+
+## Version 1.10.1, February 21, 2013
+
 * [#56](https://github.com/netzpirat/haml-coffee/issues/56): Detect HTML-style attribute without value.
 
 ## Version 1.10.0, February 15, 2013
