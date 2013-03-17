@@ -2,6 +2,7 @@
 
 ## Master
 
+* [#60](https://github.com/netzpirat/haml-coffee/issues/60): Fix broken CLI compilation.
 * [#56](https://github.com/netzpirat/haml-coffee/issues/56): Detect HTML-style attribute without value.
 
 ## Version 1.10.0, February 15, 2013

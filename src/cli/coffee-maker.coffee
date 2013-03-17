@@ -38,7 +38,7 @@ module.exports = class CoffeeMaker
         compiler = new HamlCoffee compilerOptions
         compiler.parse source
 
-        haml = compiler.render
+        haml = compiler.render()
 
       else
         console.error "  #{ red }[haml coffee] no valid Haml extension.#{ reset }"
