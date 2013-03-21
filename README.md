@@ -828,23 +828,17 @@ Of course the require call can have different quotes or parenthesises, allowing 
 
 ## Development information
 
-Haml Coffee uses [Guard](https://github.com/guard/guard) for development, which you can install Guard with the Ruby
-[Bundler](http://gembundler.com/):
-
-```bash
-$ bundle install
-```
-
-Install the Node modules with [NPM](https://npmjs.org/):
+Haml Coffee uses [Grunt](http://gruntjs.com/) for development, which you can install with
+[NPM](https://npmjs.org/):
 
 ```bash
 $ npm install
 ```
 
-and run Guard to automatically compile your CoffeeScripts and run the Jasmine specs on file modification:
+and run Grunt to automatically run the Jasmine specs on file modification:
 
 ```bash
-$ bundle exec guard
+$ grunt
 ```
 
 ## Changelog
