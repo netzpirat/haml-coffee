@@ -44,10 +44,11 @@ module.exports = (grunt) ->
     'jasmine_node'
   ]
 
-  grunt.registerTask 'release', [
+  grunt.registerTask 'publish', [
     'jasmine_node'
     'browserify'
     'uglify:dist'
+    'release'
   ]
 
   grunt.registerTask 'default', ['watch']
