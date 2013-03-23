@@ -88,7 +88,7 @@ module.exports = class HamlCoffee
   # Calculate the indention size
   #
   updateTabSize: ->
-     @tabSize = @currentIndent - @previousIndent if @tabSize == 0
+    @tabSize = @currentIndent - @previousIndent if @tabSize == 0
 
   # Update the current block level indention.
   #

@@ -119,7 +119,7 @@ optimist = require('optimist')
 exports.run = ->
   argv = optimist.argv
 
-  throw "Unknown template format '#{ argv.f }'" if ['xhtml', 'html4', 'html5'].indexOf(argv.f) is -1
+  throw new Error("Unknown template format '#{ argv.f }'") if ['xhtml', 'html4', 'html5'].indexOf(argv.f) is -1
 
   inputFilename   = argv.i
   templateName    = argv.t
@@ -211,7 +211,7 @@ exports.run = ->
     if require('tty').isatty(process.stdin)
       console.log 'Please enter template source code and press Ctrl-D to generate:\n'
 
-    source = '';
+    source = ''
     process.stdin.resume()
     process.stdin.setEncoding 'utf8'
     process.stdin.on 'data', (chunk) -> source += chunk

@@ -273,7 +273,7 @@ module.exports = class Haml extends Node
       }
 
     catch error
-      throw "Unable to parse tag from #{ exp }: #{ error }"
+      throw new Error("Unable to parse tag from #{ exp }: #{ error }")
 
   # Parse attributes either in Ruby style `%tag{ :attr => 'value' }`
   # or HTML style `%tag(attr='value)`. Both styles can be mixed:
@@ -373,40 +373,40 @@ module.exports = class Haml extends Node
       if keyValue.length is 1
         attr = keyValue[0].replace(/^[\s({]+|[\s)}]+$/g, '')
         attributes[attr] = 'true'
-      
+
       # Attribute with value or multiple attributes
       else
         # Trim key and remove preceding colon and remove markers
         key = keyValue[0]?.replace(/^\s+|\s+$/g, '').replace(/^:/, '')
         key = quoted[2] if quoted = key.match /^("|')(.*)\1$/
-  
+
         # Trim value, remove succeeding comma and remove markers
         value = keyValue[1]?.replace(/^\s+|[\s,]+$/g, '').replace(/\u0090/g, '')
-  
+
         if key is 'data' and !value
           inDataAttribute = true
           hasDataAttribute = true
-  
+
         else if key and value
           if inDataAttribute
             key = "data-#{ key }"
             inDataAttribute = false if /}\s*$/.test value
-  
+
         switch type
           when '('
             value = value.replace(/^\s+|[\s)]+$/g, '')
-            
+
             # Detect attributes without value as value suffix
             quote = /^(['"])/.exec(value)?[1]
             pos = value.lastIndexOf quote
-            
+
             if pos > 1
               for attr in value.substring(pos + 1).split ' '
                 attributes[attr] = 'true' if attr
-    
+
               value = value.substring(0, pos + 1)
-              
-                
+
+
             attributes[key] = value
           when '{'
             attributes[key] = value.replace(/^\s+|[\s}]+$/g, '')

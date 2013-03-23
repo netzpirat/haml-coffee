@@ -7,13 +7,13 @@ module.exports = (grunt) ->
     regarde:
       jasmine_node:
         files: [
-          'src/**/*.coffee',
+          'src/**/*.coffee'
           'spec/*.coffee'
           'spec/**/*.json'
           'spec/**/*.haml'
           'spec/**/*.html'
-        ],
-        tasks:  ['jasmine_node'],
+        ]
+        tasks: ['jasmine_node']
         spawn: true
     jasmine_node:
       specNameMatcher: '_spec'

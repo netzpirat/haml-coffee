@@ -26,14 +26,14 @@ module.exports = class Directive extends Node
     include: (expression) ->
       try [[], name, context] = expression.match(/\s*['"](.*)['"](?:,\s*(.*))?\s*/)
       catch e
-        throw "Failed to parse the include directive from #{ expression }"
+        throw new Error("Failed to parse the include directive from #{ expression }")
 
       context = 'this' unless context
       statement = switch @placement
         when 'global' then "#{ @namespace }['#{ name }'].apply(#{ context })"
         when 'amd' then "require('#{ name }').apply(#{ context })"
         else
-          throw "Include directive not available when placement is #{ @placement }"
+          throw new Error("Include directive not available when placement is #{ @placement }")
 
       @opener = @markInsertingCode statement, false
 
@@ -43,6 +43,6 @@ module.exports = class Directive extends Node
     directives = Object.keys(@directives).join('|')
     try [[], name, rest] = @expression.match(///\+(#{ directives })(.*)///)
     catch e
-      throw "Unable to recognize directive from #{ @expression }"
+      throw new Error("Unable to recognize directive from #{ @expression }")
 
     @directives[name].call this, rest
