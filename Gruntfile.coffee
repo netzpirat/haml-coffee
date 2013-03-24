@@ -4,6 +4,7 @@ module.exports = (grunt) ->
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks)
 
   grunt.initConfig
+    pkg: grunt.file.readJSON('package.json')
     regarde:
       jasmine_node:
         files: [
@@ -19,6 +20,16 @@ module.exports = (grunt) ->
       specNameMatcher: '_spec'
       extensions: 'coffee'
       projectRoot: '.'
+    replace:
+      version:
+        src: ['dist/compiler/hamlcoffee.js']
+        dest: 'dist/compiler/hamlcoffee.js'
+        replacements: [
+          {
+            from: "require('../package.json').version"
+            to: "'<%= pkg.version %>'"
+          }
+        ]
     uglify:
       dist:
         files:
@@ -31,6 +42,7 @@ module.exports = (grunt) ->
   #
   grunt.registerTask 'browserify', 'Create the browser distribution', ->
     browserify = require('browserify')()
+    browserify.ignore '../package.json'
     browserify.ignore 'coffee-script'
     browserify.require "#{ __dirname }/src/haml-coffee.coffee"
     browserify.require "#{ __dirname }/src/hamlc.coffee"
@@ -47,6 +59,7 @@ module.exports = (grunt) ->
   grunt.registerTask 'publish', [
     'jasmine_node'
     'browserify'
+    'replace:version'
     'uglify:dist'
     'release'
   ]

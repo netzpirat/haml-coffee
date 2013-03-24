@@ -1499,7 +1499,7 @@ require.define("/nodes/haml.coffee",function(require,module,exports,__dirname,__
         };
       } catch (_error) {
         error = _error;
-        throw "Unable to parse tag from " + exp + ": " + error;
+        throw new Error("Unable to parse tag from " + exp + ": " + error);
       }
     };
 
@@ -2127,7 +2127,7 @@ require.define("/nodes/directive.coffee",function(require,module,exports,__dirna
           _ref1 = expression.match(/\s*['"](.*)['"](?:,\s*(.*))?\s*/), _ref1[0], name = _ref1[1], context = _ref1[2];
         } catch (_error) {
           e = _error;
-          throw "Failed to parse the include directive from " + expression;
+          throw new Error("Failed to parse the include directive from " + expression);
         }
         if (!context) {
           context = 'this';
@@ -2139,7 +2139,7 @@ require.define("/nodes/directive.coffee",function(require,module,exports,__dirna
             case 'amd':
               return "require('" + name + "').apply(" + context + ")";
             default:
-              throw "Include directive not available when placement is " + this.placement;
+              throw new Error("Include directive not available when placement is " + this.placement);
           }
         }).call(this);
         return this.opener = this.markInsertingCode(statement, false);
@@ -2154,7 +2154,7 @@ require.define("/nodes/directive.coffee",function(require,module,exports,__dirna
         _ref1 = this.expression.match(RegExp("\\+(" + directives + ")(.*)")), _ref1[0], name = _ref1[1], rest = _ref1[2];
       } catch (_error) {
         e = _error;
-        throw "Unable to recognize directive from " + this.expression;
+        throw new Error("Unable to recognize directive from " + this.expression);
       }
       return this.directives[name].call(this, rest);
     };
