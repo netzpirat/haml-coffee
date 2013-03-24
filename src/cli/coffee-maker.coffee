@@ -18,12 +18,6 @@ module.exports = class CoffeeMaker
   @compileFile = (filename, compilerOptions = {}, namespace = null, templateName = null) ->
     output = ''
 
-    # Extend the options with the name and namespace so that the
-    # compiler has these configuration properties from the beginning
-    # and that the API for this method can stay the same.
-    compilerOptions.namespace = namespace
-    compilerOptions.name = templateName
-
     try
       source = fs.readFileSync(filename).toString()
     catch error
@@ -33,6 +27,12 @@ module.exports = class CoffeeMaker
     try
       # Derive template name from filename by remove .html and .haml
       templateName = filename.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] unless templateName
+
+      # Extend the options with the name and namespace so that the
+      # compiler has these configuration properties from the beginning
+      # and that the API for this method can stay the same.
+      compilerOptions.namespace = namespace
+      compilerOptions.name = templateName
 
       if templateName
         compiler = new HamlCoffee compilerOptions

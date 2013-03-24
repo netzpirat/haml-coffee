@@ -1,5 +1,9 @@
 # Haml Coffee Changelog
 
+## Master
+
+* [#64](https://github.com/netzpirat/haml-coffee/issues/64): Fix automatic template naming from the command line.
+
 ## Version 1.10.2, March 17, 2013
 
 * [#60](https://github.com/netzpirat/haml-coffee/issues/60): Fix broken CLI compilation.
