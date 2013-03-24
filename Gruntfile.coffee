@@ -43,6 +43,8 @@ module.exports = (grunt) ->
       dist:
         files:
           'dist/compiler/hamlcoffee.min.js': ['dist/compiler/hamlcoffee.js']
+    release:
+      file: 'package.json CHANGELOG.md dist/compiler/hamlcoffee.js dist/compiler/hamlcoffee.min.js'
 
   # Use a custom task for using the latest v1 version of Browserify,
   # since I don't like the current contraints in v2 like the need to
