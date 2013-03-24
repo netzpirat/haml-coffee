@@ -30,6 +30,15 @@ module.exports = (grunt) ->
             to: "'<%= pkg.version %>'"
           }
         ]
+      changelog:
+        src: ['CHANGELOG.md']
+        dest: 'CHANGELOG.md'
+        replacements: [
+          {
+          from: "## Master"
+          to: "## Version <%= pkg.version %>, <%= grunt.template.today('mmmm dd, yyyy') %>"
+          }
+        ]
     uglify:
       dist:
         files:
@@ -56,11 +65,16 @@ module.exports = (grunt) ->
     'jasmine_node'
   ]
 
-  grunt.registerTask 'publish', [
-    'jasmine_node'
+  grunt.registerTask 'dist', 'Create the browser distribution', [
     'browserify'
     'replace:version'
     'uglify:dist'
+  ]
+
+  grunt.registerTask 'publish', 'Publish a new version', [
+    'jasmine_node'
+    'dist'
+    'replace:changelog'
     'release'
   ]
 
