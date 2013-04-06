@@ -759,6 +759,15 @@ The `dependencies` option allows you to define the modules that must be required
 The object key will be the function parameter name of the module the object value defines. See AMD support for more
 information.
 
+### Data attribute hyphenation
+
+* Name: `hyphenateDataAttrs`
+* Type: `Boolean`
+* Default: `true`
+
+Convert underscores to hyphens for data attribute keys, see
+[the Ruby Haml reference](http://haml.info/docs/yardoc/file.REFERENCE.html#html5_custom_data_attributes).
+
 ### Custom helper function options
 
 Haml Coffee provides helper functions for HTML escaping, value cleaning and whitespace preservation, which must be

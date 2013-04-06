@@ -50,19 +50,20 @@ module.exports = class Node
       inside: false
     }
 
-    @escapeHtml        = options.escapeHtml
-    @escapeAttributes  = options.escapeAttributes
-    @cleanValue        = options.cleanValue
-    @format            = options.format
-    @selfCloseTags     = options.selfCloseTags.split(',')
-    @uglify            = options.uglify
+    @escapeHtml         = options.escapeHtml
+    @escapeAttributes   = options.escapeAttributes
+    @cleanValue         = options.cleanValue
+    @format             = options.format
+    @hyphenateDataAttrs = options.hyphenateDataAttrs
+    @selfCloseTags      = options.selfCloseTags.split(',')
+    @uglify             = options.uglify
 
-    @codeBlockLevel    = options.codeBlockLevel
-    @blockLevel        = options.blockLevel
+    @codeBlockLevel     = options.codeBlockLevel
+    @blockLevel         = options.blockLevel
 
-    @placement         = options.placement
-    @namespace         = options.namespace
-    @name              = options.name
+    @placement          = options.placement
+    @namespace          = options.namespace
+    @name               = options.name
 
   # Add a child node.
   #

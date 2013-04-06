@@ -67,8 +67,13 @@ optimist = require('optimist')
     default   : 'meta,img,link,br,hr,input,area,param,col,base'
     describe  : 'Set a comma separated list of self-closed HTML tags'
   )
+  .options('hyphenate-data-attrs',
+    boolean   : true
+    describe  : 'Convert underscores to hyphens for data attribute keys'
+  )
   .options('disable-html-attribute-escaping',
     boolean   : true
+    default   : true
     describe  : 'Disable any HTML attribute escaping'
   )
   .options('disable-html-escaping',
@@ -141,6 +146,7 @@ exports.run = ->
     escapeHtml            : not argv['disable-html-escaping']
     escapeAttributes      : not argv['disable-html-attribute-escaping']
     cleanValue            : not argv['disable-clean-value']
+    hyphenateDataAttrs    : argv['hyphenate-data-attrs']
     customHtmlEscape      : argv['custom-html-escape']
     customCleanValue      : argv['custom-clean-value']
     customFindAndPreserve : argv['custom-find-and-preserve']

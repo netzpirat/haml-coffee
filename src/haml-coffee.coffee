@@ -30,6 +30,7 @@ module.exports = class HamlCoffee
   # @option options [Boolean] basename ignore file path when generate the template name
   # @option options [Boolean] extendScope extend the template scope with the context
   # @option options [String] format the template format, either `xhtml`, `html4` or `html5`
+  # @option options [String] hyphenateDataAttrs whether to convert underscores to hyphens in data attributes
   # @option options [String] preserveTags a comma separated list of tags to preserve content whitespace
   # @option options [String] selfCloseTags a comma separated list of self closing HTML tags
   # @option options [String] customHtmlEscape the name of the function for HTML escaping
@@ -39,21 +40,22 @@ module.exports = class HamlCoffee
   # @option options [String] customReference the name of the function used to create the id from object references
   #
   constructor: (@options = {}) ->
-    @options.placement        ?= 'global'
-    @options.dependencies     ?= { hc: 'hamlcoffee' }
-    @options.escapeHtml       ?= true
-    @options.escapeAttributes ?= true
-    @options.cleanValue       ?= true
-    @options.uglify           ?= false
-    @options.basename         ?= false
-    @options.extendScope      ?= false
-    @options.format           ?= 'html5'
-    @options.preserveTags     ?= 'pre,textarea'
-    @options.selfCloseTags    ?= 'meta,img,link,br,hr,input,area,param,col,base'
+    @options.placement          ?= 'global'
+    @options.dependencies       ?= { hc: 'hamlcoffee' }
+    @options.escapeHtml         ?= true
+    @options.escapeAttributes   ?= true
+    @options.cleanValue         ?= true
+    @options.uglify             ?= false
+    @options.basename           ?= false
+    @options.extendScope        ?= false
+    @options.format             ?= 'html5'
+    @options.hyphenateDataAttrs ?= true
+    @options.preserveTags       ?= 'pre,textarea'
+    @options.selfCloseTags      ?= 'meta,img,link,br,hr,input,area,param,col,base'
 
     if @options.placement is 'global'
-      @options.name           ?= 'test'
-      @options.namespace      ?= 'window.HAML'
+      @options.name      ?= 'test'
+      @options.namespace ?= 'window.HAML'
 
       # Create parameter name from the filename, e.g. a file `users/new.hamlc`
       # will create `window.HAML.user.new`
@@ -149,19 +151,20 @@ module.exports = class HamlCoffee
   #
   getNodeOptions: (override = {})->
     {
-      parentNode       : override.parentNode       || @parentNode
-      blockLevel       : override.blockLevel       || @currentBlockLevel
-      codeBlockLevel   : override.codeBlockLevel   || @currentCodeBlockLevel
-      escapeHtml       : override.escapeHtml       || @options.escapeHtml
-      escapeAttributes : override.escapeAttributes || @options.escapeAttributes
-      cleanValue       : override.cleanValue       || @options.cleanValue
-      format           : override.format           || @options.format
-      preserveTags     : override.preserveTags     || @options.preserveTags
-      selfCloseTags    : override.selfCloseTags    || @options.selfCloseTags
-      uglify           : override.uglify           || @options.uglify
-      placement        : override.placement        || @options.placement
-      namespace        : override.namespace        || @options.namespace
-      name             : override.name             || @options.name
+      parentNode         : override.parentNode         || @parentNode
+      blockLevel         : override.blockLevel         || @currentBlockLevel
+      codeBlockLevel     : override.codeBlockLevel     || @currentCodeBlockLevel
+      escapeHtml         : override.escapeHtml         || @options.escapeHtml
+      escapeAttributes   : override.escapeAttributes   || @options.escapeAttributes
+      cleanValue         : override.cleanValue         || @options.cleanValue
+      format             : override.format             || @options.format
+      hyphenateDataAttrs : override.hyphenateDataAttrs || @options.format
+      preserveTags       : override.preserveTags       || @options.preserveTags
+      selfCloseTags      : override.selfCloseTags      || @options.selfCloseTags
+      uglify             : override.uglify             || @options.uglify
+      placement          : override.placement          || @options.placement
+      namespace          : override.namespace          || @options.namespace
+      name               : override.name               || @options.name
     }
 
   # Get the matching node type for the given expression. This

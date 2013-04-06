@@ -1,5 +1,9 @@
 # Haml Coffee Changelog
 
+## Master
+
+* [#65](https://github.com/netzpirat/haml-coffee/issues/65): Add data attributes hyphenation.
+
 ## Version 1.10.2, March 24, 2013
 
 * [#64](https://github.com/netzpirat/haml-coffee/issues/64): Fix automatic template naming from the command line.

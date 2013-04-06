@@ -389,7 +389,7 @@ module.exports = class Haml extends Node
 
         else if key and value
           if inDataAttribute
-            key = "data-#{ key }"
+            key = if @hyphenateDataAttrs then "data-#{ key.replace('_', '-') }" else "data-#{ key }"
             inDataAttribute = false if /}\s*$/.test value
 
         switch type
