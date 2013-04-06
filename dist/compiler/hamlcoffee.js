@@ -454,10 +454,10 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
   indent = require('./util/text').indent;
 
   module.exports = HamlCoffee = (function() {
-    HamlCoffee.VERSION = '1.10.2';
+    HamlCoffee.VERSION = '1.10.3';
 
     function HamlCoffee(options) {
-      var segment, segments, _base, _base1, _base10, _base11, _base12, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _i, _len, _ref, _ref1, _ref10, _ref11, _ref12, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+      var segment, segments, _base, _base1, _base10, _base11, _base12, _base13, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _i, _len, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
 
       this.options = options != null ? options : {};
       if ((_ref = (_base = this.options).placement) == null) {
@@ -489,18 +489,21 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
       if ((_ref8 = (_base8 = this.options).format) == null) {
         _base8.format = 'html5';
       }
-      if ((_ref9 = (_base9 = this.options).preserveTags) == null) {
-        _base9.preserveTags = 'pre,textarea';
+      if ((_ref9 = (_base9 = this.options).hyphenateDataAttrs) == null) {
+        _base9.hyphenateDataAttrs = true;
       }
-      if ((_ref10 = (_base10 = this.options).selfCloseTags) == null) {
-        _base10.selfCloseTags = 'meta,img,link,br,hr,input,area,param,col,base';
+      if ((_ref10 = (_base10 = this.options).preserveTags) == null) {
+        _base10.preserveTags = 'pre,textarea';
+      }
+      if ((_ref11 = (_base11 = this.options).selfCloseTags) == null) {
+        _base11.selfCloseTags = 'meta,img,link,br,hr,input,area,param,col,base';
       }
       if (this.options.placement === 'global') {
-        if ((_ref11 = (_base11 = this.options).name) == null) {
-          _base11.name = 'test';
+        if ((_ref12 = (_base12 = this.options).name) == null) {
+          _base12.name = 'test';
         }
-        if ((_ref12 = (_base12 = this.options).namespace) == null) {
-          _base12.namespace = 'window.HAML';
+        if ((_ref13 = (_base13 = this.options).namespace) == null) {
+          _base13.namespace = 'window.HAML';
         }
         segments = ("" + this.options.namespace + "." + this.options.name).replace(/(\s|-)+/g, '_').split(/\./);
         this.options.name = this.options.basename ? segments.pop().split(/\/|\\/).pop() : segments.pop();
@@ -588,6 +591,7 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
         escapeAttributes: override.escapeAttributes || this.options.escapeAttributes,
         cleanValue: override.cleanValue || this.options.cleanValue,
         format: override.format || this.options.format,
+        hyphenateDataAttrs: override.hyphenateDataAttrs || this.options.format,
         preserveTags: override.preserveTags || this.options.preserveTags,
         selfCloseTags: override.selfCloseTags || this.options.selfCloseTags,
         uglify: override.uglify || this.options.uglify,
@@ -1011,6 +1015,7 @@ require.define("/nodes/node.coffee",function(require,module,exports,__dirname,__
       this.escapeAttributes = options.escapeAttributes;
       this.cleanValue = options.cleanValue;
       this.format = options.format;
+      this.hyphenateDataAttrs = options.hyphenateDataAttrs;
       this.selfCloseTags = options.selfCloseTags.split(',');
       this.uglify = options.uglify;
       this.codeBlockLevel = options.codeBlockLevel;
@@ -1576,7 +1581,7 @@ require.define("/nodes/haml.coffee",function(require,module,exports,__dirname,__
             hasDataAttribute = true;
           } else if (key && value) {
             if (inDataAttribute) {
-              key = "data-" + key;
+              key = this.hyphenateDataAttrs ? "data-" + (key.replace('_', '-')) : "data-" + key;
               if (/}\s*$/.test(value)) {
                 inDataAttribute = false;
               }

@@ -1,6 +1,6 @@
 # Haml Coffee Changelog
 
-## Master
+## Version 1.10.3, April 06, 2013
 
 * [#65](https://github.com/netzpirat/haml-coffee/issues/65): Add data attributes hyphenation.
 
