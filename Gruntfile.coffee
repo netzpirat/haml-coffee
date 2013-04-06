@@ -73,11 +73,18 @@ module.exports = (grunt) ->
     'uglify:dist'
   ]
 
-  grunt.registerTask 'publish', 'Publish a new version', [
+  grunt.registerTask 'publish:patch', 'Publish a new patch version', [
     'jasmine_node'
     'dist'
     'replace:changelog'
-    'release'
+    'release:patch'
   ]
-
+  
+  grunt.registerTask 'publish:minor', 'Publish a new minor version', [
+    'jasmine_node'
+    'dist'
+    'replace:changelog'
+    'release:patch'
+  ]
+  
   grunt.registerTask 'default', ['watch']
