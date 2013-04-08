@@ -43,7 +43,8 @@ module.exports = (grunt) ->
       dist:
         files:
           'dist/compiler/hamlcoffee.min.js': ['dist/compiler/hamlcoffee.js']
-    release:
+    release
+      bump: false
       file: 'package.json CHANGELOG.md dist/compiler/hamlcoffee.js dist/compiler/hamlcoffee.min.js'
 
   # Use a custom task for using the latest v1 version of Browserify,
@@ -73,18 +74,11 @@ module.exports = (grunt) ->
     'uglify:dist'
   ]
 
-  grunt.registerTask 'publish:patch', 'Publish a new patch version', [
+  grunt.registerTask 'publish', 'Publish a new version', [
     'jasmine_node'
     'dist'
     'replace:changelog'
     'release:patch'
-  ]
-  
-  grunt.registerTask 'publish:minor', 'Publish a new minor version', [
-    'jasmine_node'
-    'dist'
-    'replace:changelog'
-    'release:minor'
   ]
   
   grunt.registerTask 'default', ['watch']
