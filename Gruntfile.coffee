@@ -43,7 +43,7 @@ module.exports = (grunt) ->
       dist:
         files:
           'dist/compiler/hamlcoffee.min.js': ['dist/compiler/hamlcoffee.js']
-    release
+    release:
       bump: false
       file: 'package.json CHANGELOG.md dist/compiler/hamlcoffee.js dist/compiler/hamlcoffee.min.js'
 
