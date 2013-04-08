@@ -78,7 +78,7 @@ module.exports = (grunt) ->
     'jasmine_node'
     'dist'
     'replace:changelog'
-    'release:patch'
+    'release'
   ]
   
   grunt.registerTask 'default', ['watch']
