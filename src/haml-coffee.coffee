@@ -255,8 +255,13 @@ module.exports = class HamlCoffee
             continue
 
           # Get the filter text and remove filter node + indention whitespace
-          text = line.match ///^\s{#{ (@node.blockLevel * 2) + 2 }}(.*)///
-          @node.addChild(new Text(text[1], @getNodeOptions({ parentNode: @node }))) if text
+          range = if @tabSize > 2 then [@tabSize..1] else [2..1]
+          for tabsize in range
+            text = line.match(///^\s{#{ (@node.blockLevel * tabsize) + tabsize }}(.*)///)
+            
+            if text
+              @node.addChild(new Text(text[1], @getNodeOptions({ parentNode: @node })))
+              break
 
       # Normal line handling
       else

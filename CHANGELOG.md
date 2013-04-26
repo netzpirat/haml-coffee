@@ -1,5 +1,9 @@
 # Haml Coffee Changelog
 
+## Master
+
+* [haml_coffee_assets issue #96](https://github.com/netzpirat/haml_coffee_assets/issues/96): Detect filter content when not indented by exactly two spaces.
+
 ## Version 1.10.3, April 06, 2013
 
 * [#65](https://github.com/netzpirat/haml-coffee/issues/65): Add data attributes hyphenation.
