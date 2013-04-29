@@ -2,6 +2,7 @@
 
 ## Master
 
+* [#67](https://github.com/netzpirat/haml-coffee/issues/67): Ignore indentation in Haml comments.
 * [haml_coffee_assets issue #96](https://github.com/netzpirat/haml_coffee_assets/issues/96): Detect filter content when not indented by exactly two spaces.
 
 ## Version 1.10.3, April 06, 2013

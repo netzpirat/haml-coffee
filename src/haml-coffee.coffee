@@ -97,14 +97,15 @@ module.exports = class HamlCoffee
   updateBlockLevel: ->
     @currentBlockLevel = @currentIndent / @tabSize
 
-    # Validate current indention
-    if @currentBlockLevel - Math.floor(@currentBlockLevel) > 0
-      throw("Indentation error in line #{ @lineNumber }")
-
-    # Validate block level
-    if (@currentIndent - @previousIndent) / @tabSize > 1
-      # Ignore block level indention errors within comments
-      unless @node.isCommented()
+    # Do not validate within comments
+    unless @node.isCommented()
+      
+      # Validate current indention
+      if @currentBlockLevel - Math.floor(@currentBlockLevel) > 0
+        throw("Indentation error in line #{ @lineNumber }")
+  
+      # Validate block level
+      if (@currentIndent - @previousIndent) / @tabSize > 1
         throw("Block level too deep in line #{ @lineNumber }")
 
     # Set the indention delta
@@ -285,6 +286,11 @@ module.exports = class HamlCoffee
           expression += ' ' + attributes.match(/^\s*(.*?)(\s+\|\s*)?$/)[1]
           @lineNumber++
 
+        # Ignore multiple commented lines
+        while /^-#/.test(expression) and not /^(\s*)[-=&!~.%#</]/.test(lines[0]) and lines.length > 0
+          lines.shift()
+          @lineNumber++
+          
         # Look ahead for multi line |
         if expression.match(/(\s)+\|\s*$/)
           expression = expression.replace(/(\s)+\|\s*$/, ' ')
