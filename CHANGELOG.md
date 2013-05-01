@@ -2,6 +2,7 @@
 
 ## Master
 
+* [#68](https://github.com/netzpirat/haml-coffee/issues/68): Compiler deletes all line feed (LF) characters from source.
 * [#68](https://github.com/netzpirat/haml-coffee/issues/68): Preserve helper deletes all line feed (LF) characters.
 * [#67](https://github.com/netzpirat/haml-coffee/issues/67): Ignore indentation in Haml comments.
 * [haml_coffee_assets issue #96](https://github.com/netzpirat/haml_coffee_assets/issues/96): Detect filter content when not indented by exactly two spaces.

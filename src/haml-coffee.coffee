@@ -231,7 +231,7 @@ module.exports = class HamlCoffee
     @root = @parentNode = new Node('', @getNodeOptions())
 
     # Keep lines for look ahead
-    lines = source.split("\n")
+    lines = source.replace(/\r/g, '').split("\n")
 
     # Parse source line by line
     while (line = lines.shift()) isnt undefined
