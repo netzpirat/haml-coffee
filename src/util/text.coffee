@@ -55,6 +55,7 @@ module.exports =
   #
   preserve: (code) ->
     if code
+      code.replace(/\r/g, '')
       code.replace /<(pre|textarea)>(.*?)<\/\1>/g, (text) ->
         text.replace('\\n', '\&\#x000A;')
 
