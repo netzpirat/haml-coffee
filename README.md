@@ -835,6 +835,15 @@ Of course the require call can have different quotes or parenthesises, allowing 
 != require("another/other")()
 ```
 
+### Module dependency
+
+By default Haml Coffee AMD templates depend on the `hamlcoffee` module that provides the client side helpers needed to
+render the template. You need to supply your own module, but you can grab a copy from
+[Haml Coffee Assets AMD helpers](https://github.com/netzpirat/haml_coffee_assets/blob/master/vendor/assets/javascripts/hamlcoffee_amd.js.coffee.erb)
+and adapt it to your needs. Another option is to remove the module from the
+[module dependencies](https://github.com/netzpirat/haml-coffee#module-dependencies), but that's usually not what you
+want because it duplicates the needed function within every template.
+
 ## Development information
 
 Haml Coffee uses [Grunt](http://gruntjs.com/) for development, which you can install with
