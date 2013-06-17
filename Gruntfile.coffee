@@ -75,13 +75,10 @@ module.exports = (grunt) ->
   ]
 
   grunt.registerTask 'publish', 'Publish a new version', [
-    # This needs to be fixed before using the publish task again:
-    # https://github.com/geddski/grunt-release/pull/14
-    #
-    #'jasmine_node'
-    #'dist'
-    #'replace:changelog'
-    #'release'
+    'jasmine_node'
+    'dist'
+    'replace:changelog'
+    'release'
   ]
-  
+
   grunt.registerTask 'default', ['watch']
