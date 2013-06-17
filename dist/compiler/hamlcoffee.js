@@ -454,55 +454,54 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
   indent = require('./util/text').indent;
 
   module.exports = HamlCoffee = (function() {
-    HamlCoffee.VERSION = '1.11.0';
+    HamlCoffee.VERSION = '1.11.1';
 
     function HamlCoffee(options) {
-      var segment, segments, _base, _base1, _base10, _base11, _base12, _base13, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _i, _len, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
-
+      var segment, segments, _base, _base1, _base10, _base11, _base12, _base13, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _i, _len;
       this.options = options != null ? options : {};
-      if ((_ref = (_base = this.options).placement) == null) {
+      if ((_base = this.options).placement == null) {
         _base.placement = 'global';
       }
-      if ((_ref1 = (_base1 = this.options).dependencies) == null) {
+      if ((_base1 = this.options).dependencies == null) {
         _base1.dependencies = {
           hc: 'hamlcoffee'
         };
       }
-      if ((_ref2 = (_base2 = this.options).escapeHtml) == null) {
+      if ((_base2 = this.options).escapeHtml == null) {
         _base2.escapeHtml = true;
       }
-      if ((_ref3 = (_base3 = this.options).escapeAttributes) == null) {
+      if ((_base3 = this.options).escapeAttributes == null) {
         _base3.escapeAttributes = true;
       }
-      if ((_ref4 = (_base4 = this.options).cleanValue) == null) {
+      if ((_base4 = this.options).cleanValue == null) {
         _base4.cleanValue = true;
       }
-      if ((_ref5 = (_base5 = this.options).uglify) == null) {
+      if ((_base5 = this.options).uglify == null) {
         _base5.uglify = false;
       }
-      if ((_ref6 = (_base6 = this.options).basename) == null) {
+      if ((_base6 = this.options).basename == null) {
         _base6.basename = false;
       }
-      if ((_ref7 = (_base7 = this.options).extendScope) == null) {
+      if ((_base7 = this.options).extendScope == null) {
         _base7.extendScope = false;
       }
-      if ((_ref8 = (_base8 = this.options).format) == null) {
+      if ((_base8 = this.options).format == null) {
         _base8.format = 'html5';
       }
-      if ((_ref9 = (_base9 = this.options).hyphenateDataAttrs) == null) {
+      if ((_base9 = this.options).hyphenateDataAttrs == null) {
         _base9.hyphenateDataAttrs = true;
       }
-      if ((_ref10 = (_base10 = this.options).preserveTags) == null) {
+      if ((_base10 = this.options).preserveTags == null) {
         _base10.preserveTags = 'pre,textarea';
       }
-      if ((_ref11 = (_base11 = this.options).selfCloseTags) == null) {
+      if ((_base11 = this.options).selfCloseTags == null) {
         _base11.selfCloseTags = 'meta,img,link,br,hr,input,area,param,col,base';
       }
       if (this.options.placement === 'global') {
-        if ((_ref12 = (_base12 = this.options).name) == null) {
+        if ((_base12 = this.options).name == null) {
           _base12.name = 'test';
         }
-        if ((_ref13 = (_base13 = this.options).namespace) == null) {
+        if ((_base13 = this.options).namespace == null) {
           _base13.namespace = 'window.HAML';
         }
         segments = ("" + this.options.namespace + "." + this.options.name).replace(/(\s|-)+/g, '_').split(/\./);
@@ -537,11 +536,11 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
 
     HamlCoffee.prototype.updateBlockLevel = function() {
       this.currentBlockLevel = this.currentIndent / this.tabSize;
-      if (this.currentBlockLevel - Math.floor(this.currentBlockLevel) > 0) {
-        throw "Indentation error in line " + this.lineNumber;
-      }
-      if ((this.currentIndent - this.previousIndent) / this.tabSize > 1) {
-        if (!this.node.isCommented()) {
+      if (!this.node.isCommented()) {
+        if (this.currentBlockLevel - Math.floor(this.currentBlockLevel) > 0) {
+          throw "Indentation error in line " + this.lineNumber;
+        }
+        if ((this.currentIndent - this.previousIndent) / this.tabSize > 1) {
           throw "Block level too deep in line " + this.lineNumber;
         }
       }
@@ -571,7 +570,6 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
 
     HamlCoffee.prototype.popParent = function() {
       var i, _i, _ref, _results;
-
       _results = [];
       for (i = _i = 0, _ref = this.delta - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
         _results.push(this.parentNode = this.stack.pop());
@@ -603,7 +601,6 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
 
     HamlCoffee.prototype.nodeFactory = function(expression) {
       var node, options, _ref;
-
       if (expression == null) {
         expression = '';
       }
@@ -628,8 +625,7 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
     };
 
     HamlCoffee.prototype.parse = function(source) {
-      var attributes, expression, line, lines, result, text, ws, _ref;
-
+      var attributes, expression, line, lines, range, result, tabsize, text, ws, _i, _j, _len, _ref, _ref1, _results;
       if (source == null) {
         source = '';
       }
@@ -638,7 +634,7 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
       this.node = null;
       this.stack = [];
       this.root = this.parentNode = new Node('', this.getNodeOptions());
-      lines = source.split("\n");
+      lines = source.replace(/\r/g, '').split("\n");
       while ((line = lines.shift()) !== void 0) {
         if ((this.node instanceof Filter) && !this.exitFilter) {
           if (/^(\s)*$/.test(line)) {
@@ -654,11 +650,20 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
               lines.unshift(line);
               continue;
             }
-            text = line.match(RegExp("^\\s{" + ((this.node.blockLevel * 2) + 2) + "}(.*)"));
-            if (text) {
-              this.node.addChild(new Text(text[1], this.getNodeOptions({
-                parentNode: this.node
-              })));
+            range = this.tabSize > 2 ? (function() {
+              _results = [];
+              for (var _i = _ref = this.tabSize; _ref <= 1 ? _i <= 1 : _i >= 1; _ref <= 1 ? _i++ : _i--){ _results.push(_i); }
+              return _results;
+            }).apply(this) : [2, 1];
+            for (_j = 0, _len = range.length; _j < _len; _j++) {
+              tabsize = range[_j];
+              text = line.match(RegExp("^\\s{" + ((this.node.blockLevel * tabsize) + tabsize) + "}(.*)"));
+              if (text) {
+                this.node.addChild(new Text(text[1], this.getNodeOptions({
+                  parentNode: this.node
+                })));
+                break;
+              }
             }
           }
         } else {
@@ -675,9 +680,13 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
             expression += ' ' + attributes.match(/^\s*(.*?)(\s+\|\s*)?$/)[1];
             this.lineNumber++;
           }
+          while (/^-#/.test(expression) && !/^(\s*)[-=&!~.%#</]/.test(lines[0]) && lines.length > 0) {
+            lines.shift();
+            this.lineNumber++;
+          }
           if (expression.match(/(\s)+\|\s*$/)) {
             expression = expression.replace(/(\s)+\|\s*$/, ' ');
-            while ((_ref = lines[0]) != null ? _ref.match(/(\s)+\|$/) : void 0) {
+            while ((_ref1 = lines[0]) != null ? _ref1.match(/(\s)+\|$/) : void 0) {
               expression += lines.shift().match(/^(\s*)(.*)/)[2].replace(/(\s)+\|\s*$/, '');
               this.lineNumber++;
             }
@@ -700,7 +709,6 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
 
     HamlCoffee.prototype.evaluate = function(node) {
       var child, _i, _len, _ref;
-
       _ref = node.children;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         child = _ref[_i];
@@ -722,13 +730,11 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
 
     HamlCoffee.prototype.renderStandalone = function() {
       var template;
-
       return template = "return (context) ->\n  (->\n" + (indent(this.precompile(), 2)) + "\n  ).call(context)";
     };
 
     HamlCoffee.prototype.renderAmd = function() {
       var m, module, modules, param, params, template, _ref, _ref1;
-
       if (/^hamlcoffee/.test(this.options.dependencies['hc'])) {
         this.options.customHtmlEscape = 'hc.escape';
         this.options.customCleanValue = 'hc.cleanValue';
@@ -757,7 +763,6 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
       if (modules.length !== 0) {
         modules = (function() {
           var _i, _len, _results;
-
           _results = [];
           for (_i = 0, _len = modules.length; _i < _len; _i++) {
             m = modules[_i];
@@ -774,7 +779,6 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
 
     HamlCoffee.prototype.renderGlobal = function() {
       var template;
-
       template = this.intro;
       if (this.options.extendScope) {
         template += "" + this.options.namespace + "['" + this.options.name + "'] = (context) -> ( ->\n";
@@ -792,7 +796,6 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
 
     HamlCoffee.prototype.precompile = function() {
       var code, fn;
-
       fn = '';
       code = this.createCode();
       if (code.indexOf('$e') !== -1) {
@@ -862,7 +865,6 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
 
     HamlCoffee.prototype.createCode = function() {
       var child, code, line, processors, _i, _j, _len, _len1, _ref, _ref1;
-
       code = [];
       this.lines = [];
       _ref = this.root.children;
@@ -923,7 +925,6 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
 
     HamlCoffee.prototype.combineText = function(lines) {
       var combined, line, nextLine;
-
       combined = [];
       while ((line = lines.shift()) !== void 0) {
         if (line.type === 'text') {
@@ -967,7 +968,6 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
 
     HamlCoffee.prototype.findDependencies = function(code) {
       var dependencies, match, module, name, requireRegexp;
-
       requireRegexp = /require(?:\s+|\()(['"])(.+?)(\1)\)?/gm;
       dependencies = {};
       while (match = requireRegexp.exec(code)) {
@@ -1117,7 +1117,6 @@ require.define("/nodes/node.coffee",function(require,module,exports,__dirname,__
 
     Node.prototype.render = function() {
       var child, output, rendered, tag, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4;
-
       output = [];
       if (this.silent) {
         return output;
@@ -1189,7 +1188,6 @@ require.define("/util/text.coffee",function(require,module,exports,__dirname,__f
   module.exports = {
     whitespace: function(n) {
       var a;
-
       n = n * 2;
       a = [];
       while (a.length < n) {
@@ -1217,6 +1215,7 @@ require.define("/util/text.coffee",function(require,module,exports,__dirname,__f
     },
     preserve: function(code) {
       if (code) {
+        code.replace(/\r/g, '');
         return code.replace(/<(pre|textarea)>(.*?)<\/\1>/g, function(text) {
           return text.replace('\\n', '\&\#x000A;');
         });
@@ -1279,7 +1278,6 @@ require.define("/nodes/haml.coffee",function(require,module,exports,__dirname,__
 
     Haml.prototype.evaluate = function() {
       var assignment, code, identifier, match, prefix, tokens;
-
       tokens = this.parseExpression(this.expression);
       if (tokens.doctype) {
         return this.opener = this.markText("" + (escapeQuotes(this.buildDocType(tokens.doctype))));
@@ -1340,7 +1338,6 @@ require.define("/nodes/haml.coffee",function(require,module,exports,__dirname,__
 
     Haml.prototype.parseExpression = function(exp) {
       var attributes, classes, id, key, tag, value, _ref1, _ref2;
-
       tag = this.parseTag(exp);
       if (this.preserveTags.indexOf(tag.tag) !== -1) {
         this.preserve = true;
@@ -1380,7 +1377,6 @@ require.define("/nodes/haml.coffee",function(require,module,exports,__dirname,__
 
     Haml.prototype.parseTag = function(exp) {
       var assignment, attr, attributes, ch, classes, doctype, end, error, haml, htmlAttributes, id, ids, key, klass, level, pos, reference, rest, rubyAttributes, start, tag, text, val, whitespace, _i, _j, _k, _len, _len1, _ref1, _ref2, _ref3, _ref4, _ref5;
-
       try {
         doctype = (_ref1 = exp.match(/^(\!{3}.*)/)) != null ? _ref1[1] : void 0;
         if (doctype) {
@@ -1479,7 +1475,6 @@ require.define("/nodes/haml.coffee",function(require,module,exports,__dirname,__
           tag: tag ? tag[1] : 'div',
           ids: ids ? (function() {
             var _l, _len2, _results;
-
             _results = [];
             for (_l = 0, _len2 = ids.length; _l < _len2; _l++) {
               id = ids[_l];
@@ -1489,7 +1484,6 @@ require.define("/nodes/haml.coffee",function(require,module,exports,__dirname,__
           })() : void 0,
           classes: classes ? (function() {
             var _l, _len2, _results;
-
             _results = [];
             for (_l = 0, _len2 = classes.length; _l < _len2; _l++) {
               klass = classes[_l];
@@ -1510,7 +1504,6 @@ require.define("/nodes/haml.coffee",function(require,module,exports,__dirname,__
 
     Haml.prototype.parseAttributes = function(exp) {
       var attr, attributes, ch, endPos, hasDataAttribute, inDataAttribute, key, keyValue, keys, level, marker, markers, pairs, pos, quote, quoted, start, startPos, type, value, _i, _j, _k, _len, _len1, _ref1, _ref2, _ref3, _ref4, _ref5;
-
       attributes = {};
       if (exp === void 0) {
         return attributes;
@@ -1617,13 +1610,11 @@ require.define("/nodes/haml.coffee",function(require,module,exports,__dirname,__
 
     Haml.prototype.buildHtmlTagPrefix = function(tokens) {
       var classList, classes, hasDynamicClass, key, klass, name, tagParts, value, _i, _len, _ref1;
-
       tagParts = ["<" + tokens.tag];
       if (tokens.classes) {
         hasDynamicClass = false;
         classList = (function() {
           var _i, _len, _ref1, _results;
-
           _ref1 = tokens.classes;
           _results = [];
           for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
@@ -1680,7 +1671,6 @@ require.define("/nodes/haml.coffee",function(require,module,exports,__dirname,__
 
     Haml.prototype.interpolateCodeAttribute = function(text, unwrap) {
       var quoted;
-
       if (unwrap == null) {
         unwrap = false;
       }
@@ -1712,7 +1702,6 @@ require.define("/nodes/haml.coffee",function(require,module,exports,__dirname,__
 
     Haml.prototype.quoteAndEscapeAttributeValue = function(value, code) {
       var escaped, hasDoubleQuotes, hasInterpolation, hasSingleQuotes, quoted, result, token, tokens;
-
       if (code == null) {
         code = false;
       }
@@ -1728,7 +1717,6 @@ require.define("/nodes/haml.coffee",function(require,module,exports,__dirname,__
       hasInterpolation = false;
       tokens = (function() {
         var _i, _len, _results;
-
         _results = [];
         for (_i = 0, _len = tokens.length; _i < _len; _i++) {
           token = tokens[_i];
@@ -1775,7 +1763,6 @@ require.define("/nodes/haml.coffee",function(require,module,exports,__dirname,__
         if (hasDoubleQuotes && !hasSingleQuotes) {
           escaped = (function() {
             var _i, _len, _results;
-
             _results = [];
             for (_i = 0, _len = tokens.length; _i < _len; _i++) {
               token = tokens[_i];
@@ -1788,7 +1775,6 @@ require.define("/nodes/haml.coffee",function(require,module,exports,__dirname,__
         if (hasSingleQuotes && hasDoubleQuotes) {
           escaped = (function() {
             var _i, _len, _results;
-
             _results = [];
             for (_i = 0, _len = tokens.length; _i < _len; _i++) {
               token = tokens[_i];
@@ -1804,7 +1790,6 @@ require.define("/nodes/haml.coffee",function(require,module,exports,__dirname,__
 
     Haml.prototype.splitInterpolations = function(value) {
       var ch, ch2, level, pos, start, tokens, _i, _ref1;
-
       level = 0;
       start = 0;
       tokens = [];
@@ -1888,7 +1873,6 @@ require.define("/nodes/code.coffee",function(require,module,exports,__dirname,__
 
     Code.prototype.evaluate = function() {
       var code, codeBlock, escape, identifier;
-
       codeBlock = this.expression.match(/(-|!=|\&=|=|~)\s?(.*)?/);
       identifier = codeBlock[1];
       code = codeBlock[2];
@@ -1943,7 +1927,6 @@ require.define("/nodes/comment.coffee",function(require,module,exports,__dirname
 
     Comment.prototype.evaluate = function() {
       var comment, expression, identifier, _ref1;
-
       _ref1 = this.expression.match(/(-#|\/\[|\/)\s?(.*)?/), expression = _ref1[0], identifier = _ref1[1], comment = _ref1[2];
       switch (identifier) {
         case '-#':
@@ -1992,13 +1975,11 @@ require.define("/nodes/filter.coffee",function(require,module,exports,__dirname,
 
     Filter.prototype.evaluate = function() {
       var _ref1;
-
       return this.filter = (_ref1 = this.expression.match(/:(escaped|preserve|css|javascript|coffeescript|plain|cdata|coffeescript)(.*)?/)) != null ? _ref1[1] : void 0;
     };
 
     Filter.prototype.render = function() {
       var child, indent, output, preserve, _i, _j, _len, _len1, _ref1, _ref2;
-
       output = [];
       switch (this.filter) {
         case 'escaped':
@@ -2066,7 +2047,6 @@ require.define("/nodes/filter.coffee",function(require,module,exports,__dirname,
 
     Filter.prototype.renderFilterContent = function(indent, output, type) {
       var child, content, e, empty, line, _i, _j, _k, _len, _len1, _ref1, _results;
-
       if (type == null) {
         type = 'text';
       }
@@ -2127,7 +2107,6 @@ require.define("/nodes/directive.coffee",function(require,module,exports,__dirna
     Directive.prototype.directives = {
       include: function(expression) {
         var context, e, name, statement, _ref1;
-
         try {
           _ref1 = expression.match(/\s*['"](.*)['"](?:,\s*(.*))?\s*/), _ref1[0], name = _ref1[1], context = _ref1[2];
         } catch (_error) {
@@ -2153,7 +2132,6 @@ require.define("/nodes/directive.coffee",function(require,module,exports,__dirna
 
     Directive.prototype.evaluate = function() {
       var directives, e, name, rest, _ref1;
-
       directives = Object.keys(this.directives).join('|');
       try {
         _ref1 = this.expression.match(RegExp("\\+(" + directives + ")(.*)")), _ref1[0], name = _ref1[1], rest = _ref1[2];
@@ -2190,7 +2168,6 @@ require.define("/hamlc.coffee",function(require,module,exports,__dirname,__filen
   module.exports = {
     compile: function(source, options) {
       var compiler, template;
-
       if (options == null) {
         options = {};
       }
@@ -2205,7 +2182,6 @@ require.define("/hamlc.coffee",function(require,module,exports,__dirname,__filen
     },
     template: function(source, name, namespace, options) {
       var compiler;
-
       if (options == null) {
         options = {};
       }
@@ -2217,7 +2193,6 @@ require.define("/hamlc.coffee",function(require,module,exports,__dirname,__filen
     },
     __express: function(filename, options, callback) {
       var err, source;
-
       if (!!(options && options.constructor && options.call && options.apply)) {
         callback = options;
         options = {};

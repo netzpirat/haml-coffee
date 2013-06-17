@@ -1,6 +1,6 @@
 # Haml Coffee Changelog
 
-## Master
+## Version 1.11.2, June 17, 2013
 
 * [#70](https://github.com/netzpirat/haml-coffee/issues/70): Fix Windows compatibility for multiple input files. ([@akhanubis](https://github.com/akhanubis))
 * [#68](https://github.com/netzpirat/haml-coffee/issues/68): Compiler deletes all line feed (LF) characters from source.
