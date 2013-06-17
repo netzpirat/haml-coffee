@@ -1,7 +1,7 @@
 CoffeeScript  = require 'coffee-script'
 CoffeeMaker   = require './coffee-maker'
 fs            = require 'fs'
-findit        = require 'findit'
+walkdir       = require 'walkdir'
 
 red   = '\u001b[31m'
 green = '\u001b[32m'
@@ -184,7 +184,7 @@ exports.run = ->
           compound = ''
 
           # Loop through all Haml files and compile them
-          for filename in findit.sync baseDir
+          for filename in walkdir.sync baseDir
             if filename.match /([^\.]+)(\.html)?\.haml[c]?$/
 
               # Combine all files into a single output

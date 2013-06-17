@@ -2,6 +2,7 @@
 
 ## Master
 
+* [#70](https://github.com/netzpirat/haml-coffee/issues/70): Fix Windows compatibility for multiple input files. ([@akhanubis](https://github.com/akhanubis))
 * [#68](https://github.com/netzpirat/haml-coffee/issues/68): Compiler deletes all line feed (LF) characters from source.
 * [#68](https://github.com/netzpirat/haml-coffee/issues/68): Preserve helper deletes all line feed (LF) characters.
 * [#67](https://github.com/netzpirat/haml-coffee/issues/67): Ignore indentation in Haml comments.
