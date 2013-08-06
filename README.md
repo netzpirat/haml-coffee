@@ -563,6 +563,24 @@ chosen in the compile option:
 Again, please consult the official [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more
 details. Haml Coffee implements the same functionality like Ruby Haml, only for CoffeeScript.
 
+#### Interpolation
+
+If you use the CoffeeScript interpolation without explicitly run code with `=` and `-`, the interpolation output is not
+being escaped. You can manually force escaping by using the HTML escape reference `$e`:
+
+```Haml
+%p
+  foo #{ $e '<bar>' }
+```
+
+will be rendered to
+
+```HTML
+<p>
+  foo &lt;bar&gt;
+</p>
+```
+
 #### Multiline code blocks
 
 Running code must be placed on a single line and unlike Ruby Haml, you cannot stretch a it over multiple lines by
