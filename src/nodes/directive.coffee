@@ -24,7 +24,7 @@ module.exports = class Directive extends Node
     #   +include 'path/to/template', @context
     #
     include: (expression) ->
-      try [[], name, context] = expression.match(/\s*['"](.*)['"](?:,\s*(.*))?\s*/)
+      try [[], name, context] = expression.match(/\s*['"](.*?)['"](?:,\s*(.*))?\s*/)
       catch e
         throw new Error("Failed to parse the include directive from #{ expression }")
 
