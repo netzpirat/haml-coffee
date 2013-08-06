@@ -43,9 +43,15 @@ module.exports = (grunt) ->
       dist:
         files:
           'dist/compiler/hamlcoffee.min.js': ['dist/compiler/hamlcoffee.js']
-    release:
-      bump: false
-      file: 'package.json CHANGELOG.md dist/compiler/hamlcoffee.js dist/compiler/hamlcoffee.min.js'
+    shell:
+      commit:
+        command: "git commit package.json CHANGELOG.md dist/compiler/hamlcoffee.js dist/compiler/hamlcoffee.min.js -m 'Release <%= pkg.version %>'"
+      tag:
+        command: "git tag v<%= pkg.version %>"
+      push:
+        command: "git push --tags origin master"
+      publish:
+        command: "npm publish"
 
   # Use a custom task for using the latest v1 version of Browserify,
   # since I don't like the current contraints in v2 like the need to
@@ -78,7 +84,10 @@ module.exports = (grunt) ->
     'jasmine_node'
     'dist'
     'replace:changelog'
-    'release'
+    'shell:commit'
+    'shell:tag'
+    'shell:push'
+    'shell:publish'
   ]
 
   grunt.registerTask 'default', ['watch']
