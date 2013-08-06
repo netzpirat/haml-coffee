@@ -1,5 +1,9 @@
 # Haml Coffee Changelog
 
+## Master
+
+* [#71](https://github.com/netzpirat/haml-coffee/issues/71): Fix template names when walkdir returns absolute paths. ([@pwnall](https://github.com/pwnall))
+
 ## Version 1.11.2, June 17, 2013
 
 * [#70](https://github.com/netzpirat/haml-coffee/issues/70): Fix Windows compatibility for multiple input files. ([@akhanubis](https://github.com/akhanubis))
