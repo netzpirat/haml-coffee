@@ -1,6 +1,7 @@
 CoffeeScript  = require 'coffee-script'
 CoffeeMaker   = require './coffee-maker'
 fs            = require 'fs'
+path          = require 'path'
 walkdir       = require 'walkdir'
 
 red   = '\u001b[31m'
@@ -185,6 +186,10 @@ exports.run = ->
 
           # Loop through all Haml files and compile them
           for filename in walkdir.sync baseDir
+            # walkdir sometimes returns absolute paths
+            if filename.substring(0, 1) is '/'
+              filename = path.relative(baseDir, filename)
+
             if filename.match /([^\.]+)(\.html)?\.haml[c]?$/
 
               # Combine all files into a single output
