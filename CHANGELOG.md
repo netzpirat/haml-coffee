@@ -1,6 +1,6 @@
 # Haml Coffee Changelog
 
-## Master
+## Version 1.11.3, August 06, 2013
 
 * [#73](https://github.com/netzpirat/haml-coffee/issues/73): Fix include error when custom context contains a string value.
 * [#71](https://github.com/netzpirat/haml-coffee/issues/71): Fix template names when walkdir returns absolute paths. ([@pwnall](https://github.com/pwnall))

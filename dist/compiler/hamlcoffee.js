@@ -454,7 +454,7 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
   indent = require('./util/text').indent;
 
   module.exports = HamlCoffee = (function() {
-    HamlCoffee.VERSION = '1.11.1';
+    HamlCoffee.VERSION = '1.11.3';
 
     function HamlCoffee(options) {
       var segment, segments, _base, _base1, _base10, _base11, _base12, _base13, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _i, _len;
@@ -2108,7 +2108,7 @@ require.define("/nodes/directive.coffee",function(require,module,exports,__dirna
       include: function(expression) {
         var context, e, name, statement, _ref1;
         try {
-          _ref1 = expression.match(/\s*['"](.*)['"](?:,\s*(.*))?\s*/), _ref1[0], name = _ref1[1], context = _ref1[2];
+          _ref1 = expression.match(/\s*['"](.*?)['"](?:,\s*(.*))?\s*/), _ref1[0], name = _ref1[1], context = _ref1[2];
         } catch (_error) {
           e = _error;
           throw new Error("Failed to parse the include directive from " + expression);
