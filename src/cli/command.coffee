@@ -201,7 +201,7 @@ exports.run = ->
               else
                 outputFilename  = "#{ filename.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] }.jst"
                 console.log "  #{ green }[Haml Coffee] Compiling file#{ reset } %s to %s", inputFilename, outputFilename
-                fs.writeFileSync outputFilename, CoffeeMaker.compileFile(filename, compilerOptions)
+                fs.writeFileSync outputFilename, CoffeeMaker.compileFile(filename, compilerOptions, namespace)
 
           # Write concatenated output
           if argv.o
