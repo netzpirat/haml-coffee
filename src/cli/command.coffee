@@ -188,7 +188,7 @@ exports.run = ->
           for filename in walkdir.sync baseDir
             # walkdir sometimes returns absolute paths
             if filename.substring(0, 1) is '/'
-              filename = path.relative(baseDir, filename)
+              filename = path.relative(process.cwd(), filename)
 
             if filename.match /([^\.]+)(\.html)?\.haml[c]?$/
 
