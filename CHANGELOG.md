@@ -1,5 +1,9 @@
 # Haml Coffee Changelog
 
+## Master
+
+* [#74](https://github.com/netzpirat/haml-coffee/issues/74): Fix namespace when compile all files within a directory.
+
 ## Version 1.11.3, August 06, 2013
 
 * [#73](https://github.com/netzpirat/haml-coffee/issues/73): Fix include error when custom context contains a string value.
