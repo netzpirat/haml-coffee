@@ -3,7 +3,9 @@ task :gem do
   sh "grunt dist"
 
   require "json"
+  require "fileutils"
   require "rubygems"
+  require "tmpdir"
   require "rubygems/package"
 
   gemspec = Gem::Specification.new do |s|
@@ -14,6 +16,9 @@ task :gem do
     s.homepage    = "https://github.com/netzpirat/haml-coffee/"
     s.summary     = "Haml Coffee Compiler"
     s.description = "JavaScript source code for the Haml Coffee compiler"
+
+    s.license     = "MIT"
+
     s.files = [
       "lib/haml_coffee/hamlcoffee.js",
       "lib/haml_coffee/source.rb"
@@ -23,32 +28,38 @@ task :gem do
     s.email       = "michi@netzpiraten.ch"
   end
 
-  file = File.open("haml-coffee-source-#{gemspec.version}.gem", "w")
-  Gem::Package.open(file, "w") do |pkg|
-    pkg.metadata = gemspec.to_yaml
 
-    path = "lib/haml_coffee/source.rb"
-    contents = <<-RUBY
+  root = Dir.getwd
+
+  Dir.mktmpdir do |tmpdir|
+    Dir.chdir(tmpdir) do
+      FileUtils.mkdir_p "lib/haml_coffee/"
+
+      File.open "lib/haml_coffee/source.rb", "w" do |f|
+        f.write <<-RB
 module HamlCoffee
   module Source
     VERSION = #{gemspec.version.to_s.inspect}
 
-    def self.bundled_path
-      File.expand_path("../hamlcoffee.js", __FILE__)
-    end
+      def self.bundled_path
+        File.expand_path("../hamlcoffee.js", __FILE__)
+      end
   end
 end
-    RUBY
-    pkg.add_file_simple(path, 0644, contents.size) do |tar_io|
-      tar_io.write(contents)
-    end
-
-    File.open("dist/compiler/hamlcoffee.min.js", "r") do |input|
-      pkg.add_file_simple("lib/haml_coffee/hamlcoffee.js", 0644, input.size) do |tar_io|
-        tar_io.write input.read
+        RB
       end
-    end
-  end
 
-  warn "Built #{file.path}"
+      FileUtils.copy File.join(root, "dist/compiler/hamlcoffee.min.js"), "lib/haml_coffee/hamlcoffee.js"
+
+      if defined?(Gem::Builder) # Rubygems 1
+        Gem::Builder.new(gemspec).build
+      else # Rubygems 2
+        Gem::Package.build gemspec
+      end
+
+      FileUtils.copy gemspec.file_name, root
+
+    end  
+  end
+  warn "Built #{gemspec.file_name}"
 end
