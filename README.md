@@ -24,6 +24,10 @@ newer Haml Coffee version with `npm update`.
 
 There are different packages available to integrate Haml Coffee into your workflow:
 
+### Editor
+
+* [CoffeeScriptHaml](https://github.com/jisaacks/CoffeeScriptHaml) Syntax highlighting for .hamlc files in Sublime Text.
+
 ### Node.JS
 
 * [grunt-haml](https://github.com/concordusapps/grunt-haml) for projects using [Grunt](http://gruntjs.com/).
