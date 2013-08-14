@@ -57,9 +57,11 @@ end
         Gem::Package.build gemspec
       end
 
-      FileUtils.copy gemspec.file_name, root
+      pkg = File.join(root, 'pkg')
+      FileUtils.mkdirr(pkg) unless File.exists?(pkg)
+      FileUtils.copy gemspec.file_name, pkg
 
-    end  
+    end
   end
   warn "Built #{gemspec.file_name}"
 end
