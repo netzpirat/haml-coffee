@@ -482,7 +482,7 @@ module.exports = class HamlCoffee
       if @options.customSurround
         fn += "surround = (start, end, fn) => #{ @options.customSurround }.call(@, start, end, fn)\n"
       else
-        fn += "surround = (start, end, fn) => start + fn.call(@)?.replace(/^\s+|\s+$/g, '') + end\n"
+        fn += "surround = (start, end, fn) => start + fn.call(@)?.replace(/^\\s+|\\s+$/g, '') + end\n"
 
     # Succeed helper
     if code.indexOf('succeed') isnt -1
