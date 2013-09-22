@@ -1,5 +1,9 @@
 # Haml Coffee Changelog
 
+## Master
+
+* [#75](https://github.com/netzpirat/haml-coffee/issues/75): Fix surround helper whitespace bug. ([@russellmcc](https://github.com/russellmcc))
+
 ## Version 1.11.4, August 09, 2013
 
 * [#74](https://github.com/netzpirat/haml-coffee/issues/74): Fix namespace when compile all files within a directory.
