@@ -2,6 +2,7 @@
 
 ## Master
 
+* [haml_coffee_assets issue #113](https://github.com/netzpirat/haml_coffee_assets/issues/113): Fix attribute lookahead, allow add text to closing tags.
 * [#75](https://github.com/netzpirat/haml-coffee/issues/75): Fix surround helper whitespace bug. ([@russellmcc](https://github.com/russellmcc))
 
 ## Version 1.11.4, August 09, 2013

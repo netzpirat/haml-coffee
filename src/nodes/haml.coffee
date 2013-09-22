@@ -103,10 +103,16 @@ module.exports = class Haml extends Node
           @closer = @markText "</#{ tokens.tag}>"
 
       # Create a self closing tag that depends on the format `<br>` or `<br/>`
+      # when it doesn't contain some text
       else
         tokens.tag = tokens.tag.replace /\/$/, ''
         prefix     = @buildHtmlTagPrefix(tokens)
-        @opener    = @markText "#{ prefix }#{ if @format is 'xhtml' then ' /' else '' }>"
+
+        if tokens.text
+          @opener = @markText "#{ prefix }>#{ tokens.text }"
+          @closer = @markText "</#{ tokens.tag }>"
+        else
+          @opener = @markText "#{ prefix }#{ if @format is 'xhtml' then ' /' else '' }>#{ tokens.text }"
 
   # Parses the expression and detect the tag, attributes
   # and any assignment. In addition class and id cleanup
