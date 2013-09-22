@@ -99,11 +99,11 @@ module.exports = class HamlCoffee
 
     # Do not validate within comments
     unless @node.isCommented()
-      
+
       # Validate current indention
       if @currentBlockLevel - Math.floor(@currentBlockLevel) > 0
         throw("Indentation error in line #{ @lineNumber }")
-  
+
       # Validate block level
       if (@currentIndent - @previousIndent) / @tabSize > 1
         throw("Block level too deep in line #{ @lineNumber }")
@@ -259,7 +259,7 @@ module.exports = class HamlCoffee
           range = if @tabSize > 2 then [@tabSize..1] else [2..1]
           for tabsize in range
             text = line.match(///^\s{#{ (@node.blockLevel * tabsize) + tabsize }}(.*)///)
-            
+
             if text
               @node.addChild(new Text(text[1], @getNodeOptions({ parentNode: @node })))
               break
@@ -290,7 +290,7 @@ module.exports = class HamlCoffee
         while /^-#/.test(expression) and not /^(\s*)[-=&!~.%#</]/.test(lines[0]) and lines.length > 0
           lines.shift()
           @lineNumber++
-          
+
         # Look ahead for multi line |
         if expression.match(/(\s)+\|\s*$/)
           expression = expression.replace(/(\s)+\|\s*$/, ' ')
