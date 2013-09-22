@@ -454,7 +454,7 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
   indent = require('./util/text').indent;
 
   module.exports = HamlCoffee = (function() {
-    HamlCoffee.VERSION = '1.11.4';
+    HamlCoffee.VERSION = '1.12.0';
 
     function HamlCoffee(options) {
       var segment, segments, _base, _base1, _base10, _base11, _base12, _base13, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _i, _len;
@@ -674,7 +674,7 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
           if (/^\s*$/.test(line)) {
             continue;
           }
-          while (/^[%.#].*[{(]/.test(expression) && !/^(\s*)[-=&!~.%#</]/.test(lines[0]) && /([-\w]+[\w:-]*\w?)\s*=|('\w+[\w:-]*\w?')\s*=|("\w+[\w:-]*\w?")\s*=|(\w+[\w:-]*\w?):|('[-\w]+[\w:-]*\w?'):|("[-\w]+[\w:-]*\w?"):|:(\w+[\w:-]*\w?)\s*=>|:?'([-\w]+[\w:-]*\w?)'\s*=>|:?"([-\w]+[\w:-]*\w?)"\s*=>/.test(lines[0])) {
+          while (/^[%.#].*[{(]/.test(expression) && RegExp("^\\s{" + (this.tabSize + 2) + ",}").test(lines[0]) && !/^(\s*)[-=&!~.%#</]/.test(lines[0]) && /([-\w]+[\w:-]*\w?)\s*=|('\w+[\w:-]*\w?')\s*=|("\w+[\w:-]*\w?")\s*=|(\w+[\w:-]*\w?):|('[-\w]+[\w:-]*\w?'):|("[-\w]+[\w:-]*\w?"):|:(\w+[\w:-]*\w?)\s*=>|:?'([-\w]+[\w:-]*\w?)'\s*=>|:?"([-\w]+[\w:-]*\w?)"\s*=>/.test(lines[0])) {
             attributes = lines.shift();
             expression = expression.replace(/(\s)+\|\s*$/, '');
             expression += ' ' + attributes.match(/^\s*(.*?)(\s+\|\s*)?$/)[1];
@@ -834,7 +834,7 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
         if (this.options.customSurround) {
           fn += "surround = (start, end, fn) => " + this.options.customSurround + ".call(@, start, end, fn)\n";
         } else {
-          fn += "surround = (start, end, fn) => start + fn.call(@)?.replace(/^\s+|\s+$/g, '') + end\n";
+          fn += "surround = (start, end, fn) => start + fn.call(@)?.replace(/^\\s+|\\s+$/g, '') + end\n";
         }
       }
       if (code.indexOf('succeed') !== -1) {
@@ -1331,7 +1331,12 @@ require.define("/nodes/haml.coffee",function(require,module,exports,__dirname,__
         } else {
           tokens.tag = tokens.tag.replace(/\/$/, '');
           prefix = this.buildHtmlTagPrefix(tokens);
-          return this.opener = this.markText("" + prefix + (this.format === 'xhtml' ? ' /' : '') + ">");
+          if (tokens.text) {
+            this.opener = this.markText("" + prefix + ">" + tokens.text);
+            return this.closer = this.markText("</" + tokens.tag + ">");
+          } else {
+            return this.opener = this.markText("" + prefix + (this.format === 'xhtml' ? ' /' : '') + ">" + tokens.text);
+          }
         }
       }
     };
