@@ -1,5 +1,9 @@
 # Haml Coffee Changelog
 
+## Master
+
+* [#80](https://github.com/netzpirat/haml-coffee/pull/80): Add ability to render to HTML through the CLI and API. ([@mehcode](https://github.com/mehcode))
+
 ## Version 1.12.0, September 22, 2013
 
 * [haml_coffee_assets issue #113](https://github.com/netzpirat/haml_coffee_assets/issues/113): Fix attribute lookahead, allow add text to closing tags.
