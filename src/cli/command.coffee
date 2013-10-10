@@ -60,6 +60,12 @@ optimist = require('optimist')
     default   : "{ hc: 'hamlcoffee' }"
     describe  : 'The global template amd module dependencies'
   )
+  .options('r',
+    alias     : 'render'
+    boolean   : true
+    default   : false
+    describe  : 'Render the template into static HTML'
+  )
   .options('preserve',
     default   : 'pre,textarea'
     describe  : 'Set a comma separated list of HTML tags to preserve'
@@ -138,7 +144,7 @@ exports.run = ->
     console.error "  #{ red }[Haml Coffee] Invalid dependencies:#{ reset } %s (%s)", argv.d, err
 
   compilerOptions =
-    placement             : argv.p
+    placement             : if argv.r then 'standalone' else argv.p
     dependencies          : dependencies
     format                : argv.f
     uglify                : argv.u
@@ -164,9 +170,16 @@ exports.run = ->
 
         # Compile a single Haml CoffeeScript template
         unless stat.isDirectory()
-          outputFilename  = argv.o || "#{ argv.i.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] }.jst"
-          console.error "  #{ green }[Haml Coffee] Compiling file#{ reset } %s to %s", inputFilename, outputFilename
-          fs.writeFileSync outputFilename, CoffeeMaker.compileFile(inputFilename, compilerOptions, namespace, templateName)
+          outputFilename  = argv.o || "#{ argv.i.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] }"
+          if argv.r
+            outputFilename += '.html'
+            console.error "  #{ green }[Haml Coffee] Rendering file#{ reset } %s to %s", inputFilename, outputFilename
+            fs.writeFileSync outputFilename, CoffeeMaker.renderFile(inputFilename, compilerOptions)
+
+          else
+            outputFilename += '.jst'
+            console.error "  #{ green }[Haml Coffee] Compiling file#{ reset } %s to %s", inputFilename, outputFilename
+            fs.writeFileSync outputFilename, CoffeeMaker.compileFile(inputFilename, compilerOptions, namespace, templateName)
 
           process.exit 0
 
@@ -176,7 +189,8 @@ exports.run = ->
             console.error "  #{ red }[Haml Coffee] You can\'t compile all Haml templates in a directory and give a single template name!#{ reset }"
             process.exit 1
 
-          console.log "  #{ green }[Haml Coffee] Compiling directory#{ reset } %s", inputFilename
+          action = if argv.r then 'Compiling' else 'Rendering'
+          console.log "  #{ green }[Haml Coffee] #{ action } directory#{ reset } %s", inputFilename
 
           # Removing a trailing slash
           baseDir  = inputFilename.replace(/\/$/, '')
@@ -194,14 +208,25 @@ exports.run = ->
 
               # Combine all files into a single output
               if argv.o
-                console.log "    #{ green }[Haml Coffee] Compiling file#{ reset } %s", filename
-                compound += CoffeeMaker.compileFile(filename, compilerOptions, namespace)
+                console.log "    #{ green }[Haml Coffee] #{ action } file#{ reset } %s", filename
+                if argv.r
+                  compound += CoffeeMaker.renderFile(filename, compilerOptions)
+
+                else
+                  compound += CoffeeMaker.compileFile(filename, compilerOptions, namespace)
 
               # Compile and write each file on its own
               else
-                outputFilename  = "#{ filename.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] }.jst"
-                console.log "  #{ green }[Haml Coffee] Compiling file#{ reset } %s to %s", inputFilename, outputFilename
-                fs.writeFileSync outputFilename, CoffeeMaker.compileFile(filename, compilerOptions, namespace)
+                outputFilename  = "#{ filename.match(/([^\.]+)(\.html)?\.haml[c]?$/)?[1] }"
+                if argv.r
+                  outputFilename += '.html'
+                  console.log "  #{ green }[Haml Coffee] Rendering file#{ reset } %s to %s", inputFilename, outputFilename
+                  fs.writeFileSync outputFilename, CoffeeMaker.renderFile(filename, compilerOptions)
+
+                else
+                  outputFilename += '.jst'
+                  console.log "  #{ green }[Haml Coffee] Compiling file#{ reset } %s to %s", inputFilename, outputFilename
+                  fs.writeFileSync outputFilename, CoffeeMaker.compileFile(filename, compilerOptions, namespace)
 
           # Write concatenated output
           if argv.o
@@ -228,4 +253,8 @@ exports.run = ->
     process.stdin.on 'data', (chunk) -> source += chunk
     process.stdin.on 'end', ->
       console.log '\n'
-      process.stdout.write CoffeeMaker.compile(source, (templateName || 'test'), namespace, compilerOptions)
+      if argv.r
+        process.stdout.write CoffeeMaker.render(source, compilerOptions)
+
+      else
+        process.stdout.write CoffeeMaker.compile(source, (templateName || 'test'), namespace, compilerOptions)

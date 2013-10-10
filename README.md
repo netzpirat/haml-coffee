@@ -207,6 +207,7 @@ Options:
   -t, --template                     Set a custom template name
   -b, --basename                     Ignore file path when generate the template name
   -e, --extend                       Extend the template scope with the context
+  -r, --render                       Render to standalone HTML
 ```
 
 _The following section describes only the options that are unique to the command line tool._
@@ -865,6 +866,19 @@ render the template. You need to supply your own module, but you can grab a copy
 and adapt it to your needs. Another option is to remove the module from the
 [module dependencies](https://github.com/netzpirat/haml-coffee#module-dependencies), but that's usually not what you
 want because it duplicates the needed function within every template.
+
+### Static HTML
+
+By default Haml Coffee outputs pre-compiled templates for rendering dynamic content.
+
+There is a `render` helper that can be used as follows to get the standalone HTML rendering of a HAML template.
+
+```
+hamlc = require 'haml-coffee'
+text = hamlc.render '%h1= @title', {title: 'hi'}
+text
+'<h1>hi</h1>'
+```
 
 ## Development information
 

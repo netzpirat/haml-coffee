@@ -100,3 +100,11 @@ module.exports = class CoffeeMaker
       process.exit 1
 
     output
+
+  @renderFile = (filename, compilerOptions = {}) ->
+    fn = @compileFile filename, compilerOptions
+    eval(fn)()
+
+  @render = (source, compilerOptions = {}) ->
+    fn = @compile source, 'test', null, compilerOptions
+    eval(fn)()
