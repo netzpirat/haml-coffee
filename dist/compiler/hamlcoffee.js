@@ -454,7 +454,7 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
   indent = require('./util/text').indent;
 
   module.exports = HamlCoffee = (function() {
-    HamlCoffee.VERSION = '1.12.0';
+    HamlCoffee.VERSION = '1.13.0';
 
     function HamlCoffee(options) {
       var segment, segments, _base, _base1, _base10, _base11, _base12, _base13, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _i, _len;
@@ -2093,13 +2093,21 @@ require.define("/nodes/filter.coffee",function(require,module,exports,__dirname,
 });
 
 require.define("/nodes/directive.coffee",function(require,module,exports,__dirname,__filename,process,global){(function() {
-  var Directive, Node, path, _ref,
+  var CoffeeScript, Directive, Node, fs, path, _ref,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  fs = require('fs');
 
   path = require('path');
 
   Node = require('./node');
+
+  if (process.browser) {
+    CoffeeScript = window.CoffeeScript;
+  } else {
+    CoffeeScript = require('coffee-script');
+  }
 
   module.exports = Directive = (function(_super) {
     __extends(Directive, _super);
@@ -2111,7 +2119,7 @@ require.define("/nodes/directive.coffee",function(require,module,exports,__dirna
 
     Directive.prototype.directives = {
       include: function(expression) {
-        var context, e, name, statement, _ref1;
+        var Compiler, code, compiler, context, e, error, name, source, statement, _ref1;
         try {
           _ref1 = expression.match(/\s*['"](.*?)['"](?:,\s*(.*))?\s*/), _ref1[0], name = _ref1[1], context = _ref1[2];
         } catch (_error) {
@@ -2127,6 +2135,21 @@ require.define("/nodes/directive.coffee",function(require,module,exports,__dirna
               return "" + this.namespace + "['" + name + "'].apply(" + context + ")";
             case 'amd':
               return "require('" + name + "').apply(" + context + ")";
+            case 'standalone':
+              try {
+                source = fs.readFileSync(name).toString();
+              } catch (_error) {
+                error = _error;
+                console.error("  Error opening file: %s", error);
+                console.error(error);
+              }
+              Compiler = require('../haml-coffee');
+              compiler = new Compiler(this.options);
+              compiler.parse(source);
+              code = CoffeeScript.compile(compiler.precompile(), {
+                bare: true
+              });
+              return statement = "`(function(){" + code + "}).apply(" + context + ")`";
             default:
               throw new Error("Include directive not available when placement is " + this.placement);
           }
@@ -2155,6 +2178,10 @@ require.define("/nodes/directive.coffee",function(require,module,exports,__dirna
 
 });
 
+require.define("fs",function(require,module,exports,__dirname,__filename,process,global){// nothing to see here... no file methods for the browser
+
+});
+
 require.define("/hamlc.coffee",function(require,module,exports,__dirname,__filename,process,global){(function() {
   var CoffeeScript, Compiler, fs, __expressCache;
 
@@ -2171,6 +2198,22 @@ require.define("/hamlc.coffee",function(require,module,exports,__dirname,__filen
   __expressCache = {};
 
   module.exports = {
+    render: function(source, context, options) {
+      var compiler, template;
+      if (context == null) {
+        context = {};
+      }
+      if (options == null) {
+        options = {};
+      }
+      options.placement = 'standalone';
+      compiler = new Compiler(options);
+      compiler.parse(source);
+      template = new Function(CoffeeScript.compile(compiler.precompile(), {
+        bare: true
+      }));
+      return template.call(context);
+    },
     compile: function(source, options) {
       var compiler, template;
       if (options == null) {
@@ -2223,9 +2266,5 @@ require.define("/hamlc.coffee",function(require,module,exports,__dirname,__filen
   };
 
 }).call(this);
-
-});
-
-require.define("fs",function(require,module,exports,__dirname,__filename,process,global){// nothing to see here... no file methods for the browser
 
 });
