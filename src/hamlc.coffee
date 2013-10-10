@@ -15,6 +15,25 @@ __expressCache = {}
 #
 module.exports =
 
+  # Render the Haml Coffee template into static HTML.
+  #
+  # @see {Compiler} for a complete list of the supported
+  #   compiler options.
+  #
+  # @param [String] source the Haml Coffee source
+  # @param [Object] context context for the template
+  # @param [Object] options the compiler options
+  # @return [Function] the template
+  #
+  render: (source, context = {}, options = {}) ->
+    # Ensure placement is set to standalone for static rendering.
+    options.placement = 'standalone'
+    compiler = new Compiler(options)
+    compiler.parse source
+
+    template = new Function CoffeeScript.compile(compiler.precompile(), bare: true)
+    template.call context
+
   # Compile the Haml Coffee template into
   # a JavaScript function.
   #
