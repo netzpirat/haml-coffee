@@ -1,5 +1,9 @@
 # Haml Coffee Changelog
 
+## Master
+
+* [#19](https://github.com/concordusapps/grunt-haml/issues/19): Fix comment followed by plain text.
+
 ## Version 1.13.0, October 10, 2013
 
 * [#80](https://github.com/netzpirat/haml-coffee/pull/80): Add ability to render to HTML through the CLI and API. ([@mehcode](https://github.com/mehcode))

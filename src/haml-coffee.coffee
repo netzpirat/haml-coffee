@@ -287,7 +287,7 @@ module.exports = class HamlCoffee
           @lineNumber++
 
         # Ignore multiple commented lines
-        while /^-#/.test(expression) and not /^(\s*)[-=&!~.%#</]/.test(lines[0]) and lines.length > 0
+        while /^-#/.test(expression) and ///^\s{#{ @previousIndent + (@tabSize || 2) }}///.test(lines[0]) and lines.length > 0
           lines.shift()
           @lineNumber++
 
