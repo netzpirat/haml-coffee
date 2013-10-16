@@ -1,6 +1,6 @@
 # Haml Coffee Changelog
 
-## Master
+## Version 1.13.1, October 16, 2013
 
 * [#19](https://github.com/concordusapps/grunt-haml/issues/19): Fix comment followed by plain text.
 
