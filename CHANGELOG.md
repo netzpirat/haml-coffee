@@ -1,6 +1,6 @@
 # Haml Coffee Changelog
 
-## Master
+## Version 1.13.3, October 22, 2013
 
 * Standalone mode in the Browser doesn't support the include directive.
 

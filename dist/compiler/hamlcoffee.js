@@ -454,7 +454,7 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
   indent = require('./util/text').indent;
 
   module.exports = HamlCoffee = (function() {
-    HamlCoffee.VERSION = '1.13.2';
+    HamlCoffee.VERSION = '1.13.3';
 
     function HamlCoffee(options) {
       var segment, segments, _base, _base1, _base10, _base11, _base12, _base13, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _i, _len;
@@ -2097,15 +2097,12 @@ require.define("/nodes/directive.coffee",function(require,module,exports,__dirna
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  fs = require('fs');
-
   path = require('path');
 
   Node = require('./node');
 
-  if (process.browser) {
-    CoffeeScript = window.CoffeeScript;
-  } else {
+  if (!process.browser) {
+    fs = require('fs');
     CoffeeScript = require('coffee-script');
   }
 
@@ -2136,20 +2133,25 @@ require.define("/nodes/directive.coffee",function(require,module,exports,__dirna
             case 'amd':
               return "require('" + name + "').apply(" + context + ")";
             case 'standalone':
-              try {
-                source = fs.readFileSync(name).toString();
-              } catch (_error) {
-                error = _error;
-                console.error("  Error opening file: %s", error);
-                console.error(error);
+              if (browser.process) {
+                throw new Error("Include directive not available in the Browser when placement is standalone.");
+              } else {
+                try {
+                  source = fs.readFileSync(name).toString();
+                } catch (_error) {
+                  error = _error;
+                  console.error("  Error opening file: %s", error);
+                  console.error(error);
+                }
+                Compiler = require('../haml-coffee');
+                compiler = new Compiler(this.options);
+                compiler.parse(source);
+                code = CoffeeScript.compile(compiler.precompile(), {
+                  bare: true
+                });
+                return statement = "`(function(){" + code + "}).apply(" + context + ")`";
               }
-              Compiler = require('../haml-coffee');
-              compiler = new Compiler(this.options);
-              compiler.parse(source);
-              code = CoffeeScript.compile(compiler.precompile(), {
-                bare: true
-              });
-              return statement = "`(function(){" + code + "}).apply(" + context + ")`";
+              break;
             default:
               throw new Error("Include directive not available when placement is " + this.placement);
           }
