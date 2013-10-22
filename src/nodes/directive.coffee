@@ -1,10 +1,8 @@
-fs = require('fs')
 path = require('path')
 Node = require('./node')
 
-if process.browser
-  CoffeeScript = window.CoffeeScript
-else
+unless process.browser
+  fs = require('fs')
   CoffeeScript = require 'coffee-script'
 
 # Directive node for HAML statements that change the meaning or do interact
@@ -39,23 +37,26 @@ module.exports = class Directive extends Node
         when 'global' then "#{ @namespace }['#{ name }'].apply(#{ context })"
         when 'amd' then "require('#{ name }').apply(#{ context })"
         when 'standalone'
-          # A standalone template cannot depend on another template so
-          # we need to compile the referenced template and attach it as a
-          # precompiled (standalone) template here.
+          if browser.process
+            throw new Error("Include directive not available in the Browser when placement is standalone.")
+          else
+            # A standalone template cannot depend on another template so
+            # we need to compile the referenced template and attach it as a
+            # precompiled (standalone) template here.
 
-          # Read the source.
-          try
-            source = fs.readFileSync(name).toString()
-          catch error
-            console.error "  Error opening file: %s", error
-            console.error error
+            # Read the source.
+            try
+              source = fs.readFileSync(name).toString()
+            catch error
+              console.error "  Error opening file: %s", error
+              console.error error
 
-          # Compile and build the source function.
-          Compiler = require '../haml-coffee'
-          compiler = new Compiler(@options)
-          compiler.parse source
-          code = CoffeeScript.compile(compiler.precompile(), bare: true)
-          statement = "`(function(){#{code}}).apply(#{context})`"
+            # Compile and build the source function.
+            Compiler = require '../haml-coffee'
+            compiler = new Compiler(@options)
+            compiler.parse source
+            code = CoffeeScript.compile(compiler.precompile(), bare: true)
+            statement = "`(function(){#{code}}).apply(#{context})`"
 
         else
           throw new Error("Include directive not available when placement is #{ @placement }")

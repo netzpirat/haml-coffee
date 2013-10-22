@@ -1,5 +1,9 @@
 # Haml Coffee Changelog
 
+## Master
+
+* Standalone mode in the Browser doesn't support the include directive.
+
 ## Version 1.13.2, October 17, 2013
 
 * [#19](https://github.com/concordusapps/grunt-haml/issues/19): Fix attr lookahead that swallows JS in a script tag.
