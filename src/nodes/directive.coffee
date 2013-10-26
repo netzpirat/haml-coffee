@@ -37,7 +37,7 @@ module.exports = class Directive extends Node
         when 'global' then "#{ @namespace }['#{ name }'].apply(#{ context })"
         when 'amd' then "require('#{ name }').apply(#{ context })"
         when 'standalone'
-          if browser.process
+          if browser? && browser.process
             throw new Error("Include directive not available in the Browser when placement is standalone.")
           else
             # A standalone template cannot depend on another template so
