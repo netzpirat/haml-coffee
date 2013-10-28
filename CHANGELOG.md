@@ -1,5 +1,9 @@
 # Haml Coffee Changelog
 
+## Master
+
+* [#82](https://github.com/netzpirat/haml-coffee/pull/82): Fix include directive in standalone mode. ([@dn](https:://github/com/dn))
+
 ## Version 1.13.3, October 22, 2013
 
 * Standalone mode in the Browser doesn't support the include directive.
