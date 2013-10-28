@@ -1,6 +1,6 @@
 # Haml Coffee Changelog
 
-## Master
+## Version 1.13.4, October 28, 2013
 
 * [#82](https://github.com/netzpirat/haml-coffee/pull/82): Fix include directive in standalone mode. ([@dn](https:://github/com/dn))
 

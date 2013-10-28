@@ -454,7 +454,7 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
   indent = require('./util/text').indent;
 
   module.exports = HamlCoffee = (function() {
-    HamlCoffee.VERSION = '1.13.3';
+    HamlCoffee.VERSION = '1.13.4';
 
     function HamlCoffee(options) {
       var segment, segments, _base, _base1, _base10, _base11, _base12, _base13, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _i, _len;
@@ -2133,7 +2133,7 @@ require.define("/nodes/directive.coffee",function(require,module,exports,__dirna
             case 'amd':
               return "require('" + name + "').apply(" + context + ")";
             case 'standalone':
-              if (browser.process) {
+              if (typeof browser !== "undefined" && browser !== null ? browser.process : void 0) {
                 throw new Error("Include directive not available in the Browser when placement is standalone.");
               } else {
                 try {
