@@ -2,11 +2,12 @@
 
 ## Master
 
-* [#83](https://github.com/netzpirat/haml-coffee/pull/83): Maintain context through includes. ([@rharriso](https:://github/com/hrriso)
+* [#85](https://github.com/netzpirat/haml-coffee/pull/85): fix boolean handling with data-\* attributes. ([@bastjan](https:://github.com/bastjan)
+* [#83](https://github.com/netzpirat/haml-coffee/pull/83): Maintain context through includes. ([@rharriso](https:://github.com/hrriso)
 
 ## Version 1.13.4, October 28, 2013
 
-* [#82](https://github.com/netzpirat/haml-coffee/pull/82): Fix include directive in standalone mode. ([@dn](https:://github/com/dn))
+* [#82](https://github.com/netzpirat/haml-coffee/pull/82): Fix include directive in standalone mode. ([@dn](https:://github.com/dn))
 
 ## Version 1.13.3, October 22, 2013
 
