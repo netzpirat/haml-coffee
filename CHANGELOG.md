@@ -1,6 +1,6 @@
 # Haml Coffee Changelog
 
-## Master
+## Version 1.13.5, November 26, 2013
 
 * [#85](https://github.com/netzpirat/haml-coffee/pull/85): fix boolean handling with data-\* attributes. ([@bastjan](https:://github.com/bastjan)
 * [#83](https://github.com/netzpirat/haml-coffee/pull/83): Maintain context through includes. ([@rharriso](https:://github.com/hrriso)

@@ -454,7 +454,7 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
   indent = require('./util/text').indent;
 
   module.exports = HamlCoffee = (function() {
-    HamlCoffee.VERSION = '1.13.4';
+    HamlCoffee.VERSION = '1.13.5';
 
     function HamlCoffee(options) {
       var segment, segments, _base, _base1, _base10, _base11, _base12, _base13, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _i, _len;
@@ -941,9 +941,9 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
     HamlCoffee.prototype.convertBooleans = function(code) {
       if (code.indexOf('$c') !== -1) {
         if (this.options.format === 'xhtml') {
-          return '.replace(/\\s(\\w+)=\'\u0093true\'/mg, " $1=\'$1\'").replace(/\\s(\\w+)=\'\u0093false\'/mg, \'\')';
+          return '.replace(/\\s([\\w-]+)=\'\u0093true\'/mg, " $1=\'$1\'").replace(/\\s([\\w-]+)=\'\u0093false\'/mg, \'\')';
         } else {
-          return '.replace(/\\s(\\w+)=\'\u0093true\'/mg, \' $1\').replace(/\\s(\\w+)=\'\u0093false\'/mg, \'\')';
+          return '.replace(/\\s([\\w-]+)=\'\u0093true\'/mg, \' $1\').replace(/\\s([\\w-]+)=\'\u0093false\'/mg, \'\')';
         }
       } else {
         return '';
@@ -2129,7 +2129,7 @@ require.define("/nodes/directive.coffee",function(require,module,exports,__dirna
         statement = (function() {
           switch (this.placement) {
             case 'global':
-              return "" + this.namespace + "['" + name + "'].apply(" + context + ")";
+              return "" + this.namespace + "['" + name + "'](" + context + ")";
             case 'amd':
               return "require('" + name + "').apply(" + context + ")";
             case 'standalone':
