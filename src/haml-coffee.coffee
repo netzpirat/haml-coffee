@@ -626,9 +626,9 @@ module.exports = class HamlCoffee
   convertBooleans: (code) ->
     if code.indexOf('$c') isnt -1
       if @options.format is 'xhtml'
-        '.replace(/\\s(\\w+)=\'\u0093true\'/mg, " $1=\'$1\'").replace(/\\s(\\w+)=\'\u0093false\'/mg, \'\')'
+        '.replace(/\\s([\\w-]+)=\'\u0093true\'/mg, " $1=\'$1\'").replace(/\\s([\\w-]+)=\'\u0093false\'/mg, \'\')'
       else
-        '.replace(/\\s(\\w+)=\'\u0093true\'/mg, \' $1\').replace(/\\s(\\w+)=\'\u0093false\'/mg, \'\')'
+        '.replace(/\\s([\\w-]+)=\'\u0093true\'/mg, \' $1\').replace(/\\s([\\w-]+)=\'\u0093false\'/mg, \'\')'
     else
       ''
 
