@@ -275,6 +275,8 @@ module.exports = class HamlCoffee
         ws         = result[1]
         expression = result[2]
 
+        @currentIndent = ws.length
+
         # Skip empty lines
         continue if /^\s*$/.test(line)
 
@@ -287,7 +289,7 @@ module.exports = class HamlCoffee
           @lineNumber++
 
         # Ignore multiple commented lines
-        while /^-#/.test(expression) and ///^\s{#{ @previousIndent + (@tabSize || 2) }}///.test(lines[0]) and lines.length > 0
+        while /^-#/.test(expression) and ///^\s{#{ @currentIndent + (@tabSize || 2) }}///.test(lines[0]) and lines.length > 0
           lines.shift()
           @lineNumber++
 
@@ -298,8 +300,6 @@ module.exports = class HamlCoffee
           while lines[0]?.match(/(\s)+\|$/)
             expression += lines.shift().match(/^(\s*)(.*)/)[2].replace(/(\s)+\|\s*$/, '')
             @lineNumber++
-
-        @currentIndent = ws.length
 
         # Update indention levels and set the current parent
         if @indentChanged()
