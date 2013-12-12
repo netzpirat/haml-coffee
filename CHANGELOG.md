@@ -1,8 +1,12 @@
 # Haml Coffee Changelog
 
+## Master
+
+* [#86](https://github.com/netzpirat/haml-coffee/pull/86): Fix bug with silent comment nesting ([@gillnana](https:://github.com/gillnana)
+
 ## Version 1.13.5, November 26, 2013
 
-* [#85](https://github.com/netzpirat/haml-coffee/pull/85): fix boolean handling with data-\* attributes. ([@bastjan](https:://github.com/bastjan)
+* [#85](https://github.com/netzpirat/haml-coffee/pull/85): Fix boolean handling with data-\* attributes. ([@bastjan](https:://github.com/bastjan)
 * [#83](https://github.com/netzpirat/haml-coffee/pull/83): Maintain context through includes. ([@rharriso](https:://github.com/hrriso)
 
 ## Version 1.13.4, October 28, 2013
