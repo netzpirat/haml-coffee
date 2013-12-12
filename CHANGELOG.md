@@ -1,6 +1,6 @@
 # Haml Coffee Changelog
 
-## Master
+## Version 1.13.6, December 12, 2013
 
 * [#86](https://github.com/netzpirat/haml-coffee/pull/86): Fix bug with silent comment nesting ([@gillnana](https:://github.com/gillnana)
 

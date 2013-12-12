@@ -454,7 +454,7 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
   indent = require('./util/text').indent;
 
   module.exports = HamlCoffee = (function() {
-    HamlCoffee.VERSION = '1.13.5';
+    HamlCoffee.VERSION = '1.13.6';
 
     function HamlCoffee(options) {
       var segment, segments, _base, _base1, _base10, _base11, _base12, _base13, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _i, _len;
@@ -671,6 +671,7 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
           result = line.match(/^(\s*)(.*)/);
           ws = result[1];
           expression = result[2];
+          this.currentIndent = ws.length;
           if (/^\s*$/.test(line)) {
             continue;
           }
@@ -680,7 +681,7 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
             expression += ' ' + attributes.match(/^\s*(.*?)(\s+\|\s*)?$/)[1];
             this.lineNumber++;
           }
-          while (/^-#/.test(expression) && RegExp("^\\s{" + (this.previousIndent + (this.tabSize || 2)) + "}").test(lines[0]) && lines.length > 0) {
+          while (/^-#/.test(expression) && RegExp("^\\s{" + (this.currentIndent + (this.tabSize || 2)) + "}").test(lines[0]) && lines.length > 0) {
             lines.shift();
             this.lineNumber++;
           }
@@ -691,7 +692,6 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
               this.lineNumber++;
             }
           }
-          this.currentIndent = ws.length;
           if (this.indentChanged()) {
             this.updateTabSize();
             this.updateBlockLevel();
