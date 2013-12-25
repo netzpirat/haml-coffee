@@ -35,7 +35,7 @@ module.exports = class Directive extends Node
       context = 'this' unless context
       statement = switch @placement
         when 'global' then "#{ @namespace }['#{ name }'](#{ context })"
-        when 'amd' then "require('#{ name }').apply(#{ context })"
+        when 'amd' then "require('#{ name }')(#{ context })"
         when 'standalone'
           if browser?.process
             throw new Error("Include directive not available in the Browser when placement is standalone.")
