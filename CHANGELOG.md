@@ -1,6 +1,6 @@
 # Haml Coffee Changelog
 
-## Master
+## Version 1.13.7, December 27, 2013
 
 * [#88](https://github.com/netzpirat/haml-coffee/pull/88): Fix include directive for AMD ([@joneshf](https:://github.com/joneshf))
 
