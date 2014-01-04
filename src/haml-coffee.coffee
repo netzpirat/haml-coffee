@@ -374,7 +374,14 @@ module.exports = class HamlCoffee
       modules.push module
       params.push param
 
-    template = indent(@precompile(), 4)
+    if @options.extendScope
+      template = """
+        `with (context || {}) {`
+      #{ indent(@precompile(), 1) }
+      `}`
+      """
+    else
+      template = @precompile()
 
     for param, module of @findDependencies(template)
       modules.push module
@@ -392,7 +399,7 @@ module.exports = class HamlCoffee
     define #{ modules } ->
       (context) ->
         render = ->
-          \n#{ template }
+          \n#{ indent(template, 4) }
         render.call(context)
     """
 
