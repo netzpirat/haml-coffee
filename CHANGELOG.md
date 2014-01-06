@@ -1,5 +1,9 @@
 # Haml Coffee Changelog
 
+## Master
+
+* [#89](https://github.com/netzpirat/haml-coffee/pull/89): Add support for extendScope in AMD modules ([@scottbrady](https:://github.com/scottbrady))
+
 ## Version 1.13.7, December 27, 2013
 
 * [#88](https://github.com/netzpirat/haml-coffee/pull/88): Fix include directive for AMD ([@joneshf](https:://github.com/joneshf))
