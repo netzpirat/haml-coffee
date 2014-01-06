@@ -454,7 +454,7 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
   indent = require('./util/text').indent;
 
   module.exports = HamlCoffee = (function() {
-    HamlCoffee.VERSION = '1.13.7';
+    HamlCoffee.VERSION = '1.14.0';
 
     function HamlCoffee(options) {
       var segment, segments, _base, _base1, _base10, _base11, _base12, _base13, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _i, _len;
@@ -753,7 +753,11 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
         modules.push(module);
         params.push(param);
       }
-      template = indent(this.precompile(), 4);
+      if (this.options.extendScope) {
+        template = "  `with (context || {}) {`\n" + (indent(this.precompile(), 1)) + "\n`}`";
+      } else {
+        template = this.precompile();
+      }
       _ref1 = this.findDependencies(template);
       for (param in _ref1) {
         module = _ref1[param];
@@ -774,7 +778,7 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
       } else {
         modules = '';
       }
-      return "define " + modules + " ->\n  (context) ->\n    render = ->\n      \n" + template + "\n    render.call(context)";
+      return "define " + modules + " ->\n  (context) ->\n    render = ->\n      \n" + (indent(template, 4)) + "\n    render.call(context)";
     };
 
     HamlCoffee.prototype.renderGlobal = function() {
