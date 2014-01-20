@@ -25,7 +25,7 @@ task :gem do
     ]
 
     s.authors     = ["Michael Kessler"]
-    s.email       = "michi@netzpiraten.ch"
+    s.email       = "michi@flinkfinger.com"
   end
 
 
