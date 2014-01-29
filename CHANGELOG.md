@@ -1,5 +1,9 @@
 # Haml Coffee Changelog
 
+## Master
+
+* [#90](https://github.com/netzpirat/haml-coffee/pull/90): Support loading Haml-Coffee on Node with CoffeeScript 1.7.
+
 ## Version 1.14.0, January 06, 2014
 
 * [#89](https://github.com/netzpirat/haml-coffee/pull/89): Add support for extendScope in AMD modules ([@scottbrady](https:://github.com/scottbrady))
