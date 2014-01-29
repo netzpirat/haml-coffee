@@ -1,6 +1,6 @@
 # Haml Coffee Changelog
 
-## Master
+## Version 1.14.1, January 29, 2014
 
 * [#90](https://github.com/netzpirat/haml-coffee/pull/90): Support loading Haml-Coffee on Node with CoffeeScript 1.7.
 
