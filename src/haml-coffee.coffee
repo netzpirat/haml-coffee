@@ -95,6 +95,8 @@ module.exports = class HamlCoffee
   # Update the current block level indention.
   #
   updateBlockLevel: ->
+    throw("Indentation error on line #{ @lineNumber }") unless @node
+
     @currentBlockLevel = @currentIndent / @tabSize
 
     # Do not validate within comments
@@ -102,11 +104,11 @@ module.exports = class HamlCoffee
 
       # Validate current indention
       if @currentBlockLevel - Math.floor(@currentBlockLevel) > 0
-        throw("Indentation error in line #{ @lineNumber }")
+        throw("Indentation error on line #{ @lineNumber }")
 
       # Validate block level
       if (@currentIndent - @previousIndent) / @tabSize > 1
-        throw("Block level too deep in line #{ @lineNumber }")
+        throw("Block level too deep on line #{ @lineNumber }")
 
     # Set the indention delta
     @delta = @previousBlockLevel - @currentBlockLevel
