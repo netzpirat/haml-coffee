@@ -3,7 +3,7 @@ fs = require 'fs'
 Compiler = require './haml-coffee'
 
 if process.browser
-  CoffeeScript = window.CoffeeScript
+  CoffeeScript = window?.CoffeeScript
 else
   CoffeeScript = require 'coffee-script'
 
