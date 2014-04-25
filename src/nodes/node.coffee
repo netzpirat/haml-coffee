@@ -32,8 +32,8 @@ module.exports = class Node
   # @option options [Boolean] escapeHtml whether to escape the rendered HTML or not
   # @option options [String] format the template format, either `xhtml`, `html4` or `html5`
   #
-  constructor: (@expression = '', options = {}) ->
-    @parentNode = options.parentNode
+  constructor: (@expression = '', @options = {}) ->
+    @parentNode = @options.parentNode
     @children   = []
 
     @opener = @closer = null
@@ -42,7 +42,7 @@ module.exports = class Node
     @silent   = false
 
     # Preserve whitespace on all children
-    @preserveTags = options.preserveTags.split(',')
+    @preserveTags = @options.preserveTags.split(',')
     @preserve = false
 
     @wsRemoval = {
@@ -50,20 +50,20 @@ module.exports = class Node
       inside: false
     }
 
-    @escapeHtml         = options.escapeHtml
-    @escapeAttributes   = options.escapeAttributes
-    @cleanValue         = options.cleanValue
-    @format             = options.format
-    @hyphenateDataAttrs = options.hyphenateDataAttrs
-    @selfCloseTags      = options.selfCloseTags.split(',')
-    @uglify             = options.uglify
+    @escapeHtml         = @options.escapeHtml
+    @escapeAttributes   = @options.escapeAttributes
+    @cleanValue         = @options.cleanValue
+    @format             = @options.format
+    @hyphenateDataAttrs = @options.hyphenateDataAttrs
+    @selfCloseTags      = @options.selfCloseTags.split(',')
+    @uglify             = @options.uglify
 
-    @codeBlockLevel     = options.codeBlockLevel
-    @blockLevel         = options.blockLevel
+    @codeBlockLevel     = @options.codeBlockLevel
+    @blockLevel         = @options.blockLevel
 
-    @placement          = options.placement
-    @namespace          = options.namespace
-    @name               = options.name
+    @placement          = @options.placement
+    @namespace          = @options.namespace
+    @name               = @options.name
 
   # Add a child node.
   #

@@ -190,7 +190,7 @@
         "format" : "html5"
       }
     },
-    
+
     "class concatenation" : {
       "haml_template" : "coffee/class",
       "html_template" : "coffee/class"
@@ -542,7 +542,7 @@
   },
 
   "directives" : {
-    "include" : {
+    "include global" : {
       "haml_template" : "directives/include",
       "html_template" : "directives/include",
       "config": {
@@ -550,6 +550,16 @@
       },
       "partials" : {
         "partials/test" : "directives/partials/test"
+      },
+      "locals" : {
+        "title": "Title For the partial."
+      }
+    },
+    "include standalone" : {
+      "haml_template" : "directives/include",
+      "html_template" : "directives/include",
+      "config": {
+        "placement": "standalone"
       },
       "locals" : {
         "title": "Title For the partial."

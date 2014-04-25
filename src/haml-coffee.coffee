@@ -52,6 +52,7 @@ module.exports = class HamlCoffee
     @options.hyphenateDataAttrs ?= true
     @options.preserveTags       ?= 'pre,textarea'
     @options.selfCloseTags      ?= 'meta,img,link,br,hr,input,area,param,col,base'
+    @options.extension          ?= 'haml'
 
     if @options.placement is 'global'
       @options.name      ?= 'test'
@@ -168,6 +169,7 @@ module.exports = class HamlCoffee
       placement          : override.placement          || @options.placement
       namespace          : override.namespace          || @options.namespace
       name               : override.name               || @options.name
+      compilerOptions    : @options
     }
 
   # Get the matching node type for the given expression. This

@@ -44,16 +44,21 @@ module.exports = class Directive extends Node
             # we need to compile the referenced template and attach it as a
             # precompiled (standalone) template here.
 
+            templatePath = path.join(
+              @options.compilerOptions.pwd,
+              "#{ name }.#{ @options.compilerOptions.extension }"
+            )
+
             # Read the source.
             try
-              source = fs.readFileSync(name).toString()
+              source = fs.readFileSync(templatePath).toString()
             catch error
               console.error "  Error opening file: %s", error
               console.error error
 
             # Compile and build the source function.
             Compiler = require '../haml-coffee'
-            compiler = new Compiler(@options)
+            compiler = new Compiler(@options.compilerOptions)
             compiler.parse source
             code = CoffeeScript.compile(compiler.precompile(), bare: true)
             statement = "`(function(){#{code}}).apply(#{context})`"
