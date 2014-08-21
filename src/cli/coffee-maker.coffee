@@ -53,7 +53,7 @@ module.exports = class CoffeeMaker
       output = CoffeeScript.compile haml
 
     catch error
-      console.error '  #{ red }[haml coffee] CoffeeScript compilation error:#{ reset } %s', error
+      console.error "  #{ red }[haml coffee] CoffeeScript compilation error:#{ reset } %s", error
       console.error error.stack
       process.exit 1
 
