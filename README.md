@@ -31,6 +31,7 @@ There are different packages available to integrate Haml Coffee into your workfl
 ### Node.JS
 
 * [grunt-haml](https://github.com/concordusapps/grunt-haml) for projects using [Grunt](http://gruntjs.com/).
+* [gulp-haml-coffee](https://github.com/saschagehlich/gulp-haml-coffee) for projects using [Gulp](http://gulpjs.com/).
 * [hem-haml-coffee](https://github.com/vojto/hem-haml-coffee) for projects using [Hem](https://github.com/spine/hem/).
 * [stitch-haml-coffee](https://github.com/jnbt/stitch-haml-coffee) for projects using [Stitch](https://github.com/sstephenson/stitch).
 * [Mincer](https://github.com/nodeca/mincer) the Sprockets inspired web assets compiler.

@@ -23,6 +23,7 @@ Pensez à vérifier le [CHANGELOG](https://github.com/netzpirat/haml-coffee/blob
 Il existe différent packages pour intégrer Haml-Coffee dans votre environnement de travail:
 
 * [grunt-haml](https://github.com/concordusapps/grunt-haml) pour les projets utilisants [Grunt](http://gruntjs.com/).
+* [gulp-haml-coffee](https://github.com/saschagehlich/gulp-haml-coffee) pour les projets utilisants [Gulp](http://gulpjs.com/).
 * [hem-haml-coffee](https://github.com/vojto/hem-haml-coffee) pour les projets utilisants [Hem](https://github.com/maccman/hem/).
 * [haml_coffee_assets](https://github.com/netzpirat/haml_coffee_assets) pour les projets utilisants Rails.
 * [stitch-haml-coffee](https://github.com/jnbt/stitch-haml-coffee) pour les projets utilisants [Stitch](https://github.com/sstephenson/stitch).
@@ -489,7 +490,7 @@ Vous pouvez aller encore plus loin en utilisant une interpolation entre guilleme
 
 _Réflechissez à deux fois avant d'utiliser des attributs complexes dans votre fichier template. Il y a d'autres places plus adaptées pour ça, comme vos modèles, vos objets vues ou vos helpers._
 
-Vous pouvez définir vos attributs sur plusieurs avec l'indentation qui vous plait, ce qui vous permet par exemple de faire : 
+Vous pouvez définir vos attributs sur plusieurs avec l'indentation qui vous plait, ce qui vous permet par exemple de faire :
 
 ```haml
 %input#password.hint{ type: 'password', name: 'registration[password]',
@@ -510,7 +511,7 @@ Vous pouvez exécuter n'importe quel code CoffeeScript dans vos templates :
       %p&= project.description
 ```
 
-Il y a plusieurs formats pour exécuter du code : 
+Il y a plusieurs formats pour exécuter du code :
 
 * Exécuter du code sans rien insérer dans le document : `-`
 * Exécuter du code et insérer le résultat : `=`
