@@ -414,10 +414,11 @@ module.exports = class HamlCoffee
   renderGlobal: ->
     # Use the existing intro that is generated at the constructor
     template = @intro
+    name = if @options.name isnt '' then "['#{ @options.name }']" else ""
 
     # Render the template and extend the scope with the context
     if @options.extendScope
-      template += "#{ @options.namespace }['#{ @options.name }'] = (context) -> ( ->\n"
+      template += "#{ @options.namespace }#{name} = (context) -> ( ->\n"
       template += "  `with (context || {}) {`\n"
       template += "#{ indent(@precompile(), 1) }"
       template += "`}`\n"
@@ -425,7 +426,7 @@ module.exports = class HamlCoffee
 
     # Render the template without extending the scope
     else
-      template += "#{ @options.namespace }['#{ @options.name }'] = (context) -> ( ->\n"
+      template += "#{ @options.namespace }#{name} = (context) -> ( ->\n"
       template += "#{ indent(@precompile(), 1) }"
       template += ").call(context)"
 
