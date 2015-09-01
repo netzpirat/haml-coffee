@@ -58,6 +58,6 @@
     "url": "https://github.com/netzpirat/haml-coffee/issues"
   },
   "scripts": {
-    "test": "jasmine-node --coffee spec"
+    "test": "grunt test"
   }
 }

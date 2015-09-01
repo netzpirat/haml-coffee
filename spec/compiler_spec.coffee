@@ -1,4 +1,5 @@
-fs = require 'fs'
+fs   = require 'fs'
+path = require 'path'
 
 CoffeeScript = require 'coffee-script'
 HamlCoffee   = require '../src/haml-coffee'
@@ -33,7 +34,14 @@ for suite in suites
               extendScope      : if spec.config?.extend_scope is 'true' then true else false
               placement        : spec.config?.placement || 'global'
               format           : spec.config?.format || 'xhtml'
+              pwd              : spec.config?.pwd || ''
             }
+
+            if spec.haml_template
+              hamlTemplatePath = "spec/suites/templates/#{ spec.haml_template }.haml"
+              spec.haml = fs.readFileSync(hamlTemplatePath).toString()
+              if config.pwd is ''
+                config.pwd = path.resolve(path.dirname(hamlTemplatePath))
 
             compiler = new HamlCoffee(config)
 
@@ -41,10 +49,6 @@ for suite in suites
             report += "-------------------- Compiler settings ------------------------\n"
             report += JSON.stringify(config)
             report += "\n-------------------- Haml template ----------------------------\n"
-
-            if spec.haml_template
-              spec.haml = fs.readFileSync("spec/suites/templates/#{ spec.haml_template }.haml").toString()
-
             report += spec.haml
 
             if spec.partials && config.placement is 'global'
@@ -75,9 +79,11 @@ for suite in suites
             try
               template = CoffeeScript.compile cst
 
-              eval template
-
-              html = window.HAML.test(spec.locals)
+              if config.placement is 'standalone'
+                html = eval(template)(spec.locals)
+              else # global
+                eval template
+                html = window.HAML.test(spec.locals)
 
             catch error
               report +=  "\n-------------- Error compiling JST -------------------------\n"

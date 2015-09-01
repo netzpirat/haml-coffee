@@ -1,4 +1,5 @@
-fs = require 'fs'
+fs   = require 'fs'
+path = require 'path'
 
 Compiler = require './haml-coffee'
 
@@ -105,7 +106,8 @@ module.exports =
 
       else
         options.filename = filename
-        source = fs.readFileSync(filename, 'utf8')
+        options.pwd      = path.dirname(filename)
+        source           = fs.readFileSync(filename, 'utf8')
 
         if options.cache
           __expressCache[filename] = module.exports.compile(source, options)
