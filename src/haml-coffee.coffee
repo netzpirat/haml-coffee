@@ -161,7 +161,7 @@ module.exports = class HamlCoffee
       escapeAttributes   : override.escapeAttributes   || @options.escapeAttributes
       cleanValue         : override.cleanValue         || @options.cleanValue
       format             : override.format             || @options.format
-      hyphenateDataAttrs : override.hyphenateDataAttrs || @options.format
+      hyphenateDataAttrs : override.hyphenateDataAttrs || @options.hyphenateDataAttrs
       preserveTags       : override.preserveTags       || @options.preserveTags
       selfCloseTags      : override.selfCloseTags      || @options.selfCloseTags
       uglify             : override.uglify             || @options.uglify

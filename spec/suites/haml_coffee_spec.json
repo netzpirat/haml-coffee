@@ -47,7 +47,29 @@
     "Complex data attributes" : {
         "haml_template" : "coffee/data_attributes",
         "html_template" : "coffee/data_attributes"
+    },
+
+    "Hyphenating on by default" : {
+      "haml" : "%div{:data => {:normal => 'A', :under_scored => 'B', :dash-ed => 'C'}}",
+      "html" : "<div data-normal='A' data-under-scored='B' data-dash-ed='C'></div>"
+    },
+
+    "Hyphenating on when specified" : {
+      "haml" : "%div{:data => {:normal => 'A', :under_scored => 'B', :dash-ed => 'C'}}",
+      "html" : "<div data-normal='A' data-under-scored='B' data-dash-ed='C'></div>",
+      "config" : {
+        "hyphenateDataAttrs" : true
+      }
+    },
+
+    "Hyphenating off when specified" : {
+      "haml" : "%div{:data => {:normal => 'A', :under_scored => 'B', :dash-ed => 'C'}}",
+      "html" : "<div data-normal='A' data-under_scored='B' data-dash-ed='C'></div>",
+      "config" : {
+        "hyphenateDataAttrs" : false
+      }
     }
+
   },
 
   "tags with Ruby 1.9 style attributes": {
@@ -190,7 +212,7 @@
         "format" : "html5"
       }
     },
-    
+
     "class concatenation" : {
       "haml_template" : "coffee/class",
       "html_template" : "coffee/class"

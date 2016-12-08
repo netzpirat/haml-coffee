@@ -35,6 +35,9 @@ for suite in suites
               format           : spec.config?.format || 'xhtml'
             }
 
+            if spec.config?.hyphenateDataAttrs?
+              config.hyphenateDataAttrs = spec.config.hyphenateDataAttrs
+
             compiler = new HamlCoffee(config)
 
             report = "Generated output doesn't match the expected result.\n\n"
