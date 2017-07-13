@@ -1,6 +1,6 @@
 # Haml Coffee Templates [![Build Status](https://secure.travis-ci.org/netzpirat/haml-coffee.png)](http://travis-ci.org/netzpirat/haml-coffee)
 
-Haml Coffee is a JavaScript templating solution that uses [Haml](http://haml-lang.com/) as markup, understands inline
+Haml Coffee is a JavaScript templating solution that uses [Haml](http://haml.info/) as markup, understands inline
 [CoffeeScript](http://jashkenas.github.com/coffee-script/) and generates a JavaScript function that renders to HTML. It
 can be used in client-side JavaScript applications that are using
 [Backbone.js](http://documentcloud.github.com/backbone/), [Spine.js](http://spinejs.com/),
