@@ -56,6 +56,7 @@ module.exports = class Directive extends Node
             compiler = new Compiler(@options)
             compiler.parse source
             code = CoffeeScript.compile(compiler.precompile(), bare: true)
+            context = CoffeeScript.compile(context, bare: true).replace(/;\s*$/, '')
             statement = "`(function(){#{code}}).apply(#{context})`"
 
         else
