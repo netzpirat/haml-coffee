@@ -338,7 +338,7 @@ other Haml implementations and the following sections are fully compatible to Ru
 * Boolean attributes conversion
 * Haml object reference syntax: `[]`
 
-Please consult the official [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more
+Please consult the official [Haml reference](http://haml.info/docs/yardoc/file.REFERENCE.html) for more
 details.
 
 Haml Coffee supports both Ruby 1.8 and Ruby 1.9 style attributes. So the following Ruby 1.8 style attribute
@@ -566,7 +566,7 @@ chosen in the compile option:
 * Run code and escape the result: `&=`
 * Preserve whitespace when insert the result: `~`
 
-Again, please consult the official [Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more
+Again, please consult the official [Haml reference](http://haml.info/docs/yardoc/file.REFERENCE.html) for more
 details. Haml Coffee implements the same functionality like Ruby Haml, only for CoffeeScript.
 
 #### Interpolation
@@ -686,7 +686,7 @@ The Haml parser knows different HTML formats to which a given template can be re
 * html5
 
 Doctype, self-closing tags and attributes handling depends on this setting. Please consult the official
-[Haml reference](http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html) for more details.
+[Haml reference](http://haml.info/docs/yardoc/file.REFERENCE.html) for more details.
 
 #### Uglify output
 
