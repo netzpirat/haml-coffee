@@ -34,7 +34,7 @@
     "haml-coffee": "./bin/haml-coffee"
   },
   "dependencies": {
-    "coffee-script": ">= 1.1.3",
+    "coffeescript": ">= 1.1.3",
     "walkdir": "~0.0.7",
     "optimist": "~0.6.0"
   },
