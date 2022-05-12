@@ -1,5 +1,9 @@
 # Haml Coffee Changelog
 
+## Version 1.50.0, May 12, 2022
+
+* Switch from optimist to yargs to improve security
+
 ## Version 1.14.1, January 29, 2014
 
 * [#90](https://github.com/netzpirat/haml-coffee/pull/90): Support loading Haml-Coffee on Node with CoffeeScript 1.7.
