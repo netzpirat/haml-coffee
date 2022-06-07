@@ -50,8 +50,8 @@ module.exports = (grunt) ->
         command: "git tag v<%= pkg.version %>"
       push:
         command: "git push --tags origin master"
-      # publish:
-      #   command: "npm publish"
+      publish:
+        command: "npm publish"
 
   # Use a custom task for using the latest v1 version of Browserify,
   # since I don't like the current contraints in v2 like the need to
