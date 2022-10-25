@@ -8,7 +8,7 @@ red   = '\u001b[31m'
 green = '\u001b[32m'
 reset = '\u001b[0m'
 
-optimist = require('optimist')
+yargs = require('yargs')
   .usage('Usage: $0')
   .options('i',
     alias     : 'input'
@@ -129,7 +129,7 @@ optimist = require('optimist')
 # of Haml Coffee templates into one JavaScript template.
 #
 exports.run = ->
-  argv = optimist.argv
+  argv = yargs.argv
 
   throw new Error("Unknown template format '#{ argv.f }'") if ['xhtml', 'html4', 'html5'].indexOf(argv.f) is -1
 
@@ -240,7 +240,7 @@ exports.run = ->
         process.exit 1
 
   else if argv.help
-    console.log optimist.help()
+    console.log yargs.help()
 
   # Read from stdin and write result to stdout
   else

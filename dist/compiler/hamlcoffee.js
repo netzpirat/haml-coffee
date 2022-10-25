@@ -454,7 +454,7 @@ require.define("/haml-coffee.coffee",function(require,module,exports,__dirname,_
   indent = require('./util/text').indent;
 
   module.exports = HamlCoffee = (function() {
-    HamlCoffee.VERSION = '1.14.1';
+    HamlCoffee.VERSION = '1.15.0';
 
     function HamlCoffee(options1) {
       var base, base1, base10, base11, base12, base13, base2, base3, base4, base5, base6, base7, base8, base9, j, len, segment, segments;
@@ -1386,7 +1386,7 @@ require.define("/nodes/haml.coffee",function(require,module,exports,__dirname,__
     };
 
     Haml.prototype.parseTag = function(exp) {
-      var assignment, attr, attributes, ch, classes, doctype, end, error, error1, haml, htmlAttributes, i, id, ids, j, k, key, klass, len, len1, level, pos, ref, ref1, ref2, ref3, ref4, reference, rest, rubyAttributes, start, tag, text, val, whitespace;
+      var assignment, attr, attributes, ch, classes, doctype, end, error, haml, htmlAttributes, i, id, ids, j, k, key, klass, len, len1, level, pos, ref, ref1, ref2, ref3, ref4, reference, rest, rubyAttributes, start, tag, text, val, whitespace;
       try {
         doctype = (ref = exp.match(/^(\!{3}.*)/)) != null ? ref[1] : void 0;
         if (doctype) {
@@ -2117,7 +2117,7 @@ require.define("/nodes/directive.coffee",function(require,module,exports,__dirna
 
     Directive.prototype.directives = {
       include: function(expression) {
-        var Compiler, code, compiler, context, e, error, error1, name, ref, source, statement;
+        var Compiler, code, compiler, context, e, error, name, ref, source, statement;
         try {
           ref = expression.match(/\s*['"](.*?)['"](?:,\s*(.*))?\s*/), ref[0], name = ref[1], context = ref[2];
         } catch (error1) {
@@ -2128,7 +2128,6 @@ require.define("/nodes/directive.coffee",function(require,module,exports,__dirna
           context = 'this';
         }
         statement = (function() {
-          var error2;
           switch (this.placement) {
             case 'global':
               return this.namespace + "['" + name + "'](" + context + ")";
@@ -2140,8 +2139,8 @@ require.define("/nodes/directive.coffee",function(require,module,exports,__dirna
               } else {
                 try {
                   source = fs.readFileSync(name).toString();
-                } catch (error2) {
-                  error = error2;
+                } catch (error1) {
+                  error = error1;
                   console.error("  Error opening file: %s", error);
                   console.error(error);
                 }
@@ -2151,6 +2150,9 @@ require.define("/nodes/directive.coffee",function(require,module,exports,__dirna
                 code = CoffeeScript.compile(compiler.precompile(), {
                   bare: true
                 });
+                context = CoffeeScript.compile(context, {
+                  bare: true
+                }).replace(/;\s*$/, '');
                 return statement = "`(function(){" + code + "}).apply(" + context + ")`";
               }
               break;
@@ -2163,7 +2165,7 @@ require.define("/nodes/directive.coffee",function(require,module,exports,__dirna
     };
 
     Directive.prototype.evaluate = function() {
-      var directives, e, error1, name, ref, rest;
+      var directives, e, name, ref, rest;
       directives = Object.keys(this.directives).join('|');
       try {
         ref = this.expression.match(RegExp("\\+(" + directives + ")(.*)")), ref[0], name = ref[1], rest = ref[2];
@@ -2244,7 +2246,7 @@ require.define("/hamlc.coffee",function(require,module,exports,__dirname,__filen
       return CoffeeScript.compile(compiler.render());
     },
     __express: function(filename, options, callback) {
-      var err, error, source;
+      var err, source;
       if (!!(options && options.constructor && options.call && options.apply)) {
         callback = options;
         options = {};
